@@ -55,13 +55,13 @@ subroutine multipole(ifPrint)
         zz = z**2
         do il = 1,ngl
             rrp = gauss%rb(il)**2                                                                        
-            ! root mean square radius                                        
+            ! r^2                                        
             rr = zz + rrp                                                           
-            ! quadrupole moment                                              
+            ! for quadrupole moment                                              
             rq = 3*zz - rr                                                                                                            
-            ! octupole moment (added by geng)
+            ! for octupole moment
             ro = 2*z*zz-3*z*rrp
-            ! hexadecupole moment                                            
+            ! for hexadecupole moment                                            
             rh = 8*zz**2 - 24*zz*rrp + 3*rrp**2
                                     
             do it = 1,itx                                                
