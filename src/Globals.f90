@@ -402,7 +402,7 @@ type Output_FileName
     ! Density 1B
     character(len=60) :: outputDsME1B ! q1-q2
     integer :: u_outputDsME1B = u_config + 12
-    ! TD1B
+    ! TD 1B
     character(len=60) :: outputTDME1B ! q1-q2
     integer :: u_outputTDME1B = u_config + 13
     character(len=60) :: outputTDME1B_c ! q2-q1
@@ -410,9 +410,10 @@ type Output_FileName
     ! EM me
     character(len=60) :: outputEMme
     integer :: u_outputEMme = u_config + 15
+    ! m-scheme 1B me
+    character(len=60) :: outputm1Bme
+    integer :: u_outputm1Bme = u_config + 16
     ! Eccentricity 
-    character(len=60) :: outputEccentricityme
-    integer :: u_outputEccentricityme = u_config + 16
     character(len=70) :: outputEccentricityKernel
     integer :: u_outputEccentricityKernel = u_config + 17
 

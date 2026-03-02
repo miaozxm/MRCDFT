@@ -258,7 +258,7 @@ subroutine write_pko_output(q1,q2)
 
     if(q1== gcm_space%q1_start .and. q2==gcm_space%q2_start) then 
         call write_reduced_1B_multipole_matrix_elements
-        call write_eccentricity_operators_matrix_elements_1B
+        call write_1B_operators_matrix_elements
     end if 
 end subroutine
 
@@ -346,7 +346,7 @@ subroutine set_pko_output_filename(q1,q2,AMPType)
                         //signb31//char(name1(4))//char(name1(5))//char(name1(6)) //'.me'
     outputfile%outputEMme = OUTPUT_PATH//'EM'//'_A'//int2str(A) &
                         //'_eMax'//char(name_nf1)//char(name_nf2)//'.me'       
-    outputfile%outputEccentricityme = OUTPUT_PATH//'Eccentricity'//'_A'//int2str(A) &
+    outputfile%outputm1Bme = OUTPUT_PATH//'mScheme_1B'//'_A'//int2str(A) &
                         //'_eMax'//char(name_nf1)//char(name_nf2)//'.me'
     outputfile%outputEccentricityKernel = OUTPUT_PATH//'Proj_kern.Eccen.'//char(AMP)//'D' &
                         //'_eMax'//char(name_nf1)//char(name_nf2) &
@@ -604,13 +604,14 @@ subroutine  write_reduced_1B_multipole_matrix_elements
     end do
 end subroutine
 
-subroutine write_eccentricity_operators_matrix_elements_1B
+subroutine write_1B_operators_matrix_elements
     use Globals, only: BS, outputfile
     use Eccentricity, only: f_n,eccentricity_matrix_element_one_body
+    use EM, only: rl_nl
     integer :: ifg,ndsp,i0sp,m1,m2,nr1,nl1,nj1,nm1,nr2,nl2,nj2,nm2
-    real(r64) :: fn, e_1B
-    open(outputfile%u_outputEccentricityme ,form='formatted',file=outputfile%outputEccentricityme)
-    write(outputfile%u_outputEccentricityme,*) "  ifg   m1   m2   n1   n2   l1   l2  2j1  2j2  2j_m1  2j_m2      f2     Eps1B" 
+    real(r64) :: r2, r4, fn, e_1B
+    open(outputfile%u_outputm1Bme ,form='formatted',file=outputfile%outputm1Bme)
+    write(outputfile%u_outputm1Bme,*) "  ifg   m1   m2   n1   n2   l1   l2  2j1  2j2  2j_m1  2j_m2       r2         r4         f2      Eps1B" 
     do ifg = 1, 2
         ndsp = BS%HO_sph%idsp(1,ifg)
         i0sp = BS%HO_sph%iasp(1,ifg)
@@ -625,10 +626,18 @@ subroutine write_eccentricity_operators_matrix_elements_1B
                 nl2 = BS%HO_sph%nljm(i0sp+m2,2)
                 nj2 = BS%HO_sph%nljm(i0sp+m2,3)
                 nm2 = BS%HO_sph%nljm(i0sp+m2,4)
-                
+
+                if(nl1==nl2 .and. nj1==nj2 .and. nm1==nm2) then 
+                    r2 =  rl_nl(nr1,nl1,2,nr2,nl2) !  <m1|r^2|m2>
+                    r4 =  rl_nl(nr1,nl1,4,nr2,nl2) !  <m1|r^4|m2>
+                else
+                    r2 = 0.d0
+                    r4 = 0.d0
+                end if 
+     
                 fn = f_n(ifg,m1,ifg,m2,2)
                 call eccentricity_matrix_element_one_body(ifg,m1,ifg,m2,2,e_1B)
-                write(outputfile%u_outputEccentricityme,"(9i5,2i7,1x,2f10.5)") ifg,m1,m2,nr1,nr2,nl1,nl2,2*nj1-1,2*nj2-1,2*nm1-1,2*nm2-1,fn,e_1B
+                write(outputfile%u_outputm1Bme,"(9i5,2i7,1x,4(f10.5,1x))") ifg,m1,m2,nr1,nr2,nl1,nl2,2*nj1-1,2*nj2-1,2*nm1-1,2*nm2-1,r2,r4,fn,e_1B
             end do 
         end do 
     end do
