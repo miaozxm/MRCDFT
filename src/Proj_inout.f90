@@ -607,26 +607,28 @@ end subroutine
 subroutine write_1B_operators_matrix_elements
     use Globals, only: BS, outputfile
     use Eccentricity, only: f_n,eccentricity_matrix_element_one_body
-    use EM, only: rl_nl
+    use EM, only: rl_nl,ylm_ljm
     integer :: ifg,ndsp,i0sp,m1,m2,nr1,nl1,nj1,nm1,nr2,nl2,nj2,nm2
-    real(r64) :: r2, r4, fn, e_1B
-    open(outputfile%u_outputm1Bme ,form='formatted',file=outputfile%outputm1Bme)
-    write(outputfile%u_outputm1Bme,*) "  ifg   m1   m2   n1   n2   l1   l2  2j1  2j2  2j_m1  2j_m2       r2         r4         f2      Eps1B" 
+    real(r64) :: r2, r4, r2Y20, r4Y20, r4Y40, fn, e_1B
+    open(outputfile%u_outputm1Bme ,form='formatted',file=outputfile%outputm1Bme) 
+    write(outputfile%u_outputm1Bme,'(9A5,2A7,7A11)')  'ifg','m1','m2','n1','n2','l1','l2','2j1','2j2','2j_m1','2j_m2', &
+                                                         'r^2','r^4',"r^2Y20","r^4Y20","r^4Y40",'f2','Eps1B'
     do ifg = 1, 2
         ndsp = BS%HO_sph%idsp(1,ifg)
         i0sp = BS%HO_sph%iasp(1,ifg)
         do m1 = 1, ndsp
             do m2= 1, ndsp
-                nr1 = BS%HO_sph%nljm(i0sp+m1,1)
-                nl1 = BS%HO_sph%nljm(i0sp+m1,2)
-                nj1 = BS%HO_sph%nljm(i0sp+m1,3)
-                nm1 = BS%HO_sph%nljm(i0sp+m1,4)
+                nr1 = BS%HO_sph%nljm(i0sp+m1,1) ! n1  
+                nl1 = BS%HO_sph%nljm(i0sp+m1,2) ! l1
+                nj1 = BS%HO_sph%nljm(i0sp+m1,3) ! j1 + 1/2 
+                nm1 = BS%HO_sph%nljm(i0sp+m1,4) ! m1 + 1/2
         
-                nr2 = BS%HO_sph%nljm(i0sp+m2,1)
-                nl2 = BS%HO_sph%nljm(i0sp+m2,2)
-                nj2 = BS%HO_sph%nljm(i0sp+m2,3)
-                nm2 = BS%HO_sph%nljm(i0sp+m2,4)
+                nr2 = BS%HO_sph%nljm(i0sp+m2,1) ! n2
+                nl2 = BS%HO_sph%nljm(i0sp+m2,2) ! l2
+                nj2 = BS%HO_sph%nljm(i0sp+m2,3) ! j2 + 1/2
+                nm2 = BS%HO_sph%nljm(i0sp+m2,4) ! m2 + 1/2
 
+                ! r^n  ! <n1 l1 j1 m1 | r^n | n2 l2 j2 m2> = <n1 l1 | r^n | n2 l2> * <l1 j1 m1 | l2 j2 m2>
                 if(nl1==nl2 .and. nj1==nj2 .and. nm1==nm2) then 
                     r2 =  rl_nl(nr1,nl1,2,nr2,nl2) !  <m1|r^2|m2>
                     r4 =  rl_nl(nr1,nl1,4,nr2,nl2) !  <m1|r^4|m2>
@@ -634,10 +636,17 @@ subroutine write_1B_operators_matrix_elements
                     r2 = 0.d0
                     r4 = 0.d0
                 end if 
-     
+                ! r^2 Y20
+                r2Y20 = rl_nl(nr1,nl1,2,nr2,nl2)*ylm_ljm(nl1,nj1,nm1,2,0,nl2,nj2,nm2) 
+                ! r^4 Y20
+                r4Y20 = rl_nl(nr1,nl1,4,nr2,nl2)*ylm_ljm(nl1,nj1,nm1,2,0,nl2,nj2,nm2)
+                ! r^4 Y40
+                r4Y40 = rl_nl(nr1,nl1,4,nr2,nl2)*ylm_ljm(nl1,nj1,nm1,4,0,nl2,nj2,nm2)
+                ! eccentricity operator matrix element
                 fn = f_n(ifg,m1,ifg,m2,2)
                 call eccentricity_matrix_element_one_body(ifg,m1,ifg,m2,2,e_1B)
-                write(outputfile%u_outputm1Bme,"(9i5,2i7,1x,4(f10.5,1x))") ifg,m1,m2,nr1,nr2,nl1,nl2,2*nj1-1,2*nj2-1,2*nm1-1,2*nm2-1,r2,r4,fn,e_1B
+                write(outputfile%u_outputm1Bme,"(9i5,2i7,1x,7(f10.5,1x))") ifg,m1,m2,nr1,nr2,nl1,nl2,2*nj1-1,2*nj2-1,2*nm1-1,2*nm2-1,&
+                                                                            r2,r4,r2Y20,r4Y20,r4Y40,fn,e_1B
             end do 
         end do 
     end do
