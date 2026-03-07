@@ -668,9 +668,9 @@ type Proj_densities_
     complex(r64),dimension(:,:,:,:,:,:,:,:), allocatable :: rho_mm, prho_mm ! (m,m',++/--,phi_it,it,alpha,beta,gamma) ! Assigned from mix%rho_mm and mix%prho_mm
     complex(r64),dimension(:,:,:,:,:,:,:,:), allocatable :: kappa10_mm, kappa01c_mm, pkappa10_mm, pkappa01c_mm ! (m,m',++/--,phi_it,it,alpha,beta,gamma) ! Assigned from mix%kappa10_mm ...
     ! 1B density matrix element
-    complex(r64), dimension(:,:,:,:,:,:,:,:), allocatable :: ME1B ! (Jf,K,K',Pi(+/-),it,ifg,m,m')
+    complex(r64), dimension(:,:,:,:,:,:,:,:), allocatable :: ME1B ! (J,K,K',Pi(+/-),it,ifg,m,m') ! rho_{m m'}^{J K K',NZ, Parity} = <q1|c^+_{m'}c_{m} P^{J}_{K K'} P^N P^Z P^{Parity}|q2>
     ! 2B density matrix element
-    complex(r64), dimension(:,:,:,:,:,:,:,:,:,:), allocatable :: ME2B ! (Jf,K,K',Pi(+/-),it,ifg,m1,m2,m3,m4)
+    complex(r64), dimension(:,:,:,:,:,:,:,:,:,:), allocatable :: ME2B ! (J,K,K',Pi(+/-),it,ifg,m1,m2,m3,m4)
 end type
 type(Proj_densities_) :: Proj_densities
 
