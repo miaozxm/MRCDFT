@@ -32,7 +32,7 @@ c      momentum projected axial-octupole deformed states
       complex*16 cnum,cden 
       character*58 olpf,elem,dens
       character*28 outputwf,outputwf1,outputwf2                 ! ttttt1
-      dimension iexst(maxq*jmax,maxq*jmax)
+      dimension iexst(maxq*jmax*maxq*jmax,maxq*jmax*maxq*jmax)
       character(500) find_file
 c
       common /ttttt4/ outputwf,outputwf1,outputwf2
@@ -44,7 +44,7 @@ c
       common /nucnuc/ amas,nama,nneu,npro,nucnam 
       common /gcmmes/ gcmbet(100),gcmgam(100),gcmr2(100),step,maxmp
       common /gcmcut/ zeta(5),jmx,icase,kmx 
-      common /gcmsta/ nmaxdi(jmax),jkmax(jmax)
+      common /gcmsta/ nmaxdi(0:jmax),jkmax(0:jmax)
       common /tapes / l6,lin,lou,lwin,lwou,lplo,laka,lvpp,lrpa 
       common /eulera/ nbet,nphi 
       common /pkcout/ nubd,iden,nubw
@@ -706,7 +706,7 @@ c     &         name6  = '0'//char(jphi)
 !      &          //char(name42)//char(name52)//'.'
 !      &          //char(name62)//char(name72)//char(namer2)//'.elem'
      
-       elem = 'kern.'//char(name)//'D' 
+       elem = 'Proj_kern.'//char(name)//'D' 
      &     //'_eMax'//char(name_nf1)//char(name_nf2) 
      &     //'.'//char(name81)//char(name82) 
      &     //'.'//char(name91)//char(name92) 
@@ -716,7 +716,7 @@ c     &         name6  = '0'//char(jphi)
      &     //signb32//char(name2(4))//char(name2(5))//char(name2(6))//'.elem' 
 
 !--------------------- 
-      dens ='/kern.'//char(name)//'D'
+      dens ='/Proj_kern.'//char(name)//'D'
      &          //'.'//char(name81)//char(name82)
      &          //'.'//char(name91)//char(name92)//'.'
      &          //sign1//char(name11)//char(name21)
@@ -743,7 +743,7 @@ c
       complex*16 nikk,hikk,nkk,hkk,novlpi,hovlpi 
       complex*16 onang,etotang,qlmang,xnang   
       complex*16 q00p,bet0ang,be0 
-      dimension nmaxdi(jmax),xn(2)
+      dimension nmaxdi(0:jmax),xn(2)
       character*8 name
 c  
       common /kerne/  nkk(0:jmax,0:jmax,0:jmax),
@@ -1072,7 +1072,7 @@ c..............................................................................
      &                q2(maxq*jmax,0:jmax)   
       common /gcmbe3/ q3spec(maxq*jmax,0:jmax)   
       common /gcmmes/ gcmbet(100),gcmgam(100),gcmr2(100),step,maxmp
-      common /gcmsta/ nmaxdi(jmax),jkmax(jmax) 
+      common /gcmsta/ nmaxdi(0:jmax),jkmax(0:jmax) 
       common /big   / qp    (maxq,maxq,0:jmax,0:jmax,0:jmax),
      1                qcp   (maxq,maxq,0:jmax,0:jmax,0:jmax), 
      2                qpred (maxq,maxq,0:jmax,0:jmax,0:jmax),
@@ -1098,8 +1098,8 @@ c..............................................................................
      9                q3cnred(maxq,maxq,0:jmax,0:jmax,0:jmax)
      
       common /groust/ egs
-      common /eltran/ be2fi(maxq*jmax,maxq*jmax,jmax),
-     &                be0fi(maxq*jmax,maxq*jmax,jmax)
+      common /eltran/ be2fi(maxq*jmax,maxq*jmax,0:jmax),
+     &                be0fi(maxq*jmax,maxq*jmax,0:jmax)
       common /nucnuc/ amas,nama,nneu,npro,nucnam
 !     
       write(*,*) ' Obser subroutine finished '
@@ -1111,7 +1111,7 @@ c         if(ji.eq.1) goto 89
 c     ............................................ print out (n^J(q,q))^(1/2)
          if(ji.eq.0) then
             do iq1=1,maxmp
-	             gg  = dreal(njqqkk(jproj,iq1,iq1)) 
+	             gg  = dreal(njqqkk(ji,iq1,iq1)) 
                write(23,203) iq1,sqrt(gg),FJKq(iq1,1,ji),FJKq(iq1,2,ji)
             enddo ! iq1
          endif
@@ -1225,7 +1225,7 @@ c..............................................................................
      &                q2(maxq*jmax,0:jmax)  
       common /gcmbe3/ q3spec(maxq*jmax,0:jmax) 
       common /gcmmes/ gcmbet(100),gcmgam(100),gcmr2(100),step,maxmp
-      common /gcmsta/ nmaxdi(jmax),jkmax(jmax) 
+      common /gcmsta/ nmaxdi(0:jmax),jkmax(0:jmax) 
       common /big   / qp    (maxq,maxq,0:jmax,0:jmax,0:jmax),
      1                qcp   (maxq,maxq,0:jmax,0:jmax,0:jmax), 
      2                qpred (maxq,maxq,0:jmax,0:jmax,0:jmax),
@@ -1252,8 +1252,8 @@ c..............................................................................
      
       common /groust/ egs
       common /gcmcut/ zeta(5),jmx,icase,kmx
-      common /eltran/ be2fi(maxq*jmax,maxq*jmax,jmax),
-     &                be0fi(maxq*jmax,maxq*jmax,jmax)
+      common /eltran/ be2fi(maxq*jmax,maxq*jmax,0:jmax),
+     &                be0fi(maxq*jmax,maxq*jmax,0:jmax)
       common /nucnuc/ amas,nama,nneu,npro,nucnam
       data py(0:1)/'+','-'/
 !     
@@ -1307,7 +1307,7 @@ c    ............................................. initialization
      &                       * dreal(njqqkk(ji,iqkf,iqki))    
             enddo ! iqkf 
           enddo ! iqki 
-          xrp(li,ji) = xrp(li,ji)/dsqrt(xp)          ! normalized to proton number
+          xrp(li,ji) = xrp(li,ji)/dsqrt(xp+0.0000001d0)          ! normalized to proton number
           write(*,202) ji, py(mod(ji,2)), li, EJKq(li,ji), xei, 
      &              bet_aver(li,ji), 
      &              gam_aver(li,ji),qspec(li,ji),
@@ -1360,7 +1360,7 @@ c..............................................................................
      &                q2(maxq*jmax,0:jmax)   
       common /gcmbe3/ q3spec(maxq*jmax,0:jmax)  
       common /gcmmes/ gcmbet(100),gcmgam(100),gcmr2(100),step,maxmp
-      common /gcmsta/ nmaxdi(jmax),jkmax(jmax) 
+      common /gcmsta/ nmaxdi(0:jmax),jkmax(0:jmax) 
       common /big   / qp    (maxq,maxq,0:jmax,0:jmax,0:jmax),
      1                qcp   (maxq,maxq,0:jmax,0:jmax,0:jmax), 
      2                qpred (maxq,maxq,0:jmax,0:jmax,0:jmax),
@@ -1386,8 +1386,8 @@ c..............................................................................
      9                q3cnred(maxq,maxq,0:jmax,0:jmax,0:jmax)
       common /groust/ egs
       common /gcmcut/ zeta(5),jmx,icase,kmx 
-      common /eltran/ be2fi(maxq*jmax,maxq*jmax,jmax),
-     &                be0fi(maxq*jmax,maxq*jmax,jmax)
+      common /eltran/ be2fi(maxq*jmax,maxq*jmax,0:jmax),
+     &                be0fi(maxq*jmax,maxq*jmax,0:jmax)
       common /nucnuc/ amas,nama,nneu,npro,nucnam
 !   
 c..............................................................................

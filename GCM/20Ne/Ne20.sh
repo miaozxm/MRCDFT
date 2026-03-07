@@ -10,10 +10,10 @@
 #PBS -l walltime=1:23:00:00
 
 ELE=Ne #Mg
-A=22 # 24
+A=20 # 24
 NUC=$A${ELE}   # the DIC code generates the files with nucleus name as element name
 Nf=6
-mq=4 #55 #11 # 15 # 5 #13 #13 #13 # 15 # 016 # 014 #21 #013 # 010       # number of mesh point in q-space
+mq=6 #55 #11 # 15 # 5 #13 #13 #13 # 15 # 016 # 014 #21 #013 # 010       # number of mesh point in q-space
 iam=0 # 1 # 0 # 0 #      # 0: 1D; 1: 3D
 iphi=07 #07 #09 # 01 # 07 #09 #09 # 01  #     # number of meshpoints in gauge angle 
 nbet=12 #16 # 14 #14 # 14 #14 # 14 # 10 # 14 # 14 # 14 # 01           # 01 -> pure PNP
@@ -28,8 +28,8 @@ iBlock=0 # 0 for even-even; 1 for odd-mass
  fi
 
 #...................... path.sh
-DATAPATH=../../../examples/22Ne/output
-pathwork=../../GCM/22Ne                    # directory where calculations are started 
+DATAPATH=../../../examples/20Ne/output
+pathwork=../../GCM/20Ne                    # directory where calculations are started 
 
 pathexec=${pathwork}/exec                      # directory where the exe files are stored
 
@@ -65,17 +65,21 @@ EOF
 #   0.20  0.100
 cat <<EOF > betgam.dat 
              ${mq}                   ! number of mesh-point in q-space  
+    0.00  0.00   0.00
     0.10  0.00   0.00
-    0.10  0.30   0.00
     0.20  0.00   0.00
-    0.20  0.30   0.00
+    0.30  0.00   0.00
+    0.40  0.00   0.00
+    0.50  0.00   0.00
 EOF
 cat <<EOF > betgam2.dat 
              ${mq}                   ! number of mesh-point in q-space  
+    0.00  0.00   0.00
     0.10  0.00   0.00
-    0.10  0.30   0.00
     0.20  0.00   0.00
-    0.20  0.30   0.00
+    0.30  0.00   0.00
+    0.40  0.00   0.00
+    0.50  0.00   0.00
 EOF
 cat <<EOF > bk_betgam.dat 
   0.18  0.00     0
@@ -88,7 +92,7 @@ cat <<EOF > bk_betgam.dat
   0.18  0.35     0
 EOF
 pwd
-./run.exe > ${fout}.out
+./run > ${fout}.out
 
 cat ${fout}.out
 echo hwgcm calculation is finished

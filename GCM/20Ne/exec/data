@@ -1,0 +1,9 @@
+Ne 20                                                ! nucleus under consideration
+isoa     =    0                                          ! 0(not odd-A); 1 (is odd-A)                 
+n0f      =   6                                          ! eMax: number of HO shells 
+iswi(1)  =   0                                      ! AMP    : (0) 1DAMP (1) 3DAMP
+iphi     =   07                                     ! number of meshpoints in gauge angle 
+nbet     =   12                                     !  01 -> Pure PNP; others, PNP+AMP
+Jmax     =    2                                          ! maximal spin value to be                 
+kmax     =    4                                          ! number of states for each spin          
+Zeta     = 5.00E-03 5.00E-03 5.00E-03 5.00E-03 5.00E-03  ! cutoff in norm            
