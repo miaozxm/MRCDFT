@@ -8,7 +8,8 @@ contains
 
     subroutine calculate_Eccentri_n(n,iphi,it,Eccentri,pEccentri)
         !--------------------------------------------------
-        !  calculate <q1| E_n |q2>/<q1|R|q2>
+        !  calculate <q1| E_n R|q2>/<q1|R|q2>
+        !  where R = R(alpha,beta,gamma, phi_n,phi_p) = e^{i alpha J_z} e^{i beta J_y} e^{i gamma J_z} e^{i phi_n N} e^{i phi_p N}
         !--------------------------------------------------
         use Constants,only: itx
         use Globals, only: BS, mix

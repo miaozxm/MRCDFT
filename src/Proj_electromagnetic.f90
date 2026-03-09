@@ -15,12 +15,12 @@ Module EM
 contains
 
     subroutine calculate_Qlm(l,iphi,it,Qlm,pQlm,cQlm,pcQlm)
-        !--------------------------------------------------
-        !  calculate <q1| Q_lm R|q2>/<q1|R|q2>
-        !  = \sum_{m1 m2}<m1|Q_lm|m2> rho_{m2m1}
-        !  calculate <q1| Q^\dagger_lm R|q2>/<q1|R|q2>
-        !  = \sum_{m1 m2}<m1|Q_lm|m2> rho_{m1m2}
-        !--------------------------------------------------
+        !-------------------------------------------------------------------------------
+        !    calculate <q1| Q_lm R|q2>/<q1|R|q2>  = \sum_{m1 m2}<m1|Q_lm|m2> rho_{m2m1}
+        !    calculate <q1| Q^\dagger_lm R|q2>/<q1|R|q2>  = \sum_{m1 m2}<m1|Q_lm|m2> rho_{m1m2}
+        !  where R = R(alpha,beta,gamma, phi_n,phi_p) 
+        !    = e^{i alpha J_z} e^{i beta J_y} e^{i gamma J_z} e^{i phi_n N} e^{i phi_p N}
+        !--------------------------------------------------------------------------------
         use Constants,only: itx
         use Globals, only: BS, mix
         integer :: l,iphi,it
@@ -61,9 +61,10 @@ contains
 
     subroutine calculate_r2(iphi,it,r2,pr2)
         !--------------------------------------------------
-        !  calculate <q1| r^2 |q2>/<q1|R|q2>
+        !  calculate <q1| r^2 R|q2>/<q1|R|q2>
         !  = \sum_{m1 m2} <m1|r^2|m2> rho_{m2m1}.
         !  where <m1|r^2|m2> = <n1 l1|r^2|n2 l2> when l1==l2 and j1==j2 and mj1==mj2
+        !  and R = R(alpha,beta,gamma, phi_n,phi_p) = e^{i alpha J_z} e^{i beta J_y} e^{i gamma J_z} e^{i phi_n N} e^{i phi_p N}
         !--------------------------------------------------
         use Constants,only: itx
         use Globals, only: BS, mix
