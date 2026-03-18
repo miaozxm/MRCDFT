@@ -133,7 +133,7 @@ subroutine read_Proj_configuration(ifPrint)
 
         write(*,'(5x,A)') AMP_char//'  +  '//PNP_char//'+  '//'PP :'
         if(pko_option%AMPtype /= 0) then
-            write(*,"(5x,a,':   ',3(i2,a))") adjust_left('Number euler angles',Strlength),input_par%nalpha,' (nalpha),  ',input_par%nbeta,' (nbeta),  ',input_par%ngamma,' (ngamma)'
+            write(*,"(5x,a,':   ',3(i2,a))") adjust_left('Number of euler angles',Strlength),input_par%nalpha,' (nalpha),  ',input_par%nbeta,' (nbeta),  ',input_par%ngamma,' (ngamma)'
             if(input_par%Euler_Symmetry==0) then
                 write(*,"(5x,a,':   ',a)") adjust_left('Symmetry of euler angles',Strlength),'no'
             else if(input_par%Euler_Symmetry==1) then
@@ -363,7 +363,7 @@ subroutine write_kernels
     use Globals, only: gcm_space,kernels
     integer :: J,K1,K2,parity
     character(1), dimension(2) :: ParityChar = ['+', '-']
-    character(len=*), parameter ::  format1 = "(3i5,4x,a)", &
+    character(len=*), parameter ::  format1 = "(3i5,4x,a,2f8.5)", &
                                     format2 = "(4e15.8)"
     open(outputfile%u_outputelem ,form='formatted',file=outputfile%outputelem)
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
@@ -377,7 +377,8 @@ subroutine write_kernels
                     else
                         parity = 2 ! -
                     end if
-                    write(outputfile%u_outputelem,format1)  J,K1,K2,ParityChar(parity)
+                    write(*,*) 'J', J, kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
+                    write(outputfile%u_outputelem,format1)  J,K1,K2,ParityChar(parity),  kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
                     write(outputfile%u_outputelem,format2)  kernels%N_KK(J,K1,K2,parity), kernels%H_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
                     write(outputfile%u_outputelem,format2)  kernels%X_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30),kernels%X_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
                     ! ! proton part
@@ -542,6 +543,54 @@ subroutine write_reduced_1B_transition_density_matrix_elements(q1,q2)
 end subroutine
 
 ! matrix elements of operator
+subroutine write_1B_operators_matrix_elements
+    use Globals, only: BS, outputfile
+    use Eccentricity, only: f_n,eccentricity_matrix_element_one_body
+    use EM, only: rl_nl,ylm_ljm
+    integer :: ifg,ndsp,i0sp,m1,m2,nr1,nl1,nj1,nm1,nr2,nl2,nj2,nm2
+    real(r64) :: r2, r4, r2Y20, r4Y20, r4Y40, fn, e_1B
+    open(outputfile%u_outputm1Bme ,form='formatted',file=outputfile%outputm1Bme) 
+    write(outputfile%u_outputm1Bme,'(9A5,2A7,7A11)')  'ifg','m1','m2','n1','n2','l1','l2','2j1','2j2','2j_m1','2j_m2', &
+                                                         'r^2','r^4',"r^2Y20","r^4Y20","r^4Y40",'f2','Eps1B'
+    do ifg = 1, 2
+        ndsp = BS%HO_sph%idsp(1,ifg)
+        i0sp = BS%HO_sph%iasp(1,ifg)
+        do m1 = 1, ndsp
+            do m2= 1, ndsp
+                nr1 = BS%HO_sph%nljm(i0sp+m1,1) ! n1  
+                nl1 = BS%HO_sph%nljm(i0sp+m1,2) ! l1
+                nj1 = BS%HO_sph%nljm(i0sp+m1,3) ! j1 + 1/2 
+                nm1 = BS%HO_sph%nljm(i0sp+m1,4) ! m1 + 1/2
+        
+                nr2 = BS%HO_sph%nljm(i0sp+m2,1) ! n2
+                nl2 = BS%HO_sph%nljm(i0sp+m2,2) ! l2
+                nj2 = BS%HO_sph%nljm(i0sp+m2,3) ! j2 + 1/2
+                nm2 = BS%HO_sph%nljm(i0sp+m2,4) ! m2 + 1/2
+
+                ! r^n  ! <n1 l1 j1 m1 | r^n | n2 l2 j2 m2> = <n1 l1 | r^n | n2 l2> * <l1 j1 m1 | l2 j2 m2>
+                if(nl1==nl2 .and. nj1==nj2 .and. nm1==nm2) then 
+                    r2 =  rl_nl(nr1,nl1,2,nr2,nl2) !  <m1|r^2|m2>
+                    r4 =  rl_nl(nr1,nl1,4,nr2,nl2) !  <m1|r^4|m2>
+                else
+                    r2 = 0.d0
+                    r4 = 0.d0
+                end if 
+                ! r^2 Y20
+                r2Y20 = rl_nl(nr1,nl1,2,nr2,nl2)*ylm_ljm(nl1,nj1,nm1,2,0,nl2,nj2,nm2) 
+                ! r^4 Y20
+                r4Y20 = rl_nl(nr1,nl1,4,nr2,nl2)*ylm_ljm(nl1,nj1,nm1,2,0,nl2,nj2,nm2)
+                ! r^4 Y40
+                r4Y40 = rl_nl(nr1,nl1,4,nr2,nl2)*ylm_ljm(nl1,nj1,nm1,4,0,nl2,nj2,nm2)
+                ! eccentricity operator matrix element
+                fn = f_n(ifg,m1,ifg,m2,2)
+                call eccentricity_matrix_element_one_body(ifg,m1,ifg,m2,2,e_1B)
+                write(outputfile%u_outputm1Bme,"(9i5,2i7,1x,7(f10.5,1x))") ifg,m1,m2,nr1,nr2,nl1,nl2,2*nj1-1,2*nj2-1,2*nm1-1,2*nm2-1,&
+                                                                            r2,r4,r2Y20,r4Y20,r4Y40,fn,e_1B
+            end do 
+        end do 
+    end do
+end subroutine
+
 subroutine  write_reduced_1B_multipole_matrix_elements
     use Globals, only: outputfile,BS,TDs,gcm_space
     use EM, only: reduced_multipole_matrix_elements,reduced_monopole_matrix_elements,rl_nl
@@ -600,54 +649,6 @@ subroutine  write_reduced_1B_multipole_matrix_elements
             end do
             call reduced_monopole_matrix_elements(nra,nla,nja,nrb,nlb,njb,monopole_ab)
             write(outputfile%u_outputEMme,'(2i4,1x,f17.10,8x,15(1x,f17.10))') a,b, monopole_ab,(Ql_ab(lambda), lambda=lambda_start,lambda_end)
-        end do 
-    end do
-end subroutine
-
-subroutine write_1B_operators_matrix_elements
-    use Globals, only: BS, outputfile
-    use Eccentricity, only: f_n,eccentricity_matrix_element_one_body
-    use EM, only: rl_nl,ylm_ljm
-    integer :: ifg,ndsp,i0sp,m1,m2,nr1,nl1,nj1,nm1,nr2,nl2,nj2,nm2
-    real(r64) :: r2, r4, r2Y20, r4Y20, r4Y40, fn, e_1B
-    open(outputfile%u_outputm1Bme ,form='formatted',file=outputfile%outputm1Bme) 
-    write(outputfile%u_outputm1Bme,'(9A5,2A7,7A11)')  'ifg','m1','m2','n1','n2','l1','l2','2j1','2j2','2j_m1','2j_m2', &
-                                                         'r^2','r^4',"r^2Y20","r^4Y20","r^4Y40",'f2','Eps1B'
-    do ifg = 1, 2
-        ndsp = BS%HO_sph%idsp(1,ifg)
-        i0sp = BS%HO_sph%iasp(1,ifg)
-        do m1 = 1, ndsp
-            do m2= 1, ndsp
-                nr1 = BS%HO_sph%nljm(i0sp+m1,1) ! n1  
-                nl1 = BS%HO_sph%nljm(i0sp+m1,2) ! l1
-                nj1 = BS%HO_sph%nljm(i0sp+m1,3) ! j1 + 1/2 
-                nm1 = BS%HO_sph%nljm(i0sp+m1,4) ! m1 + 1/2
-        
-                nr2 = BS%HO_sph%nljm(i0sp+m2,1) ! n2
-                nl2 = BS%HO_sph%nljm(i0sp+m2,2) ! l2
-                nj2 = BS%HO_sph%nljm(i0sp+m2,3) ! j2 + 1/2
-                nm2 = BS%HO_sph%nljm(i0sp+m2,4) ! m2 + 1/2
-
-                ! r^n  ! <n1 l1 j1 m1 | r^n | n2 l2 j2 m2> = <n1 l1 | r^n | n2 l2> * <l1 j1 m1 | l2 j2 m2>
-                if(nl1==nl2 .and. nj1==nj2 .and. nm1==nm2) then 
-                    r2 =  rl_nl(nr1,nl1,2,nr2,nl2) !  <m1|r^2|m2>
-                    r4 =  rl_nl(nr1,nl1,4,nr2,nl2) !  <m1|r^4|m2>
-                else
-                    r2 = 0.d0
-                    r4 = 0.d0
-                end if 
-                ! r^2 Y20
-                r2Y20 = rl_nl(nr1,nl1,2,nr2,nl2)*ylm_ljm(nl1,nj1,nm1,2,0,nl2,nj2,nm2) 
-                ! r^4 Y20
-                r4Y20 = rl_nl(nr1,nl1,4,nr2,nl2)*ylm_ljm(nl1,nj1,nm1,2,0,nl2,nj2,nm2)
-                ! r^4 Y40
-                r4Y40 = rl_nl(nr1,nl1,4,nr2,nl2)*ylm_ljm(nl1,nj1,nm1,4,0,nl2,nj2,nm2)
-                ! eccentricity operator matrix element
-                fn = f_n(ifg,m1,ifg,m2,2)
-                call eccentricity_matrix_element_one_body(ifg,m1,ifg,m2,2,e_1B)
-                write(outputfile%u_outputm1Bme,"(9i5,2i7,1x,7(f10.5,1x))") ifg,m1,m2,nr1,nr2,nl1,nl2,2*nj1-1,2*nj2-1,2*nm1-1,2*nm2-1,&
-                                                                            r2,r4,r2Y20,r4Y20,r4Y40,fn,e_1B
-            end do 
         end do 
     end do
 end subroutine
