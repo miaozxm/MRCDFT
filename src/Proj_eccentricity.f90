@@ -2,7 +2,7 @@ Module Eccentricity
     use Constants,only: r64
     implicit none
     integer, parameter :: max_n = 2 ! max n of f_n
-    real(r64), dimension(:,:,:,:,:), allocatable:: f_n_array ! f_n_array(ifg1, m1, if2, m2, n)
+    real(r64), dimension(:,:,:,:,:), allocatable:: f_n_array ! f_n_array(ifg1, m1, ifg2, m2, n)
     logical, dimension(-max_n:max_n) :: precomputed_n = .False.
 contains
 

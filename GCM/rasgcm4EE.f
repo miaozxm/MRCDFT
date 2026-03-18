@@ -971,7 +971,7 @@ c     .............................................  hamiltonian eigenvalues
 c     .............................................  hamiltonian eigenvectors
       print 403
       print 402
-!     ............................................  RR: g(q)
+!     ............................................  RR: g(K,q)
       do iqk1=1,N
          k1 =2*Int((iqk1-1)/maxmp)          ! k value
          if(iv(jtot).lt.zero) k1 = k1 + 2   ! if jtot = 3, 5, 7, ...; k value
@@ -1167,8 +1167,8 @@ c       ........................................... accuracy of the calculation
                x = x + (aa(j,l)-ek*bb(j,l)) * s(l,li,ji)
             enddo  ! l
                w    = aa(i,j)-ek*bb(i,j)
-               y(i) = y(i) + w*x
-               zz(i)= zz(i)+ w*s(j,li,ji)
+               y(i) = y(i) + w*x  ! (H -EN)^2 f
+               zz(i)= zz(i)+ w*s(j,li,ji) ! (H -EN)f
           enddo ! j
         enddo  ! i
         q1(li,ji) = 0.0d0
