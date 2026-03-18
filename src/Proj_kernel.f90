@@ -854,33 +854,36 @@ Module Kernel
         ! pJ2_PNP: <q_1| J^2 R(alpha,beta,gamma) P^{N} P^{Z} P|q_2 >
         !---------------------------------------------------------------
         use Globals, only: projection_mesh,nucleus_attributes,mix
-        use AM, only: calculate_Jsquare
+        use AM, only: calculate_Jsquare_and_J
         complex(r64),intent(out) :: J2_PNP, pJ2_PNP
         integer :: L_n,L_p,phi_n_index,phi_p_index,it
         real(r64) :: phi_n,phi_p
-        complex(r64) :: J2,pJ2,emiNphi,emiZphi,fac,pfac
-        complex(r64), dimension(:,:), allocatable :: J2_arry, pJ2_arry
-        real :: start_CPU_time,end_CPU_time,CPU_time_minutes
+        complex(r64) :: J2,pJ2,emiNphi,emiZphi,fac,pfac,J_i(3),pJ_i(3)
+        complex(r64), allocatable :: Jsquare_arry(:,:), pJsquare_arry(:,:),J_array(:,:,:),pJ_array(:,:,:)
 
         J2_PNP = (0.d0, 0.d0)
         pJ2_PNP = (0.d0, 0.d0)
         L_n = projection_mesh%nphi(1)
         L_p = projection_mesh%nphi(2)
 
-        ! calculate calculate <q1| J^2 R |q2>/<q1|R|q2> 
+        ! calculate <q1| J^2 R |q2>/<q1|R|q2> and  <q1| J_i R |q2>/<q1|R|q2> for proton and neutron separately.
         ! where R = R(alpha,beta,gamma, phi_n,phi_p) = e^{i alpha J_z} e^{i beta J_y} e^{i gamma J_z} e^{i phi_n N} e^{i phi_p N}
-        allocate(J2_arry(max(L_n,L_p),2),pJ2_arry(max(L_n,L_p),2))
+        allocate(Jsquare_arry(max(L_n,L_p),2),pJsquare_arry(max(L_n,L_p),2),J_array(max(L_n,L_p),2,3),pJ_array(max(L_n,L_p),2,3))
         do phi_n_index = 1, L_n
             it = 1
-            call calculate_Jsquare(phi_n_index,it,J2,pJ2)
-            J2_arry(phi_n_index,it) = J2
-            pJ2_arry(phi_n_index,it) = pJ2
+            call calculate_Jsquare_and_J(phi_n_index,it,J2,pJ2,J_i,pJ_i)
+            Jsquare_arry(phi_n_index,it) = J2
+            pJsquare_arry(phi_n_index,it) = pJ2
+            J_array(phi_n_index,it,:) = J_i(:)
+            pJ_array(phi_n_index,it,:) = pJ_i(:)
         end do 
         do phi_p_index = 1, L_p
             it = 2
-            call calculate_Jsquare(phi_p_index,it,J2,pJ2)
-            J2_arry(phi_p_index,it) = J2
-            pJ2_arry(phi_p_index,it) = pJ2
+            call calculate_Jsquare_and_J(phi_p_index,it,J2,pJ2,J_i,pJ_i)
+            Jsquare_arry(phi_p_index,it) = J2
+            pJsquare_arry(phi_p_index,it) = pJ2
+            J_array(phi_p_index,it,:) = J_i(:)
+            pJ_array(phi_p_index,it,:) = pJ_i(:)
         end do 
 
         do  phi_n_index = 1, L_n
@@ -891,16 +894,24 @@ Module Kernel
                 emiZphi = cdexp(-nucleus_attributes%proton_number*cmplx(0,phi_p)) ! e^{-iZ\phi_p}
                 fac = 1.d0/(L_n*L_p)*emiNphi*emiZphi*mix%norm(phi_n_index,1)*mix%norm(phi_p_index,2)
                 pfac = 1.d0/(L_n*L_p)*emiNphi*emiZphi*mix%pnorm(phi_n_index,1)*mix%pnorm(phi_p_index,2)
-                !
+                ! <J^2_n> = <Jx^2_n> + <Jy^2_n> + <Jz^2_n>
                 it = 1
-                J2_PNP = J2_PNP + fac*J2_arry(phi_n_index,it)
-                pJ2_PNP = pJ2_PNP + pfac*pJ2_arry(phi_n_index,it)
+                J2_PNP = J2_PNP + fac*Jsquare_arry(phi_n_index,it)
+                pJ2_PNP = pJ2_PNP + pfac*pJsquare_arry(phi_n_index,it)
+                ! <J^2_p> = <Jx^2_p> + <Jy^2_p> + <Jz^2_p>
                 it= 2
-                J2_PNP = J2_PNP + fac*J2_arry(phi_p_index,it)
-                pJ2_PNP = pJ2_PNP + pfac*pJ2_arry(phi_p_index,it)
+                J2_PNP = J2_PNP + fac*Jsquare_arry(phi_p_index,it)
+                pJ2_PNP = pJ2_PNP + pfac*pJsquare_arry(phi_p_index,it)
+                ! 2<J_p J_n> = 2<Jx>_n<Jx>_p + 2<Jy>_n<Jy>_p + 2<Jz>_n<Jz>_p
+                J2_PNP = J2_PNP + fac*2.d0*J_array(phi_n_index,1,1)*J_array(phi_p_index,2,1) !  2<Jx>_n<Jx>_p
+                J2_PNP = J2_PNP + fac*2.d0*J_array(phi_n_index,1,2)*J_array(phi_p_index,2,2) !  2<Jy>_n<Jy>_p
+                J2_PNP = J2_PNP + fac*2.d0*J_array(phi_n_index,1,3)*J_array(phi_p_index,2,3) !  2<Jz>_n<Jz>_p
+                pJ2_PNP = pJ2_PNP + fac*2.d0*pJ_array(phi_n_index,1,1)*pJ_array(phi_p_index,2,1) !  2<Jx>_n<Jx>_p
+                pJ2_PNP = pJ2_PNP + fac*2.d0*pJ_array(phi_n_index,1,2)*pJ_array(phi_p_index,2,2) !  2<Jy>_n<Jy>_p
+                pJ2_PNP = pJ2_PNP + fac*2.d0*pJ_array(phi_n_index,1,3)*pJ_array(phi_p_index,2,3) !  2<Jz>_n<Jz>_p
             end do
         end do
-        deallocate(J2_arry,pJ2_arry)
+        deallocate(Jsquare_arry,pJsquare_arry,J_array,pJ_array)
     end subroutine
 
     subroutine calculate_Qlm_after_PNP(Q2m_PNP,pQ2m_PNP,cQ2m_PNP,pcQ2m_PNP)

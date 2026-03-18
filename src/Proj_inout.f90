@@ -363,7 +363,7 @@ subroutine write_kernels
     use Globals, only: gcm_space,kernels
     integer :: J,K1,K2,parity
     character(1), dimension(2) :: ParityChar = ['+', '-']
-    character(len=*), parameter ::  format1 = "(3i5,4x,a,2f8.5)", &
+    character(len=*), parameter ::  format1 = "(3i5,4x,a,4x,f8.5)", &
                                     format2 = "(4e15.8)"
     open(outputfile%u_outputelem ,form='formatted',file=outputfile%outputelem)
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
@@ -377,8 +377,7 @@ subroutine write_kernels
                     else
                         parity = 2 ! -
                     end if
-                    write(*,*) 'J', J, kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
-                    write(outputfile%u_outputelem,format1)  J,K1,K2,ParityChar(parity),  kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
+                    write(outputfile%u_outputelem,format1)  J,K1,K2,ParityChar(parity),Real(kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))
                     write(outputfile%u_outputelem,format2)  kernels%N_KK(J,K1,K2,parity), kernels%H_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
                     write(outputfile%u_outputelem,format2)  kernels%X_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30),kernels%X_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
                     ! ! proton part

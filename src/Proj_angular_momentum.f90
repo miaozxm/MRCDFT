@@ -15,13 +15,15 @@ Module AM
 contains
 
 
-subroutine calculate_Jsquare(iphi,it,J2,pJ2)
+subroutine calculate_Jsquare_and_J(iphi,it,J2,pJ2,J_i,pJ_i)
     !---------------------------------------------------------------------------
     ! 
-    !  calculate calculate <q1| J^2 R |q2>/<q1|R|q2>  = <q1| J_x^2 R |q2>/<q1|R|q2> 
-    !                   + <q1| J_y^2 R |q2>/<q1|R|q2> + <q1| J_z^2 R |q2>/<q1|R|q2>
-    ! where R = R(alpha,beta,gamma, phi_n,phi_p) 
-    !   = e^{i alpha J_z} e^{i beta J_y} e^{i gamma J_z} e^{i phi_n N} e^{i phi_p N}
+    !  calculate  
+    !  1)   <q1| J^2 R |q2>/<q1|R|q2>  = \sum_i <q1| J_i^2 R |q2>/<q1|R|q2> 
+    !  2)   <q1| J_i R |q2>/<q1|R|q2> 
+    !  for neutron and porton where i= x,y,z ;  
+    !  and R = R(alpha,beta,gamma, phi_n,phi_p) 
+    !        = e^{i alpha J_z} e^{i beta J_y} e^{i gamma J_z} e^{i phi_n N} e^{i phi_p N}
     ! 
     ! -------------------------------------------------------------------------------
     !   <q1| J_i^2 R |q2>/<q1|R|q2>  
@@ -33,20 +35,21 @@ subroutine calculate_Jsquare(iphi,it,J2,pJ2)
     !---------------------------------------------------------------------------
     use Globals, only: BS, mix
     integer :: iphi,it
-    complex(r64) :: J2,pJ2,J12_J24,rho_4321,prho_4321,J13_J24
+    complex(r64) :: J2,pJ2,J12_J24,rho_4321,prho_4321,J13_J24,J_i(3),pJ_i(3)
     integer :: ifg1,m1,ifg2,m2,ifg3,m3,ifg4,m4,total_iter,iter
 
     J2 = (0.0d0,0.0d0)
     pJ2 = (0.0d0,0.0d0)
+    J_i = (0.0d0,0.0d0)
+    pJ_i = (0.0d0,0.0d0)
 
     if(.not. precomputed_angular_matrix_element) then
-        call precompute_angular_matrix_element
-        write(*,*) 'precompute_angular_matrix_element' 
+        call precompute_angular_matrix_element 
     end if
 
     total_iter = BS%HO_sph%idsp(1,1) + BS%HO_sph%idsp(1,2)
     !$OMP PARALLEL DEFAULT(shared) PRIVATE(iter,ifg1,m1,ifg2,m2,ifg3,m3,ifg4,m4,J12_J24,rho_4321,prho_4321,J13_J24) &
-    !$omp reduction(+:J2,pJ2)
+    !$omp reduction(+:J2,pJ2,J_i,pJ_i)
     !$OMP DO COLLAPSE(1) SCHEDULE(static)
 
     do iter = 1,total_iter
@@ -59,39 +62,49 @@ subroutine calculate_Jsquare(iphi,it,J2,pJ2)
         end if
         do ifg2 = 1,2
         do m2 = 1, BS%HO_sph%idsp(1,ifg2)
+
+            ! calculate <q1| J_i R |q2>/<q1|R|q2> 
+            if(ifg1==ifg2) then
+                J_i(1) = J_i(1) + angular_matrix_element(1,ifg1,m1,ifg2,m2)*mix%rho_mm(m2,m1,ifg1,iphi,it)
+                J_i(2) = J_i(2) + angular_matrix_element(2,ifg1,m1,ifg2,m2)*mix%rho_mm(m2,m1,ifg1,iphi,it)
+                J_i(3) = J_i(3) + angular_matrix_element(3,ifg1,m1,ifg2,m2)*mix%rho_mm(m2,m1,ifg1,iphi,it)
+                pJ_i(1) = pJ_i(1) + angular_matrix_element(1,ifg1,m1,ifg2,m2)*mix%prho_mm(m2,m1,ifg1,iphi,it)
+                pJ_i(2) = pJ_i(2) + angular_matrix_element(2,ifg1,m1,ifg2,m2)*mix%prho_mm(m2,m1,ifg1,iphi,it)
+                pJ_i(3) = pJ_i(3) + angular_matrix_element(3,ifg1,m1,ifg2,m2)*mix%prho_mm(m2,m1,ifg1,iphi,it)
+            end if 
+
             do ifg3 = 1,2
             do m3 = 1, BS%HO_sph%idsp(1,ifg3)
                 do ifg4 = 1,2
                 do m4 = 1, BS%HO_sph%idsp(1,ifg4)
+
+                    ! calculate <q1| J_i^2 R |q2>/<q1|R|q2> 
                     if(ifg1==ifg3 .and. ifg2==ifg4) then
                         ! nonzero (J_i)_{m2 m4} 
-                        if( angular_matrix_element(1,ifg2,m2,ifg4,m4)==(0.d0,0.d0) .and.  angular_matrix_element(2,ifg2,m2,ifg4,m4)==(0.d0,0.d0) & 
-                            .or. angular_matrix_element(3,ifg2,m2,ifg4,m4)==(0.d0,0.d0) ) cycle
+                        if( angular_matrix_element(1,ifg2,m2,ifg4,m4)==(0.d0,0.d0) .and. angular_matrix_element(2,ifg2,m2,ifg4,m4)==(0.d0,0.d0) & 
+                            .and. angular_matrix_element(3,ifg2,m2,ifg4,m4)==(0.d0,0.d0) ) cycle
                         ! 1B
                         if(ifg2==ifg3 .and. m2==m3) then
-                            if (abs(mix%rho_mm(m4,m1,ifg1,iphi,it)) > 1.E-10 .or. abs(mix%prho_mm(m4,m1,ifg1,iphi,it)) > 1.E-10) then 
-                                J12_J24 = angular_matrix_element(1,ifg1,m1,ifg2,m2)*angular_matrix_element(1,ifg2,m2,ifg4,m4) &
-                                        + angular_matrix_element(2,ifg1,m1,ifg2,m2)*angular_matrix_element(2,ifg2,m2,ifg4,m4) &
-                                        + angular_matrix_element(3,ifg1,m1,ifg2,m2)*angular_matrix_element(3,ifg2,m2,ifg4,m4)
-                                J2 = J2 + J12_J24 * mix%rho_mm(m4,m1,ifg1,iphi,it)
-                                pJ2 = pJ2 + J12_J24 * mix%prho_mm(m4,m1,ifg1,iphi,it)
-                            end if 
+                            J12_J24 = angular_matrix_element(1,ifg1,m1,ifg2,m2)*angular_matrix_element(1,ifg2,m2,ifg4,m4) &
+                                    + angular_matrix_element(2,ifg1,m1,ifg2,m2)*angular_matrix_element(2,ifg2,m2,ifg4,m4) &
+                                    + angular_matrix_element(3,ifg1,m1,ifg2,m2)*angular_matrix_element(3,ifg2,m2,ifg4,m4)
+                            J2 = J2 + J12_J24 * mix%rho_mm(m4,m1,ifg1,iphi,it)
+                            pJ2 = pJ2 + J12_J24 * mix%prho_mm(m4,m1,ifg1,iphi,it)
                         end if 
                         ! 2B
+                        J13_J24 = angular_matrix_element(1,ifg1,m1,ifg3,m3)*angular_matrix_element(1,ifg2,m2,ifg4,m4)  &
+                                    + angular_matrix_element(2,ifg1,m1,ifg3,m3)*angular_matrix_element(2,ifg2,m2,ifg4,m4)  &
+                                    + angular_matrix_element(3,ifg1,m1,ifg3,m3)*angular_matrix_element(3,ifg2,m2,ifg4,m4)
                         rho_4321  = mix%rho_mm(m4,m1,indexfg(ifg4,ifg1),iphi,it)*mix%rho_mm(m3,m2,indexfg(ifg3,ifg2),iphi,it) &
                                     - mix%rho_mm(m3,m1,indexfg(ifg3,ifg1),iphi,it)*mix%rho_mm(m4,m2,indexfg(ifg4,ifg2),iphi,it) &
                                     + mix%kappa01c_mm(m1,m2,indexfg(ifg1,ifg2),iphi,it)*mix%kappa10_mm(m4,m3,indexfg(ifg4,ifg3),iphi,it)
                         prho_4321 =  mix%prho_mm(m4,m1,indexfg(ifg4,ifg1),iphi,it)*mix%prho_mm(m3,m2,indexfg(ifg3,ifg2),iphi,it) &
                                     - mix%prho_mm(m3,m1,indexfg(ifg3,ifg1),iphi,it)*mix%prho_mm(m4,m2,indexfg(ifg4,ifg2),iphi,it) &
                                     + mix%pkappa01c_mm(m1,m2,indexfg(ifg1,ifg2),iphi,it)*mix%pkappa10_mm(m4,m3,indexfg(ifg4,ifg3),iphi,it)
-                        J13_J24 = angular_matrix_element(1,ifg1,m1,ifg3,m3)*angular_matrix_element(1,ifg2,m2,ifg4,m4)  &
-                                    + angular_matrix_element(2,ifg1,m1,ifg3,m3)*angular_matrix_element(2,ifg2,m2,ifg4,m4)  &
-                                    + angular_matrix_element(3,ifg1,m1,ifg3,m3)*angular_matrix_element(3,ifg2,m2,ifg4,m4)
-                                    J2 = J2 + J13_J24*rho_4321
-                                    pJ2 = pJ2 + J13_J24*prho_4321
-                        J2 = J2 + J13_J24*rho_4321
-                        pJ2 = pJ2 + J13_J24*prho_4321
+                        J2 = J2 - J13_J24*rho_4321
+                        pJ2 = pJ2 - J13_J24*prho_4321
                     end if 
+
                 end do
                 end do
             end do
@@ -173,16 +186,15 @@ function compute_angular_matrix_element(case,ifg1,m1,ifg2,m2)
     nj2 = BS%HO_sph%nljm(i0sp2+m2,3)
     nm2 = BS%HO_sph%nljm(i0sp2+m2,4)
 
-    if(nr1/=nr2 .or. nl1 /= nl2 .or. nj1== nj2) return 
-
+    if(nr1/=nr2 .or. nl1 /= nl2 .or. nj1/= nj2) return 
     if(case==1) then
         ! <n1 l1 j1 m1|Jx|n2 l2 j2 m2>
-        if (m2==m1+1) compute_angular_matrix_element = 0.5d0*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half+1.0d0))
-        if (m2==m1-1) compute_angular_matrix_element = 0.5d0*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half-1.0d0))
+        if (nm2==(nm1+1)) compute_angular_matrix_element = 0.5d0*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half+1.0d0))
+        if (nm2==(nm1-1)) compute_angular_matrix_element = 0.5d0*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half-1.0d0))
     else if(case==2) then
         ! <n1 l1 j1 m1|Jy|n2 l2 j2 m2>
-        if (m2==m1+1) compute_angular_matrix_element = -(0.0, 0.5d0)*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half+1.0d0)) 
-        if (m2==m1-1) compute_angular_matrix_element =  (0.0, 0.5d0)*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half-1.0d0))
+        if (nm2==(nm1+1)) compute_angular_matrix_element = -(0.0, 0.5d0)*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half+1.0d0)) 
+        if (nm2==(nm1-1)) compute_angular_matrix_element =  (0.0, 0.5d0)*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half-1.0d0))
     else if(case==3) then
         ! <n1 l1 j1 m1|Jz|n2 l2 j2 m2>
         if(nm1==nm2) compute_angular_matrix_element = nm1_half
