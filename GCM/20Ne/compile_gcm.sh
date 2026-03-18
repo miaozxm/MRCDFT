@@ -19,7 +19,7 @@ cd ${pathwork}
 #FC = f90 -O3 -fpic -openmp -fastsse -Minform=inform   
 #	rm -rf *.o
 cat <<'EOF' > makefile
-FC = gfortran  -fopenmp -mcmodel=large -ffixed-line-length-132 -ffree-line-length-none -fstack-arrays -g -fcheck=all -fbacktrace -ffpe-trap=invalid,zero,overflow -Wall # -Wl,--stack,1073741824
+FC = gfortran  -fopenmp -mcmodel=large -ffixed-line-length-132 -ffree-line-length-none -fstack-arrays -g -fcheck=all -fbacktrace -ffpe-trap=invalid,zero,overflow -Wall  -Wl,--stack,1073741824
 OBJ =  rasgcm.o
 
 run: $(OBJ)
