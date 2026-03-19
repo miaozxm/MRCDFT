@@ -240,8 +240,8 @@ Module Kernel
                         pParticle_PNP_AMParray(ialpha,ibeta,igamma,1) = Particle_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,1)
                         pParticle_PNP_AMParray(ialpha,ibeta,igamma,2) = Particle_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,2) 
                         ! J^2
-                        J2_PNP_AMParray(ialpha,ibeta,igamma) = J2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma)
-                        pJ2_PNP_AMParray(ialpha,ibeta,igamma) = pJ2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma)
+                        J2_PNP_AMParray(ialpha,ibeta,igamma) = pJ2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma)
+                        pJ2_PNP_AMParray(ialpha,ibeta,igamma) = J2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma)
 
                         ! because <T_{lm} R(0,beta,0)> = (-1)^m*<T_{lm} R(0,pi-beta,0)P>
                         ! because <T_{lm} R(0,beta,0)P> = (-1)^m*<T_{lm} R(0,pi-beta,0)>
@@ -906,9 +906,9 @@ Module Kernel
                 J2_PNP = J2_PNP + fac*2.d0*J_array(phi_n_index,1,1)*J_array(phi_p_index,2,1) !  2<Jx>_n<Jx>_p
                 J2_PNP = J2_PNP + fac*2.d0*J_array(phi_n_index,1,2)*J_array(phi_p_index,2,2) !  2<Jy>_n<Jy>_p
                 J2_PNP = J2_PNP + fac*2.d0*J_array(phi_n_index,1,3)*J_array(phi_p_index,2,3) !  2<Jz>_n<Jz>_p
-                pJ2_PNP = pJ2_PNP + fac*2.d0*pJ_array(phi_n_index,1,1)*pJ_array(phi_p_index,2,1) !  2<Jx>_n<Jx>_p
-                pJ2_PNP = pJ2_PNP + fac*2.d0*pJ_array(phi_n_index,1,2)*pJ_array(phi_p_index,2,2) !  2<Jy>_n<Jy>_p
-                pJ2_PNP = pJ2_PNP + fac*2.d0*pJ_array(phi_n_index,1,3)*pJ_array(phi_p_index,2,3) !  2<Jz>_n<Jz>_p
+                pJ2_PNP = pJ2_PNP + pfac*2.d0*pJ_array(phi_n_index,1,1)*pJ_array(phi_p_index,2,1) !  2<Jx>_n<Jx>_p
+                pJ2_PNP = pJ2_PNP + pfac*2.d0*pJ_array(phi_n_index,1,2)*pJ_array(phi_p_index,2,2) !  2<Jy>_n<Jy>_p
+                pJ2_PNP = pJ2_PNP + pfac*2.d0*pJ_array(phi_n_index,1,3)*pJ_array(phi_p_index,2,3) !  2<Jz>_n<Jz>_p
             end do
         end do
         deallocate(Jsquare_arry,pJsquare_arry,J_array,pJ_array)
