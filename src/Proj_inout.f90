@@ -412,14 +412,10 @@ subroutine write_eccentricity_operators_kernels(q1,q2)
                         parity = 2 ! -
                     end if
                     write(outputfile%u_outputEccentricityKernel,format1)  J,K1,K2,ParityChar(parity),constraint%betac(q1),constraint%bet3c(q1),constraint%betac(q2),constraint%bet3c(q2)
-                    ! ! proton part
-                    write(outputfile%u_outputEccentricityKernel,format2)  Real(kernels%Eccentricity_KK(J,K1,K2,2,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
-                                                                          Real(kernels%Eccentricity_KK(J,K1,K2,2,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
-                             Real((kernels%Eccentricity_KK(J,K1,K2,2,parity,1)+kernels%Eccentricity_KK(J,K1,K2,2,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
-                    ! ! neutron part
-                    write(outputfile%u_outputEccentricityKernel,format2)  Real(kernels%Eccentricity_KK(J,K1,K2,1,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
-                                                                          Real(kernels%Eccentricity_KK(J,K1,K2,1,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
-                             Real((kernels%Eccentricity_KK(J,K1,K2,1,parity,1)+kernels%Eccentricity_KK(J,K1,K2,1,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
+
+                    write(outputfile%u_outputEccentricityKernel,format2)  Real(kernels%Eccentricity_KK(J,K1,K2,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
+                                                                          Real(kernels%Eccentricity_KK(J,K1,K2,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
+                              Real((kernels%Eccentricity_KK(J,K1,K2,parity,1)+kernels%Eccentricity_KK(J,K1,K2,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
 
                     write(outputfile%u_outputEccentricityKernel,*) "By Density:"
                     ! ! proton part

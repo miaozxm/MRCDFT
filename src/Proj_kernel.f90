@@ -18,7 +18,7 @@ Module Kernel
                                 Q2m_PNP_AMParray(:,:,:,:,:),pQ2m_PNP_AMParray(:,:,:,:,:), &
                                 cQ2m_PNP_AMParray(:,:,:,:,:),pcQ2m_PNP_AMParray(:,:,:,:,:), &
                                 r2_PNP_AMParray(:,:,:,:), pr2_PNP_AMParray(:,:,:,:),&
-                                Eccentri_PNP_AMParray(:,:,:,:,:), pEccentri_PNP_AMParray(:,:,:,:,:)
+                                Eccentri_PNP_AMParray(:,:,:,:), pEccentri_PNP_AMParray(:,:,:,:)
 
 
     contains
@@ -114,7 +114,7 @@ Module Kernel
                  Q2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),pQ2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),&
                  cQ2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),pcQ2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),&
                  r2_PNP_AMParray(nalpha,nbeta,ngamma,2),pr2_PNP_AMParray(nalpha,nbeta,ngamma,2),&
-                 Eccentri_PNP_AMParray(nalpha,nbeta,ngamma,2,2),pEccentri_PNP_AMParray(nalpha,nbeta,ngamma,2,2))
+                 Eccentri_PNP_AMParray(nalpha,nbeta,ngamma,2),pEccentri_PNP_AMParray(nalpha,nbeta,ngamma,2))
 
         call calculate_overlaps_arrays
 
@@ -142,7 +142,7 @@ Module Kernel
         use Proj_Density, only: store_mix_density_matrix_elements
         use CDFT_Inout, only: adjust_left
         complex(r64) :: Norm_PNP_Euler, pNorm_PNP_Euler, Etot_PNP_Euler, pEtot_PNP_Euler, Particle_PNP_Euler(2), pParticle_PNP_Euler(2),&
-                        J2_PNP_Euler, pJ2_PNP_Euler, r2_PNP_Euler(2),pr2_PNP_Euler(2),Eccentri_PNP_Euler(2,2),pEccentri_PNP_Euler(2,2)
+                        J2_PNP_Euler, pJ2_PNP_Euler, r2_PNP_Euler(2),pr2_PNP_Euler(2),Eccentri_PNP_Euler(2),pEccentri_PNP_Euler(2)
         complex(r64), dimension(-2:2,2) :: Q2m_PNP_Euler, pQ2m_PNP_Euler, cQ2m_PNP_Euler, pcQ2m_PNP_Euler
         integer :: nalpha,nbeta,ngamma,ialpha,ibeta,igamma,mu
         real(r64) :: alpha, beta, gamma
@@ -187,8 +187,8 @@ Module Kernel
                         r2_PNP_AMParray(ialpha,ibeta,igamma,:) = r2_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma,:)
                         pr2_PNP_AMParray(ialpha,ibeta,igamma,:) = pr2_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma,:)
                         ! 
-                        Eccentri_PNP_AMParray(ialpha,ibeta,igamma,:,:) = Eccentri_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma,:,:)
-                        pEccentri_PNP_AMParray(ialpha,ibeta,igamma,:,:) = pEccentri_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma,:,:)
+                        Eccentri_PNP_AMParray(ialpha,ibeta,igamma,:) = Eccentri_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma,:)
+                        pEccentri_PNP_AMParray(ialpha,ibeta,igamma,:) = pEccentri_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma,:)
                         ! store density matrix elements
                         call store_mix_density_matrix_elements(ialpha,ibeta,igamma)
                         cycle
@@ -219,8 +219,8 @@ Module Kernel
                         r2_PNP_AMParray(ialpha,ibeta,igamma,:) = r2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:) 
                         pr2_PNP_AMParray(ialpha,ibeta,igamma,:) = pr2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:) 
                         ! 
-                        Eccentri_PNP_AMParray(ialpha,ibeta,igamma,:,:) = Eccentri_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:,:) 
-                        pEccentri_PNP_AMParray(ialpha,ibeta,igamma,:,:) = pEccentri_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:,:) 
+                        Eccentri_PNP_AMParray(ialpha,ibeta,igamma,:) = Eccentri_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:) 
+                        pEccentri_PNP_AMParray(ialpha,ibeta,igamma,:) = pEccentri_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:) 
                         ! store density matrix elements
                         call store_mix_density_matrix_elements(ialpha,ibeta,igamma)
                         cycle
@@ -256,8 +256,8 @@ Module Kernel
                         r2_PNP_AMParray(ialpha,ibeta,igamma,:) = pr2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:)
                         pr2_PNP_AMParray(ialpha,ibeta,igamma,:) = r2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:)
                         !
-                        Eccentri_PNP_AMParray(ialpha,ibeta,igamma,:,:) = pEccentri_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:,:) 
-                        pEccentri_PNP_AMParray(ialpha,ibeta,igamma,:,:) = Eccentri_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:,:) 
+                        Eccentri_PNP_AMParray(ialpha,ibeta,igamma,:) = pEccentri_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:) 
+                        pEccentri_PNP_AMParray(ialpha,ibeta,igamma,:) = Eccentri_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:) 
                         ! store density matrix elements 
                         call store_mix_density_matrix_elements(ialpha,ibeta,igamma)
                         cycle 
@@ -291,8 +291,8 @@ Module Kernel
                     r2_PNP_AMParray(ialpha,ibeta,igamma,:) = r2_PNP_Euler(:)   ! <q_1| r^2 R(alpha,beta,gamma)  |q_2 >
                     pr2_PNP_AMParray(ialpha,ibeta,igamma,:) = pr2_PNP_Euler(:) ! <q_1| r^2 R(alpha,beta,gamma)  P |q_2 >
                     ! Eccentricity
-                    Eccentri_PNP_AMParray(ialpha,ibeta,igamma,:,:) = Eccentri_PNP_Euler(:,:)   ! <q_1| E_n R(alpha,beta,gamma)  |q_2 >
-                    pEccentri_PNP_AMParray(ialpha,ibeta,igamma,:,:) = pEccentri_PNP_Euler(:,:) ! <q_1| E_n R(alpha,beta,gamma)  P |q_2 >             
+                    Eccentri_PNP_AMParray(ialpha,ibeta,igamma,:) = Eccentri_PNP_Euler(:)   ! <q_1| E_n R(alpha,beta,gamma)  |q_2 >
+                    pEccentri_PNP_AMParray(ialpha,ibeta,igamma,:) = pEccentri_PNP_Euler(:) ! <q_1| E_n R(alpha,beta,gamma)  P |q_2 >             
                     ! store density matrix elements
                     call store_mix_density_matrix_elements(ialpha,ibeta,igamma)
                 end do
@@ -408,7 +408,7 @@ Module Kernel
         integer :: ialpha,ibeta,igamma,J,Ji,Jf,Ki_start,Ki_end,Kf_start,Kf_end,Kf,Ki,it
         real(r64) :: alpha, beta, gamma, w
         complex(r64) :: calpha,cgamma,cpi,fac1,fac2,fac
-        kernels%E0_KK = (0.d0,0.d0)
+        kernels%J2_KK = (0.d0,0.d0)
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
             Ji = J
             Jf = J
@@ -724,15 +724,13 @@ Module Kernel
                                     fac2 = 1.0d0 + CDEXP(-Kf*cpi) + CDEXP(-Ki*cpi) + CDEXP(-Kf*cpi-Ki*cpi)
                                     fac = fac1*fac2*w
                                 end if
-                                do it =1,2
-                                    ! <Jf Kf q1 Pi|E_n|Ji Ki q2 Pi> 
-                                    ! Pi = +
-                                    kernels%Eccentricity_KK(Ji,Kf,Ki,it,1,1) = kernels%Eccentricity_KK(Ji,Kf,Ki,it,1,1) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,1,it) + pEccentri_PNP_AMParray(ialpha,ibeta,igamma,1,it))/2.d0 ! 1B
-                                    kernels%Eccentricity_KK(Ji,Kf,Ki,it,1,2) = kernels%Eccentricity_KK(Ji,Kf,Ki,it,1,2) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,2,it) + pEccentri_PNP_AMParray(ialpha,ibeta,igamma,2,it))/2.d0 ! 2B
-                                    ! Pi = -
-                                    kernels%Eccentricity_KK(Ji,Kf,Ki,it,2,1) = kernels%Eccentricity_KK(Ji,Kf,Ki,it,2,1) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,1,it) - pEccentri_PNP_AMParray(ialpha,ibeta,igamma,1,it))/2.d0 ! 1B
-                                    kernels%Eccentricity_KK(Ji,Kf,Ki,it,2,2) = kernels%Eccentricity_KK(Ji,Kf,Ki,it,2,2) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,2,it) - pEccentri_PNP_AMParray(ialpha,ibeta,igamma,2,it))/2.d0 ! 1B
-                                end do 
+                                ! <Jf Kf q1 Pi|E_n|Ji Ki q2 Pi> 
+                                ! Pi = +
+                                kernels%Eccentricity_KK(Ji,Kf,Ki,1,1) = kernels%Eccentricity_KK(Ji,Kf,Ki,1,1) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,1) + pEccentri_PNP_AMParray(ialpha,ibeta,igamma,1))/2.d0 ! 1B
+                                kernels%Eccentricity_KK(Ji,Kf,Ki,1,2) = kernels%Eccentricity_KK(Ji,Kf,Ki,1,2) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,2) + pEccentri_PNP_AMParray(ialpha,ibeta,igamma,2))/2.d0 ! 2B
+                                ! Pi = -
+                                kernels%Eccentricity_KK(Ji,Kf,Ki,2,1) = kernels%Eccentricity_KK(Ji,Kf,Ki,2,1) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,1) - pEccentri_PNP_AMParray(ialpha,ibeta,igamma,1))/2.d0 ! 1B
+                                kernels%Eccentricity_KK(Ji,Kf,Ki,2,2) = kernels%Eccentricity_KK(Ji,Kf,Ki,2,2) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,2) - pEccentri_PNP_AMParray(ialpha,ibeta,igamma,2))/2.d0 ! 1B 
                             end do 
                         end do 
                     end do 
@@ -749,7 +747,7 @@ Module Kernel
         use Globals, only: pko_option
         use Mixed, only: calculate_mixed_DensCurrTens_and_norm_overlap
         real(r64), intent(in) :: alpha, beta, gamma
-        complex(r64),intent(out) :: Norm_PNP, pNorm_PNP, Etot_PNP, pEtot_PNP, Particle_PNP(2), pParticle_PNP(2),J2_PNP, pJ2_PNP, r2_PNP(2), pr2_PNP(2),Eccentri_PNP(2,2),pEccentri_PNP(2,2)
+        complex(r64),intent(out) :: Norm_PNP, pNorm_PNP, Etot_PNP, pEtot_PNP, Particle_PNP(2), pParticle_PNP(2),J2_PNP, pJ2_PNP, r2_PNP(2), pr2_PNP(2),Eccentri_PNP(2),pEccentri_PNP(2)
         complex(r64), dimension(-2:2,2),intent(out) :: Q2m_PNP, pQ2m_PNP,cQ2m_PNP,pcQ2m_PNP
 
         ! 1) calcualate mixed ... matrix elements
@@ -1045,30 +1043,34 @@ Module Kernel
 
         use Globals, only: projection_mesh,nucleus_attributes,mix
         use Eccentricity, only: calculate_Eccentri_n
-        complex(r64),intent(out) :: Eccentri_PNP(2,2),pEccentri_PNP(2,2)
-        integer :: L_n,L_p,phi_n_index,phi_p_index,it
+        complex(r64),intent(out) :: Eccentri_PNP(2),pEccentri_PNP(2)
+        integer :: L_n,L_p,phi_n_index,phi_p_index,it,mu
         real(r64) :: phi_n,phi_p
         complex(r64) :: emiNphi,emiZphi,fac,pfac
-        complex(r64) :: Eccentri(2),pEccentri(2)
-        complex(r64), dimension(:,:,:),allocatable :: Eccentri_arry, pEccentri_arry
-
+        integer,parameter :: n = 2
+        complex(r64) :: Eccentri(2),pEccentri(2),Qn_mu(-n:n),pQn_mu(-n:n)
+        complex(r64), dimension(:,:,:),allocatable :: Eccentri_arry, pEccentri_arry,Qn_mu_arry,pQn_mu_arry
         Eccentri_PNP = (0.d0, 0.d0)
         pEccentri_PNP = (0.d0, 0.d0)
         L_n = projection_mesh%nphi(1)
         L_p = projection_mesh%nphi(2)
 
-        allocate(Eccentri_arry(2,max(L_n,L_p),2),pEccentri_arry(2,max(L_n,L_p),2))
+        allocate(Eccentri_arry(n,max(L_n,L_p),2),pEccentri_arry(n,max(L_n,L_p),2),Qn_mu_arry(-n:n,max(L_n,L_p),2),pQn_mu_arry(-n:n,max(L_n,L_p),2))
         do phi_n_index = 1, L_n
             it = 1
-            call calculate_Eccentri_n(2,phi_n_index,it,Eccentri,pEccentri)
+            call calculate_Eccentri_n(n,phi_n_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu)
             Eccentri_arry(:,phi_n_index,it) = Eccentri(:)
             pEccentri_arry(:,phi_n_index,it) = pEccentri(:)
+            Qn_mu_arry(:,phi_n_index,it) = Qn_mu(:)
+            pQn_mu_arry(:,phi_n_index,it) = pQn_mu(:)
         end do 
         do phi_p_index = 1, L_p
             it = 2
-            call calculate_Eccentri_n(2,phi_p_index,it,Eccentri,pEccentri)
+            call calculate_Eccentri_n(2,phi_p_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu)
             Eccentri_arry(:,phi_p_index,it) = Eccentri(:)
             pEccentri_arry(:,phi_p_index,it) = pEccentri(:)
+            Qn_mu_arry(:,phi_p_index,it) = Qn_mu(:)
+            pQn_mu_arry(:,phi_p_index,it) = pQn_mu(:)
         end do 
 
         do  phi_n_index = 1, L_n
@@ -1079,17 +1081,26 @@ Module Kernel
                 emiZphi = cdexp(-nucleus_attributes%proton_number*cmplx(0,phi_p)) ! e^{-iZ\phi_p}
                 fac = 1.d0/(L_n*L_p)*emiNphi*emiZphi*mix%norm(phi_n_index,1)*mix%norm(phi_p_index,2)
                 pfac = 1.d0/(L_n*L_p)*emiNphi*emiZphi*mix%pnorm(phi_n_index,1)*mix%pnorm(phi_p_index,2)
-                !
+                ! 1B
                 it = 1
-                Eccentri_PNP(1,it) = Eccentri_PNP(1,it) + fac*Eccentri_arry(1,phi_n_index,it) ! 1B
-                Eccentri_PNP(2,it) = Eccentri_PNP(2,it) + fac*Eccentri_arry(2,phi_n_index,it) ! 2B
-                pEccentri_PNP(1,it) = pEccentri_PNP(1,it) + pfac*pEccentri_arry(1,phi_n_index,it)
-                pEccentri_PNP(2,it) = pEccentri_PNP(2,it) + pfac*pEccentri_arry(2,phi_n_index,it)
-                it= 2
-                Eccentri_PNP(1,it) = Eccentri_PNP(1,it) + fac*Eccentri_arry(1,phi_p_index,it)
-                Eccentri_PNP(2,it) = Eccentri_PNP(2,it) + fac*Eccentri_arry(2,phi_p_index,it)
-                pEccentri_PNP(1,it) = pEccentri_PNP(1,it) + pfac*pEccentri_arry(1,phi_p_index,it)
-                pEccentri_PNP(2,it) = pEccentri_PNP(2,it) + pfac*pEccentri_arry(2,phi_p_index,it)
+                Eccentri_PNP(1) = Eccentri_PNP(1) + fac*Eccentri_arry(1,phi_n_index,it)
+                pEccentri_PNP(1) = pEccentri_PNP(1) + pfac*pEccentri_arry(1,phi_n_index,it)
+                it = 2
+                Eccentri_PNP(1) = Eccentri_PNP(1) + fac*Eccentri_arry(1,phi_p_index,it)
+                pEccentri_PNP(1) = pEccentri_PNP(1) + pfac*pEccentri_arry(1,phi_p_index,it)
+                ! 2B
+                it = 1
+                Eccentri_PNP(2) = Eccentri_PNP(2) + fac*Eccentri_arry(2,phi_n_index,it)
+                pEccentri_PNP(2) = pEccentri_PNP(2) + pfac*pEccentri_arry(2,phi_n_index,it)
+                it = 2
+                Eccentri_PNP(2) = Eccentri_PNP(2) + fac*Eccentri_arry(2,phi_p_index,it)
+                pEccentri_PNP(2) = pEccentri_PNP(2) + pfac*pEccentri_arry(2,phi_p_index,it)
+                do mu = -n,n
+                    Eccentri_PNP(2) = Eccentri_PNP(2) + fac*(-1)**mu* &
+                            (Qn_mu_arry(mu,phi_n_index,1)*Qn_mu_arry(-mu,phi_p_index,2) + Qn_mu_arry(mu,phi_p_index,2)*Qn_mu_arry(-mu,phi_n_index,1))
+                    pEccentri_PNP(2) = pEccentri_PNP(2) + pfac*(-1)**mu* &
+                            (pQn_mu_arry(mu,phi_n_index,1)*pQn_mu_arry(-mu,phi_p_index,2) + pQn_mu_arry(mu,phi_p_index,2)*pQn_mu_arry(-mu,phi_n_index,1))     
+                end do
             end do
         end do
         deallocate(Eccentri_arry,pEccentri_arry)
