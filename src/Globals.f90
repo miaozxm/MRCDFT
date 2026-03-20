@@ -654,7 +654,8 @@ type Kernel_
     complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2) :: N_KK ! N_KK(J,K1,K2,Pi(+/-)), Norm kernel
     complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2) :: H_KK ! H_KK(J,K1,K2,Pi(+/-)), Hamiltonian  kernel
     complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2,2) :: X_KK ! X_KK(J,K1,K2,it,Pi(+/-)), Particle number kernel
-    complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2) :: J2_KK ! J2_KK(J,K1,K2,Pi(+/-)), <J_f K_f q_1 Pi| J2 |J_i K_i q_2 Pi>
+    complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2,2) :: N2_KK ! N2_KK(J,K1,K2,it,Pi(+/-)), <J_f K_f q_1 Pi| N^2 |J_i K_i q_2 Pi>
+    complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2) :: J2_KK   ! J2_KK(J,K1,K2,Pi(+/-)),    <J_f K_f q_1 Pi| J^2 |J_i K_i q_2 Pi>
     complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2,2) :: Q2_KK_12 ! Q2_KK(J,Kf,Ki,it,Pi_i(+/-)), <Ji+2 Kf q1 Pi_f ||Q2||Ji Ki q2 Pi_i>   
     complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2,2) :: Q2_KK_21 ! Q2_KK(J,Kf,Ki,it,Pi_i(+/-)), <Ji+2 Kf q2 Pi_f ||Q2||Ji Ki q1 Pi_i>
     complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2,2) :: E0_KK    ! E0_KK(J,Kf,Ki,it,Pi(+/-)), <J_f K_f q_1 Pi| r2 |J_i K_i q_2 Pi> 

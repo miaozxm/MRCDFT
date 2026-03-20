@@ -1,20 +1,22 @@
 !==============================================================================!
-! MODULE AM                                                                    !
+! MODULE JNsquare                                                              !
 !                                                                              !
-! This module calculates the angular momentum operators                        !
+! This module calculates the ...                                               !
 !                                                                              !
 !                                                                              !
 ! List of routines and functions:                                              !
 ! - subroutine                                                                 !
 !==============================================================================!
-Module AM
+Module JNsquare
     use Constants,only: r64
     implicit none
     complex(r64), dimension(:,:,:,:,:), allocatable:: angular_matrix_element_array ! angular_matrix_element_array(Jx/Jy/Jz,ifg1, m1, ifg2, m2)
     logical :: precomputed_angular_matrix_element = .False.
 contains
 
-
+! ------------------------------------------------------------------------
+!                                J^2
+! -------------------------------------------------------------------------
 subroutine calculate_Jsquare_and_J(iphi,it,J2,pJ2,J_i,pJ_i)
     !---------------------------------------------------------------------------
     ! 
@@ -35,7 +37,7 @@ subroutine calculate_Jsquare_and_J(iphi,it,J2,pJ2,J_i,pJ_i)
     !---------------------------------------------------------------------------
     use Globals, only: BS, mix
     integer :: iphi,it
-    complex(r64) :: J2,pJ2,J12_J24,rho_4321,prho_4321,J13_J24,J_i(3),pJ_i(3)
+    complex(r64) :: J2,pJ2,J12_J23,rho_4321,prho_4321,J13_J24,J_i(3),pJ_i(3)
     integer :: ifg1,m1,ifg2,m2,ifg3,m3,ifg4,m4,total_iter,iter
 
     J2 = (0.0d0,0.0d0)
@@ -48,7 +50,7 @@ subroutine calculate_Jsquare_and_J(iphi,it,J2,pJ2,J_i,pJ_i)
     end if
 
     total_iter = BS%HO_sph%idsp(1,1) + BS%HO_sph%idsp(1,2)
-    !$OMP PARALLEL DEFAULT(shared) PRIVATE(iter,ifg1,m1,ifg2,m2,ifg3,m3,ifg4,m4,J12_J24,rho_4321,prho_4321,J13_J24) &
+    !$OMP PARALLEL DEFAULT(shared) PRIVATE(iter,ifg1,m1,ifg2,m2,ifg3,m3,ifg4,m4,J12_J23,rho_4321,prho_4321,J13_J24) &
     !$omp reduction(+:J2,pJ2,J_i,pJ_i)
     !$OMP DO COLLAPSE(1) SCHEDULE(static)
 
@@ -73,24 +75,24 @@ subroutine calculate_Jsquare_and_J(iphi,it,J2,pJ2,J_i,pJ_i)
                 pJ_i(3) = pJ_i(3) + angular_matrix_element(3,ifg1,m1,ifg2,m2)*mix%prho_mm(m2,m1,ifg1,iphi,it)
             end if 
 
+            ! calculate \sum_i <q1| J_i^2 R |q2>/<q1|R|q2>
             do ifg3 = 1,2
             do m3 = 1, BS%HO_sph%idsp(1,ifg3)
-                do ifg4 = 1,2
-                do m4 = 1, BS%HO_sph%idsp(1,ifg4)
+                ! 1B
+                if(ifg1==ifg3.and. ifg1 == ifg2) then
+                    J12_J23 = angular_matrix_element(1,ifg1,m1,ifg2,m2)*angular_matrix_element(1,ifg2,m2,ifg3,m3) &
+                            + angular_matrix_element(2,ifg1,m1,ifg2,m2)*angular_matrix_element(2,ifg2,m2,ifg3,m3) &
+                            + angular_matrix_element(3,ifg1,m1,ifg2,m2)*angular_matrix_element(3,ifg2,m2,ifg3,m3)
+                    J2 = J2 + J12_J23 * mix%rho_mm(m3,m1,ifg1,iphi,it)
+                    pJ2 = pJ2 + J12_J23 * mix%prho_mm(m3,m1,ifg1,iphi,it)
+                end if
 
-                    ! calculate <q1| J_i^2 R |q2>/<q1|R|q2> 
+                do ifg4 = 1,2
+                do m4 = 1, BS%HO_sph%idsp(1,ifg4) 
                     if(ifg1==ifg3 .and. ifg2==ifg4) then
                         ! nonzero (J_i)_{m2 m4} 
                         if( angular_matrix_element(1,ifg2,m2,ifg4,m4)==(0.d0,0.d0) .and. angular_matrix_element(2,ifg2,m2,ifg4,m4)==(0.d0,0.d0) & 
-                            .and. angular_matrix_element(3,ifg2,m2,ifg4,m4)==(0.d0,0.d0) ) cycle
-                        ! 1B
-                        if(ifg2==ifg3 .and. m2==m3) then
-                            J12_J24 = angular_matrix_element(1,ifg1,m1,ifg2,m2)*angular_matrix_element(1,ifg2,m2,ifg4,m4) &
-                                    + angular_matrix_element(2,ifg1,m1,ifg2,m2)*angular_matrix_element(2,ifg2,m2,ifg4,m4) &
-                                    + angular_matrix_element(3,ifg1,m1,ifg2,m2)*angular_matrix_element(3,ifg2,m2,ifg4,m4)
-                            J2 = J2 + J12_J24 * mix%rho_mm(m4,m1,ifg1,iphi,it)
-                            pJ2 = pJ2 + J12_J24 * mix%prho_mm(m4,m1,ifg1,iphi,it)
-                        end if 
+                            .and. angular_matrix_element(3,ifg2,m2,ifg4,m4)==(0.d0,0.d0) ) cycle 
                         ! 2B
                         J13_J24 = angular_matrix_element(1,ifg1,m1,ifg3,m3)*angular_matrix_element(1,ifg2,m2,ifg4,m4)  &
                                     + angular_matrix_element(2,ifg1,m1,ifg3,m3)*angular_matrix_element(2,ifg2,m2,ifg4,m4)  &
@@ -203,6 +205,59 @@ function compute_angular_matrix_element(case,ifg1,m1,ifg2,m2)
     end if
 end 
 
+! ------------------------------------------------------------------------
+!                                N^2
+! -------------------------------------------------------------------------
+subroutine calculate_N2(iphi,it,N2,pN2)
+    !-------------------------------------------------------------------------------------------------
+    !
+    !   <q1| N^2 R |q2>/<q1|R|q2>  =  \sum_{m m'} <q1|c^+_m c_m  c^+_m' c_m' R|q2>/<q1|R|q2>
+    !     =   \sum_{m} rho_{m m} - \sum_{m m'} rho_{m' m m' m}
+    !
+    !  where             R  = R(alpha,beta,gamma, phi_n,phi_p) 
+    !                       = e^{i alpha J_z} e^{i beta J_y} e^{i gamma J_z} e^{i phi_n N} e^{i phi_p N} 
+    !             rho_{m m} = <q1|c^+_m c_m R|q2>/<q1|R|q2>
+    !       rho_{m' m m' m} = <q1|c^+_m c^+_m' c_m c_m' R|q2>/<q1|R|q2>
+    !                       = rho_{m' m}rho_{m m'} - rho_{m m}rho_{m' m'} + kappa01*(m m')kappa10(m' m)
+    !--------------------------------------------------------------------------------------------------
+    use Globals, only: BS, mix
+    integer :: iphi,it
+    complex(r64) :: N2,pN2
+    integer :: ifg1,m1,ifg2,m2,total_iter,iter
+
+    N2 = (0.0d0,0.0d0)
+    pN2 = (0.0d0,0.0d0)
+
+    total_iter = BS%HO_sph%idsp(1,1) + BS%HO_sph%idsp(1,2)
+    !$OMP PARALLEL DEFAULT(shared) PRIVATE(iter,ifg1,m1,ifg2,m2) &
+    !$omp reduction(+:N2,pN2)
+    !$OMP DO COLLAPSE(1) SCHEDULE(static)
+
+    do iter = 1,total_iter
+        if(iter <= BS%HO_sph%idsp(1,1)) then
+            ifg1 = 1
+            m1 = iter
+        else
+            ifg1 = 2
+            m1 = iter - BS%HO_sph%idsp(1,1)
+        end if
+        N2 = N2 + mix%rho_mm(m1,m1,ifg1,iphi,it)
+        pN2 = pN2 + mix%prho_mm(m1,m1,ifg1,iphi,it)
+        do ifg2 = 1,2
+        do m2 = 1, BS%HO_sph%idsp(1,ifg2)
+            N2 = N2 - (  mix%rho_mm(m2,m1,indexfg(ifg2,ifg1),iphi,it)*mix%rho_mm(m1,m2,indexfg(ifg1,ifg2),iphi,it) &
+                       - mix%rho_mm(m1,m1,indexfg(ifg1,ifg1),iphi,it)*mix%rho_mm(m2,m2,indexfg(ifg2,ifg2),iphi,it) &
+                       + mix%kappa01c_mm(m1,m2,indexfg(ifg1,ifg2),iphi,it)*mix%kappa10_mm(m2,m1,indexfg(ifg2,ifg1),iphi,it))
+            pN2 = pN2 - (  mix%prho_mm(m2,m1,indexfg(ifg2,ifg1),iphi,it)*mix%prho_mm(m1,m2,indexfg(ifg1,ifg2),iphi,it) &
+                         - mix%prho_mm(m1,m1,indexfg(ifg1,ifg1),iphi,it)*mix%prho_mm(m2,m2,indexfg(ifg2,ifg2),iphi,it) &
+                         + mix%pkappa01c_mm(m1,m2,indexfg(ifg1,ifg2),iphi,it)*mix%pkappa10_mm(m2,m1,indexfg(ifg2,ifg1),iphi,it))
+        end do
+        end do
+    end do
+    !$OMP END PARALLEL
+end subroutine
+
+
 integer function indexfg(ifg1,ifg2)
     integer, intent(in) :: ifg1, ifg2
     if(ifg1==1.and.ifg2==1) then
@@ -217,5 +272,4 @@ integer function indexfg(ifg1,ifg2)
         stop 'wrong ifg1 and ifg2'
     end if 
 end function
-
-end Module AM
+end Module

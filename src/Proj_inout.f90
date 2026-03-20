@@ -363,7 +363,7 @@ subroutine write_kernels
     use Globals, only: gcm_space,kernels
     integer :: J,K1,K2,parity
     character(1), dimension(2) :: ParityChar = ['+', '-']
-    character(len=*), parameter ::  format1 = "(3i5,4x,a,4x,f8.5)", &
+    character(len=*), parameter ::  format1 = "(3i5,4x,a,4x,3f9.3)", &
                                     format2 = "(4e15.8)"
     open(outputfile%u_outputelem ,form='formatted',file=outputfile%outputelem)
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
@@ -377,15 +377,24 @@ subroutine write_kernels
                     else
                         parity = 2 ! -
                     end if
-                    write(outputfile%u_outputelem,format1)  J,K1,K2,ParityChar(parity),Real(kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))
-                    write(outputfile%u_outputelem,format2)  kernels%N_KK(J,K1,K2,parity), kernels%H_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
-                    write(outputfile%u_outputelem,format2)  kernels%X_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30),kernels%X_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
+                    write(outputfile%u_outputelem,format1)  J,K1,K2,ParityChar(parity),&
+                                                            Real(kernels%N2_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! N^2
+                                                            Real(kernels%N2_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! Z^2
+                                                            Real(kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))      ! J^2
+                    write(outputfile%u_outputelem,format2)  kernels%N_KK(J,K1,K2,parity), &
+                                                            kernels%H_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
+                    write(outputfile%u_outputelem,format2)  kernels%X_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30),&
+                                                            kernels%X_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
                     ! ! proton part
-                    write(outputfile%u_outputelem,format2)  kernels%Q2_KK_12(J,K1,K2,2,parity),kernels%Q2_KK_21(J,K1,K2,2,parity)
-                    write(outputfile%u_outputelem,format2)  kernels%E0_KK(J,K1,K2,2,parity), kernels%E0_KK(J,K1,K2,2,parity)
+                    write(outputfile%u_outputelem,format2)  kernels%Q2_KK_12(J,K1,K2,2,parity),&
+                                                            kernels%Q2_KK_21(J,K1,K2,2,parity)
+                    write(outputfile%u_outputelem,format2)  kernels%E0_KK(J,K1,K2,2,parity), &
+                                                            kernels%E0_KK(J,K1,K2,2,parity)
                     ! ! neutron part
-                    write(outputfile%u_outputelem,format2)  kernels%Q2_KK_12(J,K1,K2,1,parity),kernels%Q2_KK_21(J,K1,K2,1,parity)
-                    write(outputfile%u_outputelem,format2)  kernels%E0_KK(J,K1,K2,1,parity), kernels%E0_KK(J,K1,K2,1,parity)
+                    write(outputfile%u_outputelem,format2)  kernels%Q2_KK_12(J,K1,K2,1,parity),&
+                                                            kernels%Q2_KK_21(J,K1,K2,1,parity)
+                    write(outputfile%u_outputelem,format2)  kernels%E0_KK(J,K1,K2,1,parity), &
+                                                            kernels%E0_KK(J,K1,K2,1,parity)
                 end do
             end do
         end do 

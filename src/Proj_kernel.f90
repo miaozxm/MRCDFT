@@ -14,6 +14,7 @@ Module Kernel
     complex(r64),allocatable :: Norm_PNP_AMParray(:,:,:), pNorm_PNP_AMParray(:,:,:), &
                                 Etot_PNP_AMParray(:,:,:), pEtot_PNP_AMParray(:,:,:), &
                                 Particle_PNP_AMParray(:,:,:,:), pParticle_PNP_AMParray(:,:,:,:), &
+                                N2_PNP_AMParray(:,:,:,:), pN2_PNP_AMParray(:,:,:,:), &
                                 J2_PNP_AMParray(:,:,:), pJ2_PNP_AMParray(:,:,:), &
                                 Q2m_PNP_AMParray(:,:,:,:,:),pQ2m_PNP_AMParray(:,:,:,:,:), &
                                 cQ2m_PNP_AMParray(:,:,:,:,:),pcQ2m_PNP_AMParray(:,:,:,:,:), &
@@ -110,6 +111,7 @@ Module Kernel
         allocate(Norm_PNP_AMParray(nalpha,nbeta,ngamma), pNorm_PNP_AMParray(nalpha,nbeta,ngamma), &
                  Etot_PNP_AMParray(nalpha,nbeta,ngamma), pEtot_PNP_AMParray(nalpha,nbeta,ngamma), &
                  Particle_PNP_AMParray(nalpha,nbeta,ngamma,2), pParticle_PNP_AMParray(nalpha,nbeta,ngamma,2), &
+                 N2_PNP_AMParray(nalpha,nbeta,ngamma,2), pN2_PNP_AMParray(nalpha,nbeta,ngamma,2), &
                  J2_PNP_AMParray(nalpha,nbeta,ngamma), pJ2_PNP_AMParray(nalpha,nbeta,ngamma), &
                  Q2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),pQ2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),&
                  cQ2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),pcQ2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),&
@@ -120,6 +122,7 @@ Module Kernel
 
         ! Integration over AMP mesh points(alpha beta gamma)
         call calcualate_Norm_Hamiltonian_ParticleNumber_kernels  ! calculate <J K_1 q_1 Pi | O | J K_2 q_2 Pi >
+        call calculate_N2_kernels ! <J   K_f q_1 Pi  | N^2 |J   K_i q_2 Pi>
         call calculate_J2_kernels ! <J   K_f q_1 Pi  | J^2 |J   K_i q_2 Pi>
         call calculate_EM_kernels ! calcualate <J_f K_f q_1 Pi_f ||T_lambda|| J_i K_i q_2 Pi_i >
         call calculate_E0_kernel ! <J   K_f q_1 Pi  | r^2 |J   K_i q_2 Pi>
@@ -130,6 +133,7 @@ Module Kernel
         deallocate( Norm_PNP_AMParray,pNorm_PNP_AMParray, &
                     Etot_PNP_AMParray,pEtot_PNP_AMParray, &
                     Particle_PNP_AMParray,pParticle_PNP_AMParray, &
+                    N2_PNP_AMParray, pN2_PNP_AMParray, &
                     J2_PNP_AMParray, pJ2_PNP_AMParray, &
                     Q2m_PNP_AMParray,pQ2m_PNP_AMParray,&
                     cQ2m_PNP_AMParray,pcQ2m_PNP_AMParray,&
@@ -141,9 +145,6 @@ Module Kernel
         use Globals, only: projection_mesh,pko_option
         use Proj_Density, only: store_mix_density_matrix_elements
         use CDFT_Inout, only: adjust_left
-        complex(r64) :: Norm_PNP_Euler, pNorm_PNP_Euler, Etot_PNP_Euler, pEtot_PNP_Euler, Particle_PNP_Euler(2), pParticle_PNP_Euler(2),&
-                        J2_PNP_Euler, pJ2_PNP_Euler, r2_PNP_Euler(2),pr2_PNP_Euler(2),Eccentri_PNP_Euler(2),pEccentri_PNP_Euler(2)
-        complex(r64), dimension(-2:2,2) :: Q2m_PNP_Euler, pQ2m_PNP_Euler, cQ2m_PNP_Euler, pcQ2m_PNP_Euler
         integer :: nalpha,nbeta,ngamma,ialpha,ibeta,igamma,mu
         real(r64) :: alpha, beta, gamma
         character(len=*),parameter :: format1 = "(5x,'alpha:',i3,'/',a,'beta:',i3,'/',a,'gamma:',i3,'/',a)"
@@ -172,6 +173,9 @@ Module Kernel
                         Particle_PNP_AMParray(ialpha,ibeta,igamma,2) = Particle_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma,2) 
                         pParticle_PNP_AMParray(ialpha,ibeta,igamma,1) = pParticle_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma,1)
                         pParticle_PNP_AMParray(ialpha,ibeta,igamma,2) = pParticle_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma,2)
+                        ! N^2
+                        N2_PNP_AMParray(ialpha,ibeta,igamma,:) = N2_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma,:)
+                        pN2_PNP_AMParray(ialpha,ibeta,igamma,:) = pN2_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma,:)
                         ! J^2
                         J2_PNP_AMParray(ialpha,ibeta,igamma) = J2_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma)
                         pJ2_PNP_AMParray(ialpha,ibeta,igamma) = pJ2_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma)
@@ -204,6 +208,9 @@ Module Kernel
                         Particle_PNP_AMParray(ialpha,ibeta,igamma,2) = Particle_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,2) 
                         pParticle_PNP_AMParray(ialpha,ibeta,igamma,1) = pParticle_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,1)
                         pParticle_PNP_AMParray(ialpha,ibeta,igamma,2) = pParticle_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,2)
+                        ! N^2
+                        N2_PNP_AMParray(ialpha,ibeta,igamma,:) = N2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:)
+                        pN2_PNP_AMParray(ialpha,ibeta,igamma,:) = pN2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:)
                         ! J^2
                         J2_PNP_AMParray(ialpha,ibeta,igamma) = J2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma)
                         pJ2_PNP_AMParray(ialpha,ibeta,igamma) = pJ2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma)
@@ -238,7 +245,10 @@ Module Kernel
                         Particle_PNP_AMParray(ialpha,ibeta,igamma,1) = pParticle_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,1)
                         Particle_PNP_AMParray(ialpha,ibeta,igamma,2) = pParticle_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,2)
                         pParticle_PNP_AMParray(ialpha,ibeta,igamma,1) = Particle_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,1)
-                        pParticle_PNP_AMParray(ialpha,ibeta,igamma,2) = Particle_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,2) 
+                        pParticle_PNP_AMParray(ialpha,ibeta,igamma,2) = Particle_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,2)
+                        ! N^2
+                        N2_PNP_AMParray(ialpha,ibeta,igamma,:) = pN2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:)
+                        pN2_PNP_AMParray(ialpha,ibeta,igamma,:) = N2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma,:) 
                         ! J^2
                         J2_PNP_AMParray(ialpha,ibeta,igamma) = pJ2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma)
                         pJ2_PNP_AMParray(ialpha,ibeta,igamma) = J2_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma)
@@ -267,32 +277,25 @@ Module Kernel
                     !#   calculate the overlap at given Euler angles
                     !#############################################################
                     write(*,'(A)') 'calculate_overlaps_after_PNP_at_Euler_angles ...'
-                    call calculate_overlaps_after_PNP_at_Euler_angles(alpha,beta,gamma,Norm_PNP_Euler,pNorm_PNP_Euler,Etot_PNP_Euler,pEtot_PNP_Euler,Particle_PNP_Euler,pParticle_PNP_Euler,&
-                                J2_PNP_Euler, pJ2_PNP_Euler, Q2m_PNP_Euler, pQ2m_PNP_Euler,cQ2m_PNP_Euler, pcQ2m_PNP_Euler,r2_PNP_Euler, pr2_PNP_Euler,Eccentri_PNP_Euler,pEccentri_PNP_Euler)
-                    
-                    ! all the overlaps are calculated once and stored
-                    Norm_PNP_AMParray(ialpha,ibeta,igamma) = Norm_PNP_Euler   ! <q_1| R(alpha,beta,gamma)  |q_2 >
-                    pNorm_PNP_AMParray(ialpha,ibeta,igamma) = pNorm_PNP_Euler ! <q_1| R(alpha,beta,gamma) P|q_2 >
-                    Etot_PNP_AMParray(ialpha,ibeta,igamma) = Etot_PNP_Euler   ! <q_1| H R(alpha,beta,gamma)  |q_2 >
-                    pEtot_PNP_AMParray(ialpha,ibeta,igamma) = pEtot_PNP_Euler ! <q_1| H R(alpha,beta,gamma) P|q_2 >
-                    Particle_PNP_AMParray(ialpha,ibeta,igamma,1) = Particle_PNP_Euler(1)   ! <q_1| N R(alpha,beta,gamma)  |q_2 > for neutron
-                    Particle_PNP_AMParray(ialpha,ibeta,igamma,2) = Particle_PNP_Euler(2)  
-                    pParticle_PNP_AMParray(ialpha,ibeta,igamma,1) = pParticle_PNP_Euler(1) ! <q_1| N R(alpha,beta,gamma)  P|q_2 > for proton
-                    pParticle_PNP_AMParray(ialpha,ibeta,igamma,2) = pParticle_PNP_Euler(2)
-                    ! J^2
-                    J2_PNP_AMParray(ialpha,ibeta,igamma) = J2_PNP_Euler  ! <q_1| J^2 R(alpha,beta,gamma)  |q_2 >
-                    pJ2_PNP_AMParray(ialpha,ibeta,igamma) = pJ2_PNP_Euler  ! <q_1| J^2 R(alpha,beta,gamma)  P |q_2 >
-                    ! Q2m
-                    Q2m_PNP_AMParray(ialpha,ibeta,igamma,:,:) = Q2m_PNP_Euler(:,:)     ! <q_1| Q_{2 mu} R(alpha,beta,gamma) |q_2 >
-                    pQ2m_PNP_AMParray(ialpha,ibeta,igamma,:,:) = pQ2m_PNP_Euler(:,:)   ! <q_1| Q_{2 mu} R(alpha,beta,gamma) P|q_2 >
-                    cQ2m_PNP_AMParray(ialpha,ibeta,igamma,:,:) = cQ2m_PNP_Euler(:,:)   ! <q_1| Q^{\dagger}_{2 mu} R(alpha,beta,gamma) |q_2 >
-                    pcQ2m_PNP_AMParray(ialpha,ibeta,igamma,:,:) = pcQ2m_PNP_Euler(:,:) ! <q_1| Q^{\dagger}_{2 mu} R(alpha,beta,gamma) P |q_2 >
-                    ! r2
-                    r2_PNP_AMParray(ialpha,ibeta,igamma,:) = r2_PNP_Euler(:)   ! <q_1| r^2 R(alpha,beta,gamma)  |q_2 >
-                    pr2_PNP_AMParray(ialpha,ibeta,igamma,:) = pr2_PNP_Euler(:) ! <q_1| r^2 R(alpha,beta,gamma)  P |q_2 >
-                    ! Eccentricity
-                    Eccentri_PNP_AMParray(ialpha,ibeta,igamma,:) = Eccentri_PNP_Euler(:)   ! <q_1| E_n R(alpha,beta,gamma)  |q_2 >
-                    pEccentri_PNP_AMParray(ialpha,ibeta,igamma,:) = pEccentri_PNP_Euler(:) ! <q_1| E_n R(alpha,beta,gamma)  P |q_2 >             
+                    call calculate_overlaps_after_PNP_at_Euler_angles(alpha,beta,gamma,         &
+                        Norm_PNP_AMParray(ialpha,ibeta,igamma),         & ! <q_1|   R(alpha,beta,gamma)  |q_2 >
+                        pNorm_PNP_AMParray(ialpha,ibeta,igamma),        & ! <q_1|   R(alpha,beta,gamma) P|q_2 >
+                        Etot_PNP_AMParray(ialpha,ibeta,igamma),         & ! <q_1| H R(alpha,beta,gamma)  |q_2 >
+                        pEtot_PNP_AMParray(ialpha,ibeta,igamma),        & ! <q_1| H R(alpha,beta,gamma) P|q_2 >
+                        Particle_PNP_AMParray(ialpha,ibeta,igamma,:),   & ! <q_1| N R(alpha,beta,gamma)  |q_2 > for neutron  and proton
+                        pParticle_PNP_AMParray(ialpha,ibeta,igamma,:),  & ! <q_1| N R(alpha,beta,gamma) P|q_2 > for neutron and proton
+                        N2_PNP_AMParray(ialpha,ibeta,igamma,:),           & ! <q_1| N^2 R(alpha,beta,gamma)    |q_2 >
+                        pN2_PNP_AMParray(ialpha,ibeta,igamma,:),          & ! <q_1| N^2 R(alpha,beta,gamma)  P |q_2 >
+                        J2_PNP_AMParray(ialpha,ibeta,igamma),           & ! <q_1| J^2 R(alpha,beta,gamma)    |q_2 >
+                        pJ2_PNP_AMParray(ialpha,ibeta,igamma),          & ! <q_1| J^2 R(alpha,beta,gamma)  P |q_2 >
+                        Q2m_PNP_AMParray(ialpha,ibeta,igamma,:,:),      & ! <q_1| Q_{2 mu} R(alpha,beta,gamma)  |q_2 >
+                        pQ2m_PNP_AMParray(ialpha,ibeta,igamma,:,:),     & ! <q_1| Q_{2 mu} R(alpha,beta,gamma) P|q_2 >
+                        cQ2m_PNP_AMParray(ialpha,ibeta,igamma,:,:),     & ! <q_1| Q^{\dagger}_{2 mu} R(alpha,beta,gamma)   |q_2 >
+                        pcQ2m_PNP_AMParray(ialpha,ibeta,igamma,:,:),    & ! <q_1| Q^{\dagger}_{2 mu} R(alpha,beta,gamma) P |q_2 >
+                        r2_PNP_AMParray(ialpha,ibeta,igamma,:),         & ! <q_1| r^2 R(alpha,beta,gamma)    |q_2 >
+                        pr2_PNP_AMParray(ialpha,ibeta,igamma,:),        & ! <q_1| r^2 R(alpha,beta,gamma)  P |q_2 >
+                        Eccentri_PNP_AMParray(ialpha,ibeta,igamma,:),   & ! <q_1| E_n R(alpha,beta,gamma)    |q_2 >
+                        pEccentri_PNP_AMParray(ialpha,ibeta,igamma,:))    ! <q_1| E_n R(alpha,beta,gamma)  P |q_2 >            
                     ! store density matrix elements
                     call store_mix_density_matrix_elements(ialpha,ibeta,igamma)
                 end do
@@ -384,6 +387,76 @@ Module Kernel
                                     ! Pi = -
                                     kernels%X_KK(J,K1,K2,it,2) = kernels%X_KK(J,K1,K2,it,2) + fac*(Particle_PNP_Euler(it) - pParticle_PNP_Euler(it))/2.0d0
                                 end do
+
+                            end do 
+                        end do 
+                    end do 
+                end do 
+            end do
+        end do
+    end subroutine
+
+    subroutine calculate_N2_kernels
+        !-------------------------------------------------------------------------------------------------------------------------------
+        !  
+        !      <J_f K_f q_1 Pi_i| N^2 |J_i K_i q_2 Pi_i> 
+        !   =  <J   K_f q_1 Pi  | N^2 |J   K_i q_2 Pi> 
+        !   =  <q_1| J^2 P^{J}_{K_f K_i} P^{Pi} |q_2 >
+        !   =  (2J_i +1)/(pi^2) \int d alpha d beta d gamma  D^{J*}_{K_f K_i}(alpha,beta,gamma) 
+        !                          * <q_1| N^2 R(alpha,beta,gamma) P^{Pi} |q_2 >
+        !-------------------------------------------------------------------------------------------------------------------------------------
+        use Constants, only: pi
+        use Globals, only: gcm_space,projection_mesh,kernels,pko_option
+        use Basis, only: djmk
+        integer :: ialpha,ibeta,igamma,J,Ji,Jf,Ki_start,Ki_end,Kf_start,Kf_end,Kf,Ki,it
+        real(r64) :: alpha, beta, gamma, w
+        complex(r64) :: calpha,cgamma,cpi,fac1,fac2,fac
+        kernels%N2_KK = (0.d0,0.d0)
+        do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
+            Ji = J
+            Jf = J
+            if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+                Ki_start = 0
+                Ki_end = 0
+                Kf_start = 0
+                Kf_end = 0
+            else
+                Ki_start = -Ji
+                Ki_end = Ji
+                Kf_start = -Jf
+                Kf_end = Jf
+            end if 
+            do ialpha = 1, projection_mesh%nalpha
+                alpha = projection_mesh%alpha(ialpha)
+                calpha = DCMPLX(0.d0,alpha)
+                do ibeta = 1, projection_mesh%nbeta
+                    beta = projection_mesh%beta(ibeta)
+                    do igamma = 1, projection_mesh%ngamma
+                        gamma = projection_mesh%gamma(igamma)
+                        cgamma = DCMPLX(0.d0,gamma)
+                        do Kf = Kf_start, Kf_end
+                            do Ki = Ki_start, Ki_end            
+                                if(pko_option%AMPtype==0) then
+                                    fac = 1
+                                else if (pko_option%AMPtype==1) then
+                                    w = projection_mesh%wbeta(ibeta)
+                                    fac1 = (2*Ji+1)/(2.0d0)*dsin(beta)*djmk(Ji,Kf,Ki,dcos(beta),0)
+                                    fac = fac1*w
+                                else
+                                    cpi = DCMPLX(0.d0,pi) ! i*pi
+                                    w = projection_mesh%walpha(ialpha)*projection_mesh%wbeta(ibeta)*projection_mesh%wgamma(igamma)
+                                    fac1 = (2*Ji+1)/(8.0d0*pi**2)*dsin(beta)*djmk(Ji,Kf,Ki,dcos(beta),0)*CDEXP(-Kf*calpha-Ki*cgamma)
+                                    fac2 = 1.0d0 + CDEXP(-Kf*cpi) + CDEXP(-Ki*cpi) + CDEXP(-Kf*cpi-Ki*cpi)
+                                    fac = fac1*fac2*w
+                                end if
+
+                                do it =1,2
+                                   ! <Ji Kf q1 Pi|N^2|Ji Ki q2 Pi> 
+                                   ! Pi = +
+                                   kernels%N2_KK(Ji,Kf,Ki,it,1) = kernels%N2_KK(Ji,Kf,Ki,it,1) + fac*(N2_PNP_AMParray(ialpha,ibeta,igamma,it) + pN2_PNP_AMParray(ialpha,ibeta,igamma,it))/2.d0
+                                   ! Pi = -
+                                   kernels%N2_KK(Ji,Kf,Ki,it,2) = kernels%N2_KK(Ji,Kf,Ki,it,2) + fac*(N2_PNP_AMParray(ialpha,ibeta,igamma,it) - pN2_PNP_AMParray(ialpha,ibeta,igamma,it))/2.d0
+                               end do
 
                             end do 
                         end do 
@@ -743,11 +816,12 @@ Module Kernel
     !   PNP Integration
     !------------------------------------------------
     subroutine calculate_overlaps_after_PNP_at_Euler_angles(alpha, beta, gamma, Norm_PNP, pNorm_PNP, Etot_PNP, pEtot_PNP, Particle_PNP, pParticle_PNP,&
-                    J2_PNP, pJ2_PNP, Q2m_PNP, pQ2m_PNP,cQ2m_PNP,pcQ2m_PNP,r2_PNP, pr2_PNP,Eccentri_PNP,pEccentri_PNP)
+                                        N2_PNP,pN2_PNP,J2_PNP, pJ2_PNP, Q2m_PNP, pQ2m_PNP,cQ2m_PNP,pcQ2m_PNP,r2_PNP, pr2_PNP,Eccentri_PNP,pEccentri_PNP)
         use Globals, only: pko_option
         use Mixed, only: calculate_mixed_DensCurrTens_and_norm_overlap
         real(r64), intent(in) :: alpha, beta, gamma
-        complex(r64),intent(out) :: Norm_PNP, pNorm_PNP, Etot_PNP, pEtot_PNP, Particle_PNP(2), pParticle_PNP(2),J2_PNP, pJ2_PNP, r2_PNP(2), pr2_PNP(2),Eccentri_PNP(2),pEccentri_PNP(2)
+        complex(r64),intent(out) :: Norm_PNP, pNorm_PNP, Etot_PNP, pEtot_PNP, Particle_PNP(2), pParticle_PNP(2),N2_PNP(2),pN2_PNP(2),J2_PNP, pJ2_PNP, &
+                                    r2_PNP(2), pr2_PNP(2),Eccentri_PNP(2),pEccentri_PNP(2)
         complex(r64), dimension(-2:2,2),intent(out) :: Q2m_PNP, pQ2m_PNP,cQ2m_PNP,pcQ2m_PNP
 
         ! 1) calcualate mixed ... matrix elements
@@ -758,6 +832,7 @@ Module Kernel
         ! Integration over PNP mesh points(phi_it) and spatial coordinates (r,theta,phi)  
         call calculate_norm_overlap_and_particle_number_after_PNP(Norm_PNP,pNorm_PNP,Particle_PNP,pParticle_PNP)
         call calculate_Rotated_Energy_after_PNP(Etot_PNP,pEtot_PNP)
+        call calculate_N2_after_PNP(N2_PNP,pN2_PNP)
         call calculate_J2_after_PNP(J2_PNP, pJ2_PNP)
         call calculate_Qlm_after_PNP(Q2m_PNP,pQ2m_PNP,cQ2m_PNP,pcQ2m_PNP)
         call calculate_r2_after_PNP(r2_PNP, pr2_PNP)
@@ -846,13 +921,66 @@ Module Kernel
         contains
     end subroutine
 
+    subroutine calculate_N2_after_PNP(N2_PNP, pN2_PNP)
+        !----------------------------------------------------------------
+        !  N2_PNP: <q_1| N^2 R(alpha,beta,gamma) P^{N} P^{Z}  |q_2 >
+        ! pN2_PNP: <q_1| N^2 R(alpha,beta,gamma) P^{N} P^{Z} P|q_2 >
+        !---------------------------------------------------------------
+        use Globals, only: projection_mesh,nucleus_attributes,mix
+        use JNsquare, only: calculate_N2
+        complex(r64),intent(out) :: N2_PNP(2), pN2_PNP(2)
+        integer :: L_n,L_p,phi_n_index,phi_p_index,it
+        real(r64) :: phi_n,phi_p
+        complex(r64) :: N2,pN2,emiNphi,emiZphi,fac,pfac
+        complex(r64), allocatable :: N2_arry(:,:), pN2_arry(:,:)
+
+        N2_PNP = (0.d0, 0.d0)
+        pN2_PNP = (0.d0, 0.d0)
+        L_n = projection_mesh%nphi(1)
+        L_p = projection_mesh%nphi(2)
+
+        ! calculate <q1| N^2 R |q2>/<q1|R|q2> for proton and neutron separately.
+        ! where R = R(alpha,beta,gamma, phi_n,phi_p) = e^{i alpha J_z} e^{i beta J_y} e^{i gamma J_z} e^{i phi_n N} e^{i phi_p N}
+        allocate(N2_arry(max(L_n,L_p),2),pN2_arry(max(L_n,L_p),2))
+        do phi_n_index = 1, L_n
+            it = 1
+            call calculate_N2(phi_n_index,it,N2,pN2)
+            N2_arry(phi_n_index,it) = N2
+            pN2_arry(phi_n_index,it) = pN2
+        end do 
+        do phi_p_index = 1, L_p
+            it = 2
+            call calculate_N2(phi_p_index,it,N2,pN2)
+            N2_arry(phi_p_index,it) = N2
+            pN2_arry(phi_p_index,it) = pN2
+        end do 
+
+        do  phi_n_index = 1, L_n
+            phi_n =  phi_n_index*projection_mesh%dphi(1)
+            emiNphi = cdexp(-nucleus_attributes%neutron_number*cmplx(0,phi_n)) ! e^{-iN\phi_n}
+            do  phi_p_index = 1, L_p
+                phi_p =  phi_p_index*projection_mesh%dphi(2) 
+                emiZphi = cdexp(-nucleus_attributes%proton_number*cmplx(0,phi_p)) ! e^{-iZ\phi_p}
+                fac = 1.d0/(L_n*L_p)*emiNphi*emiZphi*mix%norm(phi_n_index,1)*mix%norm(phi_p_index,2)
+                pfac = 1.d0/(L_n*L_p)*emiNphi*emiZphi*mix%pnorm(phi_n_index,1)*mix%pnorm(phi_p_index,2)
+                it = 1
+                N2_PNP(it) = N2_PNP(it) + fac*N2_arry(phi_n_index,it)
+                pN2_PNP(it) = pN2_PNP(it) + pfac*pN2_arry(phi_n_index,it)
+                it= 2
+                N2_PNP(it) = N2_PNP(it) + fac*N2_arry(phi_p_index,it)
+                pN2_PNP(it) = pN2_PNP(it) + pfac*pN2_arry(phi_p_index,it)
+            end do
+        end do
+        deallocate(N2_arry,pN2_arry)
+    end subroutine
+
     subroutine calculate_J2_after_PNP(J2_PNP, pJ2_PNP)
         !----------------------------------------------------------------
         !  J2_PNP: <q_1| J^2 R(alpha,beta,gamma) P^{N} P^{Z}  |q_2 >
         ! pJ2_PNP: <q_1| J^2 R(alpha,beta,gamma) P^{N} P^{Z} P|q_2 >
         !---------------------------------------------------------------
         use Globals, only: projection_mesh,nucleus_attributes,mix
-        use AM, only: calculate_Jsquare_and_J
+        use JNsquare, only: calculate_Jsquare_and_J
         complex(r64),intent(out) :: J2_PNP, pJ2_PNP
         integer :: L_n,L_p,phi_n_index,phi_p_index,it
         real(r64) :: phi_n,phi_p
