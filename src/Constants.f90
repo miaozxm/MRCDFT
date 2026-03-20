@@ -121,7 +121,7 @@ integer, parameter :: MSUM1 = nxx*(nxx+1)/2, &
                       MVTX2 = nxx+4*MSUM4+8*MSUM3+9*MSUM2+5*MSUM1, &
                       MVTX  = MVTX1+MVTX2
 
-!***************** PKO parameters *****************
+!***************** Proj parameters *****************
 ! number of meshpoints
 integer, parameter ::   ngr = 16, &
                         ntheta = 16, &

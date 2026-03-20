@@ -11,7 +11,7 @@ contains
         ! store mix density matrix elements
         !-------------------------------------------------
         use Constants, only: itx
-        use Globals, only: BS,mix,projection_mesh,pko_option,Proj_densities
+        use Globals, only: BS,mix,projection_mesh,Proj_option,Proj_densities
         integer,intent(in) :: ialpha,ibeta,igamma
         integer :: dim_m_max, nphi_max, nalpha, nbeta, ngamma
         dim_m_max = max(BS%HO_sph%idsp(1,1), BS%HO_sph%idsp(1,2))
@@ -29,15 +29,15 @@ contains
         if(.not. allocated(Proj_densities%pkappa10_mm)) allocate(Proj_densities%pkappa10_mm(dim_m_max,dim_m_max,4,nphi_max,itx,nalpha,nbeta,ngamma),source=(0.d0,0.d0))
 
         ! we have to implement the symmetry of rho_mm
-        if(pko_option%Euler_Symmetry>=1 .and. ialpha > (nalpha+1)/2 ) then
+        if(Proj_option%Euler_Symmetry>=1 .and. ialpha > (nalpha+1)/2 ) then
             write(*,*) '[alpha symmetry of rho_mm] Not yet implemented.... '
             return 
         end if
-        if(pko_option%Euler_Symmetry>=1 .and. ibeta > (nbeta+1)/2 ) then
-            if(pko_option%Euler_Symmetry == 1) then
+        if(Proj_option%Euler_Symmetry>=1 .and. ibeta > (nbeta+1)/2 ) then
+            if(Proj_option%Euler_Symmetry == 1) then
                 ! write(*,*) '[beta symmetry of rho_mm] Not yet implemented  .... ' 
                 ! we can simply multiply by 2 without integrating over [pi/2, pi ]
-            else if(pko_option%Euler_Symmetry == 2) then
+            else if(Proj_option%Euler_Symmetry == 2) then
                 write(*,*) '[beta symmetry of rho_mm] Not yet implemented  .... ' 
             end if 
             return
@@ -62,21 +62,21 @@ contains
         !      Due to the extremely large memory usage, the two-body density
         !      is not stored in Proj_densities%ME2B.
         !-----------------------------------------------------------------
-        use Globals, only: gcm_space,pko_option,BS,kernels
+        use Globals, only: gcm_space,Proj_option,BS,kernels
         integer, intent(in) :: q1,q2
         integer :: dim_m_max,J,K1_start,K1_end,K2_start,K2_end,K1,K2,iParity,Parity,ifg1,m1,ifg2,m2,ifg3,m3,ifg4,m4,total_iter,iter
         complex(r64) :: ME1B(2),ME2B(2)
         complex(r64) :: N(2), N2(2)
         ! logical :: q2_q1_Symmetry
         write(*,'(5x,A)') 'calculate_density_matrix_element ...'
-        ! if(q1/=q2 .and. pko_option%Kernel_Symmetry==1) then
+        ! if(q1/=q2 .and. Proj_option%Kernel_Symmetry==1) then
         !     q2_q1_Symmetry = .True.
         ! else
         !     q2_q1_Symmetry = .False.
         ! end if
 
         dim_m_max = max(BS%HO_sph%idsp(1,1), BS%HO_sph%idsp(1,2))
-        if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+        if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
             if(.not. allocated(Proj_densities%ME1B)) allocate(Proj_densities%ME1B(gcm_space%Jmin:gcm_space%Jmax, 0:0, 0:0, 2,& ! Jf, K, K', Pi(+/-)
                                                              2, 2, dim_m_max,dim_m_max)) ! it, ifg(++/--), m, m'
             ! if(.not. allocated(Proj_densities%ME2B)) allocate(Proj_densities%ME2B(gcm_space%Jmin:gcm_space%Jmax, 0:0, 0:0, 2,& ! Jf, K, K', Pi(+/-)
@@ -88,7 +88,7 @@ contains
             !                                                  2, 2, dim_m_max,dim_m_max,dim_m_max,dim_m_max)) ! it, ifg(++/--), m1, m2, m3, m4
         end if
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
-            if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+            if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
                 K1_start = 0
                 K1_end = 0
                 K2_start = 0
@@ -120,7 +120,7 @@ contains
                             end if
                             do ifg2 = 1, 2
                             do m2 = 1, BS%HO_sph%idsp(1,ifg2)
-                                if(pko_option%DsType == 1 .or. pko_option%DsType == 3) then 
+                                if(Proj_option%DsType == 1 .or. Proj_option%DsType == 3) then 
                                     ! 1 Body
                                     if(ifg1==ifg2) then
                                         call calculate_one_body_density_matrix_element(J,K1,K2,Parity,ifg1,m1,ifg2,m2,ME1B)
@@ -135,7 +135,7 @@ contains
                                         end if
                                     end if
                                 end if
-                                if(pko_option%DsType == 2 .or. pko_option%DsType == 3) then
+                                if(Proj_option%DsType == 2 .or. Proj_option%DsType == 3) then
                                     do ifg3 = 1, 2
                                     do m3 = 1, BS%HO_sph%idsp(1,ifg3)
                                         do ifg4 = 1, 2
@@ -179,7 +179,7 @@ contains
         ! 
         !--------------------------------------------------------------------------------------------------
         use Constants, only: pi
-        use Globals, only: projection_mesh,pko_option,nucleus_attributes
+        use Globals, only: projection_mesh,Proj_option,nucleus_attributes
         use Basis, only: djmk
         integer,intent(in) :: J,K1,K2,Parity,ifg1,m1,ifg2,m2
         complex(r64), intent(out) :: ME1B(2)
@@ -191,10 +191,10 @@ contains
             do ibeta = 1, projection_mesh%nbeta
                 do igamma = 1, projection_mesh%ngamma
                     ! If we have implemented the symmetry of rho_mm, then these lines are not needed.
-                    if(pko_option%Euler_Symmetry == 2) then
+                    if(Proj_option%Euler_Symmetry == 2) then
                         stop '[calculate_one_body_density_matrix_element]: Euler_Symmetry=2, Not yet implemented! You should set the Symmetry of Euler angles as 0!'
                     end if
-                    if(pko_option%Euler_Symmetry==1 .and. ibeta>(projection_mesh%nbeta+1)/2) then
+                    if(Proj_option%Euler_Symmetry==1 .and. ibeta>(projection_mesh%nbeta+1)/2) then
                         cycle
                         ! Using the tensor symmetry, it can be proven that when Parity = (-1)**J
                         !  the contribution from (pi/2, pi]) is the same as that from (0, pi/2).
@@ -206,9 +206,9 @@ contains
                     beta = projection_mesh%beta(ibeta)
                     gamma = projection_mesh%gamma(igamma)
                     cgamma = DCMPLX(0.d0,gamma)
-                    if(pko_option%AMPtype==0) then
+                    if(Proj_option%AMPtype==0) then
                         fac_AMP = 1
-                    else if (pko_option%AMPtype==1) then
+                    else if (Proj_option%AMPtype==1) then
                         w = projection_mesh%wbeta(ibeta)
                         fac1 = (2*J+1)/(2.0d0)*dsin(beta)*djmk(J,K1,K2,dcos(beta),0)
                         fac_AMP = fac1*w
@@ -244,16 +244,16 @@ contains
             end do
         end do 
 
-        if(pko_option%Euler_Symmetry==1 .and. pko_option%AMPtype==1 ) then
+        if(Proj_option%Euler_Symmetry==1 .and. Proj_option%AMPtype==1 ) then
             ! If we have implemented the symmetry of rho_mm, No need to multiply by 2.
             ME1B(1) = ME1B(1)*2.d0
             ME1B(2) = ME1B(2)*2.d0   
-        else if(pko_option%Euler_Symmetry==0 .or. pko_option%AMPtype==0) then
+        else if(Proj_option%Euler_Symmetry==0 .or. Proj_option%AMPtype==0) then
             ME1B(1) = ME1B(1)
             ME1B(2) = ME1B(2)
         else 
-            write(*,*) 'AMPtype=',pko_option%AMPtype
-            write(*,*) 'Euler_Symmetry=',pko_option%Euler_Symmetry
+            write(*,*) 'AMPtype=',Proj_option%AMPtype
+            write(*,*) 'Euler_Symmetry=',Proj_option%Euler_Symmetry
             stop "Wrong AMPtype or Euler_Symmetry ! "
         end if 
     end subroutine
@@ -266,7 +266,7 @@ contains
         ! 
         !----------------------------------------------------------------------------------------------------------------
         use Constants, only: pi
-        use Globals, only: projection_mesh,pko_option,nucleus_attributes
+        use Globals, only: projection_mesh,Proj_option,nucleus_attributes
         use Basis, only: djmk
         integer,intent(in) :: J,K1,K2,Parity,ifg1,m1,ifg2,m2,ifg3,m3,ifg4,m4
         complex(r64), intent(out) :: ME2B(2)
@@ -278,10 +278,10 @@ contains
             do ibeta = 1, projection_mesh%nbeta
                 do igamma = 1, projection_mesh%ngamma
                     ! If we have implemented the symmetry of rho_mm, then these lines are not needed.
-                    if(pko_option%Euler_Symmetry == 2) then
+                    if(Proj_option%Euler_Symmetry == 2) then
                         stop '[calculate_two_body_density_matrix_element]: Euler_Symmetry=2, Not yet implemented! You should set the Symmetry of Euler angles as 0!'
                     end if
-                    if(pko_option%Euler_Symmetry==1 .and. ibeta>(projection_mesh%nbeta+1)/2) then
+                    if(Proj_option%Euler_Symmetry==1 .and. ibeta>(projection_mesh%nbeta+1)/2) then
                         cycle
                         ! Using the tensor symmetry, it can be proven that when Parity = (-1)**J
                         !  the contribution from (pi/2, pi]) is the same as that from (0, pi/2).
@@ -293,9 +293,9 @@ contains
                     beta = projection_mesh%beta(ibeta)
                     gamma = projection_mesh%gamma(igamma)
                     cgamma = DCMPLX(0.d0,gamma)
-                    if(pko_option%AMPtype==0) then
+                    if(Proj_option%AMPtype==0) then
                         fac_AMP = 1
-                    else if (pko_option%AMPtype==1) then
+                    else if (Proj_option%AMPtype==1) then
                         w = projection_mesh%wbeta(ibeta)
                         fac1 = (2*J+1)/(2.0d0)*dsin(beta)*djmk(J,K1,K2,dcos(beta),0)
                         fac_AMP = fac1*w
@@ -347,16 +347,16 @@ contains
             end do
         end do
 
-        if(pko_option%Euler_Symmetry==1 .and. pko_option%AMPtype==1) then
+        if(Proj_option%Euler_Symmetry==1 .and. Proj_option%AMPtype==1) then
             ! If we have implemented the symmetry of rho_mm, No need to multiply by 2.
             ME2B(1) = ME2B(1)*2.d0
             ME2B(2) = ME2B(2)*2.d0   
-        else if(pko_option%Euler_Symmetry==0 .or. pko_option%AMPtype==0) then
+        else if(Proj_option%Euler_Symmetry==0 .or. Proj_option%AMPtype==0) then
             ME2B(1) = ME2B(1)
             ME2B(2) = ME2B(2)
         else 
-            write(*,*) 'AMPtype=',pko_option%AMPtype
-            write(*,*) 'Euler_Symmetry=',pko_option%Euler_Symmetry
+            write(*,*) 'AMPtype=',Proj_option%AMPtype
+            write(*,*) 'Euler_Symmetry=',Proj_option%Euler_Symmetry
             stop "Wrong AMPtype or Euler_Symmetry ! "
         end if 
     end subroutine

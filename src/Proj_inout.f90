@@ -9,81 +9,81 @@
 MODULE Proj_Inout
 use Globals, only: outputfile
 use Constants, only: i16,r64,u_start,pi,ngl,OUTPUT_PATH, Jmax_max
-use CDFT_Inout, only: file_path_para,set_output_filename, int2str, adjust_left
+use CDFT_Inout, only: file_path_para,set_CDFT_output_filename, int2str, adjust_left
 implicit none
-integer, private :: u_pko = u_start + 11
+integer, private :: u_Proj = u_start + 11
 
 contains
 
 subroutine read_Proj_configuration(ifPrint)
-    use Globals, only: input_par,pko_option
+    use Globals, only: input_par,Proj_option
     integer :: i,is
     logical,intent(in),optional :: ifPrint
     character(len=*), parameter ::  format1 = "(10x,2f10.4)", &
                                     format2 = "(10x,i5)", &
                                     format3 = "(10x,2i5)" 
 
-    open(u_pko, file=file_path_para, status='old')
+    open(u_Proj, file=file_path_para, status='old')
     ! skip CDFT parameters
     do i = 1, 29
-        read(u_pko,'(A)', iostat=is) 
+        read(u_Proj,'(A)', iostat=is) 
         if (is /= 0) then
             print *, "Error reading file"
             stop
         end if
     end do
 
-    read(u_pko, format2) input_par%ProjectionType
-    read(u_pko, format2) input_par%AMPType
-    read(u_pko, format2) input_par%PNPType
-    read(u_pko, format2) input_par%Kernel_Symmetry
-    read(u_pko, format3) input_par%q1_start, input_par%q1_end
-    read(u_pko, format3) input_par%q2_start, input_par%q2_end
-    read(u_pko, format2) input_par%Jmax
-    read(u_pko, format2) input_par%icm
-    read(u_pko, format2) input_par%nphi
-    read(u_pko, format2) input_par%Euler_Symmetry
-    read(u_pko, format2) input_par%nalpha
-    read(u_pko, format2) input_par%nbeta
-    read(u_pko, format2) input_par%ngamma
-    read(u_pko, format2) input_par%DsType
-    read(u_pko, format2) input_par%TDType
-    read(u_pko, format2) input_par%lambda_max
-    read(u_pko, format2) input_par%EccentriType
-    call set_pko_parameters
+    read(u_Proj, format2) input_par%ProjectionType
+    read(u_Proj, format2) input_par%AMPType
+    read(u_Proj, format2) input_par%PNPType
+    read(u_Proj, format2) input_par%Kernel_Symmetry
+    read(u_Proj, format3) input_par%q1_start, input_par%q1_end
+    read(u_Proj, format3) input_par%q2_start, input_par%q2_end
+    read(u_Proj, format2) input_par%Jmax
+    read(u_Proj, format2) input_par%icm
+    read(u_Proj, format2) input_par%nphi
+    read(u_Proj, format2) input_par%Euler_Symmetry
+    read(u_Proj, format2) input_par%nalpha
+    read(u_Proj, format2) input_par%nbeta
+    read(u_Proj, format2) input_par%ngamma
+    read(u_Proj, format2) input_par%DsType
+    read(u_Proj, format2) input_par%TDType
+    read(u_Proj, format2) input_par%lambda_max
+    read(u_Proj, format2) input_par%EccentriType
+    call set_Proj_parameters
     if(ifPrint) call printParameters
     contains
-    subroutine set_pko_parameters
-        use Globals, only: input_par,pko_option,gcm_space,constraint,TDs
+    subroutine set_Proj_parameters
+        use Globals, only: input_par,Proj_option,gcm_space,constraint,TDs
         ! set projection type ( 0 : no 1: RMF+AMP 2: only AMP)
-        pko_option%ProjectionType = input_par%ProjectionType
-        if(pko_option%ProjectionType > 2 .or. pko_option%ProjectionType < 0) stop 'ProjectionType wrong!'
+        Proj_option%ProjectionType = input_par%ProjectionType
+        if(Proj_option%ProjectionType > 2 .or. Proj_option%ProjectionType < 0) stop 'ProjectionType wrong!'
 
         ! set AMP type ((0) no (1) 1DAMP (2) 3DAMP)
-        pko_option%AMPtype = input_par%AMPType
+        Proj_option%AMPtype = input_par%AMPType
         if(input_par%AMPType.ne.0 .and. input_par%AMPType.ne.1 .and. input_par%AMPType.ne.2) stop 'AMPType wrong!'
         if( input_par%AMPType==2) stop '(3DAMP) Not yet verified !'
         if(input_par%AMPtype==1 .and. mod(input_par%nbeta, 2) /= 0) stop 'nbeta must be an even number!' 
 
         ! set PNP type (0: no PNP; 1: PNP)
-        pko_option%PNPtype = input_par%PNPType
+        Proj_option%PNPtype = input_par%PNPType
         if(input_par%PNPType.ne.0 .and. input_par%PNPType.ne.1 ) stop 'PNPType wrong!'
         if(input_par%PNPType.ne.0 .and. mod(input_par%nphi, 2) == 0) stop 'nphi must be an odd number!' 
 
         ! Kernel Symmetry  (0: All ; 1: Triangular Matrix ; 2: Diagonal elements only)
-        pko_option%Kernel_Symmetry = input_par%Kernel_Symmetry
-        if(pko_option%Kernel_Symmetry > 2 .or. pko_option%Kernel_Symmetry < 0) stop 'Kernel_Symmetry wrong!'
+        Proj_option%Kernel_Symmetry = input_par%Kernel_Symmetry
+        if(Proj_option%Kernel_Symmetry > 2 .or. Proj_option%Kernel_Symmetry < 0) stop 'Kernel_Symmetry wrong!'
 
         ! Euler angles Symmetry (0: no, 1: Axially, 2: D2)
-        pko_option%Euler_Symmetry = input_par%Euler_Symmetry
-        if(pko_option%Euler_Symmetry .ne. 0 .and. pko_option%Euler_Symmetry .ne. 1 .and. pko_option%Euler_Symmetry .ne. 2) stop 'Euler_Symmetry wrong!'
-        if(input_par%AMPType == 1  .and. (pko_option%Euler_Symmetry .ne. 0 .and. pko_option%Euler_Symmetry .ne. 1)) stop '1DAMP: Euler_Symmetry should be 0 or 1!'
-        if(input_par%AMPType == 2  .and. (pko_option%Euler_Symmetry .ne. 2)) stop '3DAMP: Euler_Symmetry should 2 !'
+        Proj_option%Euler_Symmetry = input_par%Euler_Symmetry
+        if(Proj_option%Euler_Symmetry .ne. 0 .and. Proj_option%Euler_Symmetry .ne. 1 .and. Proj_option%Euler_Symmetry .ne. 2) stop 'Euler_Symmetry wrong!'
+        if(input_par%AMPType == 1  .and. (Proj_option%Euler_Symmetry .ne. 0 .and. Proj_option%Euler_Symmetry .ne. 1)) stop '1DAMP: Euler_Symmetry should be 0 or 1!'
+        if(input_par%AMPType == 2  .and. (Proj_option%Euler_Symmetry .ne. 2)) stop '3DAMP: Euler_Symmetry should 2 !'
 
         ! center of mass correction (1: average  ; 2: HO approximation)
-        pko_option%icm = input_par%icm
+        Proj_option%icm = input_par%icm
         ! Set Norm overlap calculation method
-        pko_option%ihf = 3
+        Proj_option%ihf = 3
 
         ! set GCM space
         gcm_space%Jmin = 0
@@ -104,35 +104,35 @@ subroutine read_Proj_configuration(ifPrint)
         if(gcm_space%q2_end > constraint%length) stop 'q2_end greater than max length.'
 
         ! set calculate density matrix element option
-        pko_option%DsType = input_par%DsType
-        if(pko_option%DsType<0 .or. pko_option%DsType>3) stop "DsType should be 0 or 1 or 2 or 3"
+        Proj_option%DsType = input_par%DsType
+        if(Proj_option%DsType<0 .or. Proj_option%DsType>3) stop "DsType should be 0 or 1 or 2 or 3"
         ! set TD type
-        pko_option%TDType = input_par%TDType
-        if(pko_option%TDType<0 .or. pko_option%TDType>1) stop "TDType should be 0 or 1"
+        Proj_option%TDType = input_par%TDType
+        if(Proj_option%TDType<0 .or. Proj_option%TDType>1) stop "TDType should be 0 or 1"
         TDs%lambda_max = input_par%lambda_max ! max lambda of 1B transition density
         ! set calculate eccentricity kernel option
-        pko_option%EccentriType = input_par%EccentriType
-        if(pko_option%EccentriType<0 .or. pko_option%EccentriType>3) stop "EccentriType should be 0 or 1 or 2 or 3"
+        Proj_option%EccentriType = input_par%EccentriType
+        if(Proj_option%EccentriType<0 .or. Proj_option%EccentriType>3) stop "EccentriType should be 0 or 1 or 2 or 3"
     end subroutine
     subroutine printParameters
-        use Globals, only: input_par,pko_option,gcm_space,TDs
+        use Globals, only: input_par,Proj_option,gcm_space,TDs
         integer :: Strlength = 40
         character(len=5) :: AMP_char, PNP_char
-        if(pko_option%AMPtype==0) then 
+        if(Proj_option%AMPtype==0) then 
             AMP_char = 'noAMP'
-        else if (pko_option%AMPtype==1) then
+        else if (Proj_option%AMPtype==1) then
             AMP_char = '1DAMP'
-        else if (pko_option%AMPtype==2) then
+        else if (Proj_option%AMPtype==2) then
             AMP_char = '3DAMP'
         end if 
-        if(pko_option%PNPtype==0) then 
+        if(Proj_option%PNPtype==0) then 
             PNP_char = 'noPNP'
-        else if (pko_option%PNPtype==1) then
+        else if (Proj_option%PNPtype==1) then
             PNP_char = 'PNP'
         end if 
 
         write(*,'(5x,A)') AMP_char//'  +  '//PNP_char//'+  '//'PP :'
-        if(pko_option%AMPtype /= 0) then
+        if(Proj_option%AMPtype /= 0) then
             write(*,"(5x,a,':   ',3(i2,a))") adjust_left('Number of euler angles',Strlength),input_par%nalpha,' (nalpha),  ',input_par%nbeta,' (nbeta),  ',input_par%ngamma,' (ngamma)'
             if(input_par%Euler_Symmetry==0) then
                 write(*,"(5x,a,':   ',a)") adjust_left('Symmetry of euler angles',Strlength),'no'
@@ -142,49 +142,49 @@ subroutine read_Proj_configuration(ifPrint)
                 write(*,"(5x,a,':   ',a)") adjust_left('Symmetry of euler angles',Strlength),'D2'
             end if 
         end if 
-        if(pko_option%PNPtype /= 0) then
+        if(Proj_option%PNPtype /= 0) then
             write(*,"(5x,a,':   ',i2,a)") adjust_left('Number gauge angles',Strlength),input_par%nphi,' (nphi)'
         end if
 
-        if(pko_option%Kernel_Symmetry==0) then 
+        if(Proj_option%Kernel_Symmetry==0) then 
             write(*,"(5x,a,':   ',a)") adjust_left('Kernels',Strlength),'All kernels'
-        else if(pko_option%Kernel_Symmetry==1) then
+        else if(Proj_option%Kernel_Symmetry==1) then
             write(*,"(5x,a,':   ',a)") adjust_left('Kernels',Strlength),'Upper triangular kernels'
-        else if(pko_option%Kernel_Symmetry==2) then
+        else if(Proj_option%Kernel_Symmetry==2) then
             write(*,"(5x,a,':   ',a)") adjust_left('Kernels',Strlength),'Diagonal kernels'
         end if 
         write(*,"(5x,a,':   ',a,i3,a,i3,a)") adjust_left('Quadratic constraint q1 range',Strlength), '[',gcm_space%q1_start,',',gcm_space%q1_end,' ]'
         write(*,"(5x,a,':   ',a,i3,a,i3,a)") adjust_left('Quadratic constraint q2 range',Strlength), '[',gcm_space%q2_start,',',gcm_space%q2_end,' ]'
 
         write(*,"(5x,a,':   ',i3)") adjust_left('Maximal J value',Strlength), gcm_space%Jmax
-        if (pko_option%DsType /=0 ) then
-            if(pko_option%DsType==1) write(*,"(5x,a,':   ',a)") adjust_left('Calculate density ME',Strlength),'1B'
-            if(pko_option%DsType==2) write(*,"(5x,a,':   ',a)") adjust_left('Calculate density ME',Strlength),'2B'
-            if(pko_option%DsType==3) write(*,"(5x,a,':   ',a)") adjust_left('Calculate density ME',Strlength),'1B + 2B'
+        if (Proj_option%DsType /=0 ) then
+            if(Proj_option%DsType==1) write(*,"(5x,a,':   ',a)") adjust_left('Calculate density ME',Strlength),'1B'
+            if(Proj_option%DsType==2) write(*,"(5x,a,':   ',a)") adjust_left('Calculate density ME',Strlength),'2B'
+            if(Proj_option%DsType==3) write(*,"(5x,a,':   ',a)") adjust_left('Calculate density ME',Strlength),'1B + 2B'
         else 
             write(*,"(5x,a,':   ',a)") adjust_left('Calculate density ME',Strlength),'No'
         end if 
 
-        if (pko_option%TDType /=0 ) then
-            if(pko_option%TDType==1)write(*,"(5x,a,':   ',a)") adjust_left('Calculate reduced transition density ME',Strlength),'1B'
+        if (Proj_option%TDType /=0 ) then
+            if(Proj_option%TDType==1)write(*,"(5x,a,':   ',a)") adjust_left('Calculate reduced transition density ME',Strlength),'1B'
             write(*,"(5x,a,':   ',i3)") adjust_left('Maximal lambda value(1BTD)',Strlength),TDs%lambda_max
         else 
             write(*,"(5x,a,':   ',a)") adjust_left('Calculate reduced transition density ME',Strlength),'No'
         end if 
 
-        if (pko_option%EccentriType /=0 ) then
-            if(pko_option%EccentriType==1) write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'(1)'
-            if(pko_option%EccentriType==2) write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'(2)'
-            if(pko_option%EccentriType==3) write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'(3)'
+        if (Proj_option%EccentriType /=0 ) then
+            if(Proj_option%EccentriType==1) write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'(1)'
+            if(Proj_option%EccentriType==2) write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'(2)'
+            if(Proj_option%EccentriType==3) write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'(3)'
         else 
             write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'No'
         end if 
 
-        if(pko_option%ihf == 1) then 
+        if(Proj_option%ihf == 1) then 
             write(*,"(5x,a,':   ',a)") adjust_left('Norm overlap formula',Strlength),'sqrt(det(D) det(R))'
-        else if(pko_option%ihf == 2) then
+        else if(Proj_option%ihf == 2) then
             write(*,"(5x,a,':   ',a)") adjust_left('Norm overlap formula',Strlength),'Robledo (2009) formula'
-        else if(pko_option%ihf == 3) then
+        else if(Proj_option%ihf == 3) then
             write(*,"(5x,a,':   ',a)") adjust_left('Norm overlap formula',Strlength),'Bertsch & Robledo (2011) formula'
         end if 
         write(*,"(a)") '=========================================================================================='
@@ -196,7 +196,7 @@ subroutine read_wavefuntion_files(q1,q2)
     use Globals, only: wf1,wf2,constraint
     integer :: q1,q2,nb,it,temp,ib
     integer, dimension(nb_max,2) :: kd
-    call set_output_filename(constraint%betac(q1),constraint%bet3c(q1))
+    call set_CDFT_output_filename(constraint%betac(q1),constraint%bet3c(q1))
     open(outputfile%u_outputwf,file=outputfile%outputwf,form='unformatted',status='unknown')      
     read(outputfile%u_outputwf) !dirac%ka
     read(outputfile%u_outputwf) kd
@@ -215,7 +215,7 @@ subroutine read_wavefuntion_files(q1,q2)
         enddo
         wf1%nk(it) = temp
     enddo 
-    call set_output_filename(constraint%betac(q2),constraint%bet3c(q2))
+    call set_CDFT_output_filename(constraint%betac(q2),constraint%bet3c(q2))
     open(outputfile%u_outputwf,file=outputfile%outputwf,form='unformatted',status='unknown')      
     read(outputfile%u_outputwf) !dirac%ka
     read(outputfile%u_outputwf) kd
@@ -236,23 +236,23 @@ subroutine read_wavefuntion_files(q1,q2)
     enddo
 end subroutine
 
-subroutine write_pko_output(q1,q2)
-    use Globals, only: gcm_space,pko_option
+subroutine write_Proj_output(q1,q2)
+    use Globals, only: gcm_space,Proj_option
     use Eccentricity, only: calculate_Eccentricity_kernel_by_density_matrix_element
     integer,intent(in) :: q1,q2
-    call set_pko_output_filename(q1,q2,pko_option%AMPType)
+    call set_Proj_output_filename(q1,q2,Proj_option%AMPType)
     call write_kernels
     
-    if(pko_option%EccentriType==2 .or. pko_option%EccentriType==3) then
+    if(Proj_option%EccentriType==2 .or. Proj_option%EccentriType==3) then
         call calculate_Eccentricity_kernel_by_density_matrix_element
     end if 
     call write_eccentricity_operators_kernels(q1,q2)
 
-    if (pko_option%DsType > 0 )then
-        if (pko_option%DsType==1 .or. pko_option%DsType==3) call write_1B_density_matrix_elements
+    if (Proj_option%DsType > 0 )then
+        if (Proj_option%DsType==1 .or. Proj_option%DsType==3) call write_1B_density_matrix_elements
     end if 
 
-    if (pko_option%TDType==1) then
+    if (Proj_option%TDType==1) then
         call write_reduced_1B_transition_density_matrix_elements(q1,q2)
     end if 
 
@@ -262,7 +262,7 @@ subroutine write_pko_output(q1,q2)
     end if 
 end subroutine
 
-subroutine set_pko_output_filename(q1,q2,AMPType)
+subroutine set_Proj_output_filename(q1,q2,AMPType)
     use Globals, only:constraint,BS,projection_mesh,nucleus_attributes
     integer :: q1,q2,AMPType,A
     real(r64) :: beta2_1, beta3_1,beta2_2,beta3_2,abs2c1,abs3c1,abs2c2,abs3c2
@@ -443,14 +443,14 @@ end subroutine
 
 ! density matrix elements
 subroutine write_1B_density_matrix_elements
-    use Globals, only: gcm_space,pko_option,BS,outputfile,Proj_densities
+    use Globals, only: gcm_space,Proj_option,BS,outputfile,Proj_densities
     integer :: J,K1_start,K1_end,K2_start,K2_end,K1,K2,iParity,Parity,ifg,m1,m2
     character(1), dimension(2) :: ParityChar = ['+', '-']
     character(1) :: Parity_c
     open(outputfile%u_outputDsME1B,form='formatted',file=outputfile%outputDsME1B)
     write(outputfile%u_outputDsME1B,*) "Pi   J  K1  K2  ifg  m1   m2    neutron            proton"
     do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
-        if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+        if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
             K1_start = 0
             K1_end = 0
             K2_start = 0
@@ -485,7 +485,7 @@ subroutine write_1B_density_matrix_elements
 end subroutine
 
 subroutine write_reduced_1B_transition_density_matrix_elements(q1,q2)
-    use Globals, only: outputfile,gcm_space,pko_option,TDs
+    use Globals, only: outputfile,gcm_space,Proj_option,TDs
     integer, intent(in) :: q1,q2
     integer :: J,Ji,Jf,lambda,Ki_start,Ki_end,Kf_start,Kf_end,Kf,Ki,ifg,a,b,Parity_i,Parity_f,iPi,iPf
     character(1), dimension(2) :: ParityChar = ['+', '-']
@@ -494,13 +494,13 @@ subroutine write_reduced_1B_transition_density_matrix_elements(q1,q2)
     open(outputfile%u_outputTDME1B ,form='formatted',file=outputfile%outputTDME1B)
     write(outputfile%u_outputTDME1B,*) "Pf Pi  Jf  Ji  l   Kf  Ki  ifg a   b    neutron            proton"
     ! q2-q1
-    if (pko_option%Kernel_Symmetry == 1 .and. q1/=q2) then
+    if (Proj_option%Kernel_Symmetry == 1 .and. q1/=q2) then
         open(outputfile%u_outputTDME1B_c ,form='formatted',file=outputfile%outputTDME1B_c)
         write(outputfile%u_outputTDME1B_c,*) "Pf Pi  Jf  Ji  l   Kf  Ki  ifg a   b    neutron            proton"
     end if 
     do Ji = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
         do Jf = Ji, Ji+TDs%lambda_max
-            if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+            if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
                 Ki_start = 0
                 Ki_end = 0
                 Kf_start = 0
@@ -526,7 +526,7 @@ subroutine write_reduced_1B_transition_density_matrix_elements(q1,q2)
                                         write(outputfile%u_outputTDME1B,"(1x,a1,2x,a1,8i4,2x,2f18.14)") Parity_f_c,Parity_i_c,Jf,Ji,lambda,Kf,Ki,ifg,a,b, &
                                             Real(TDs%reduced_TDME1B(Jf,Kf,iPf,lambda,Ji,Ki,iPi,ifg,a,b,1)),&
                                             Real(TDs%reduced_TDME1B(Jf,Kf,iPf,lambda,Ji,Ki,iPi,ifg,a,b,2))
-                                        if (pko_option%Kernel_Symmetry == 1 .and. q1/=q2) then
+                                        if (Proj_option%Kernel_Symmetry == 1 .and. q1/=q2) then
                                             write(outputfile%u_outputTDME1B_c,"(1x,a1,2x,a1,8i4,2x,2f18.14)")Parity_f_c,Parity_i_c,Jf,Ji,lambda,Kf,Ki,ifg,a,b, &
                                                 Real(TDs%reduced_TDME1B_c(Jf,Kf,iPf,lambda,Ji,Ki,iPi,ifg,a,b,1)),&
                                                 Real(TDs%reduced_TDME1B_c(Jf,Kf,iPf,lambda,Ji,Ki,iPi,ifg,a,b,2))
@@ -541,7 +541,7 @@ subroutine write_reduced_1B_transition_density_matrix_elements(q1,q2)
         end do 
     end do
     close(outputfile%u_outputTDME1B)
-    if (pko_option%Kernel_Symmetry == 1 .and. q1/=q2) then 
+    if (Proj_option%Kernel_Symmetry == 1 .and. q1/=q2) then 
         close(outputfile%u_outputTDME1B_c)
     end if 
 end subroutine

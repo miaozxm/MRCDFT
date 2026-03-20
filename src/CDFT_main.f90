@@ -10,7 +10,7 @@ MODULE CDFT
 contains
     subroutine CDFT_Main
         use Globals, only: constraint, iteration, outputfile,expectations,option,pairing
-        use CDFT_Inout, only: set_output_filename,write_result_DIR,adjust_left
+        use CDFT_Inout, only: set_CDFT_output_filename,write_result_DIR,adjust_left
         use Field, only: set_woodssaxon_parameters,calculate_meson_propagators,initial_potential_fields,calculate_fields
         use Forces, only : calculate_density_dependence_of_coupling_constants
         use Basis, only : set_Cylindrical_HO_basis,set_Spherical_HO_basis,transform_coefficients_form_cylindrical_to_spherical
@@ -54,7 +54,7 @@ contains
         do constraint_index = 1, constraint%length ! loop for different deformation parameters 
             constraint%index = constraint_index  
             call set_constraint_parameters
-            call set_output_filename(constraint%betac(constraint%index),constraint%bet3c(constraint%index))
+            call set_CDFT_output_filename(constraint%betac(constraint%index),constraint%bet3c(constraint%index))
             open(outputfile%u_outputf, file=outputfile%outputf, status='unknown')
 
             call initial_pairing_field(ifPrint .and. .True.) ! for BCS case (set initial fermi energy for RHB )

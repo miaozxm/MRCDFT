@@ -20,20 +20,20 @@ Module TD
         !      where M_lambda = [c_a^\dagger \tilde{c}_b]_\lambda
         !
         !-----------------------------------------------------------------
-        use Globals, only: gcm_space,pko_option
+        use Globals, only: gcm_space,Proj_option
         integer, intent(in) :: q1,q2
         integer :: J,Ji,Jf,lambda,Ki_start,Ki_end,Kf_start,Kf_end,Kf,Ki,ifg,a,b,Parity_i,Parity_f,iPi,iPf
         complex(r64) :: reduced_TDME1B(2),reduced_TDME1B_c(2)
         logical :: q2_q1_Symmetry
         write(*,'(5x,A)') 'calculate_reduced_transition_density_matrix_element ...'
         call set_nlj_mapping
-        if(q1/=q2 .and. pko_option%Kernel_Symmetry==1) then
+        if(q1/=q2 .and. Proj_option%Kernel_Symmetry==1) then
             q2_q1_Symmetry = .True.
         else
             q2_q1_Symmetry = .False.
         end if 
         ! reduced 1B transition density
-        if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+        if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
             if(.not. allocated(TDs%reduced_TDME1B)) allocate(TDs%reduced_TDME1B(gcm_space%Jmin:gcm_space%Jmax+TDs%lambda_max, 0:0, 2,&        ! Jf,Kf,Pf
                                                                             0:TDs%lambda_max, &                                               ! lambda    
                                                                             gcm_space%Jmin:gcm_space%Jmax, 0:0, 2,&                           ! Ji,Ki,Pi
@@ -54,7 +54,7 @@ Module TD
         end if 
         do Ji = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
             do Jf = Ji, Ji+TDs%lambda_max
-                if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+                if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
                     Ki_start = 0
                     Ki_end = 0
                     Kf_start = 0
@@ -172,7 +172,7 @@ Module TD
         !   Here we take Parity_i = (-1)^{J_i}), so we can simply multiply by 2 without integrating over [pi/2, pi ].
         !------------------------------------------------------------------------------------------------------------------------------
         use Constants, only: pi
-        use Globals, only: BS,projection_mesh,pko_option,nucleus_attributes,mix,Proj_densities
+        use Globals, only: BS,projection_mesh,Proj_option,nucleus_attributes,mix,Proj_densities
         use Basis, only: djmk
         use EM, only: wigner3j
         integer, intent(in) :: Jf,Ji,lambda,Kf,Ki,ifg,a,b,Parity_f,Parity_i
@@ -200,10 +200,10 @@ Module TD
         do ialpha = 1, projection_mesh%nalpha
             do ibeta = 1, projection_mesh%nbeta
                 ! If we have implemented the symmetry of rho_mm, then these lines are not needed.
-                if(pko_option%Euler_Symmetry == 2) then
+                if(Proj_option%Euler_Symmetry == 2) then
                     stop '[calculate_reduced_one_body_transition_density]: Euler_Symmetry=2, Not yet implemented! You should set the Symmetry of Euler angles as 0!'
                 end if
-                if(pko_option%Euler_Symmetry==1 .and. ibeta>(projection_mesh%nbeta+1)/2) then
+                if(Proj_option%Euler_Symmetry==1 .and. ibeta>(projection_mesh%nbeta+1)/2) then
                     cycle
                     ! Using the tensor symmetry, it can be proven that when Parity_i = (-1)**Ji
                     !  the contribution from (pi/2, pi]) is the same as that from (0, pi/2).
@@ -216,10 +216,10 @@ Module TD
                         beta = projection_mesh%beta(ibeta)
                         gamma = projection_mesh%gamma(igamma)
                         cgamma = DCMPLX(0.d0,gamma)
-                        if(pko_option%AMPtype==0) then
+                        if(Proj_option%AMPtype==0) then
                             fac_AMP = 1
                             cfac_AMP = 1
-                        else if (pko_option%AMPtype==1) then
+                        else if (Proj_option%AMPtype==1) then
                             ! In fact, when checking the AMP type (equal to 1) , 
                             ! the values of (alpha) and (gamma) have already been set to zero.
                             ! The following four assignments are unnecessary.
@@ -296,20 +296,20 @@ Module TD
             end do 
         end do       
         
-        if(pko_option%Euler_Symmetry==1 .and. pko_option%AMPtype==1) then
+        if(Proj_option%Euler_Symmetry==1 .and. Proj_option%AMPtype==1) then
             ! If we have implemented the symmetry of rho_mm, No need to multiply by 2.
             reduced_TDME1B(1) = fac_Parity*reduced_TDME1B(1)*2.d0
             reduced_TDME1B(2) = fac_Parity*reduced_TDME1B(2)*2.d0  
             reduced_TDME1B_c(1) = fac_Parity*reduced_TDME1B_c(1)*2.d0
             reduced_TDME1B_c(2) = fac_Parity*reduced_TDME1B_c(2)*2.d0  
-        else if(pko_option%Euler_Symmetry==0) then
+        else if(Proj_option%Euler_Symmetry==0) then
             reduced_TDME1B(1) = fac_Parity*reduced_TDME1B(1)
             reduced_TDME1B(2) = fac_Parity*reduced_TDME1B(2)
             reduced_TDME1B_c(1) = fac_Parity*reduced_TDME1B_c(1)
             reduced_TDME1B_c(2) = fac_Parity*reduced_TDME1B_c(2)
         else 
-            write(*,*) 'AMPtype=',pko_option%AMPtype
-            write(*,*) 'Euler_Symmetry=',pko_option%Euler_Symmetry
+            write(*,*) 'AMPtype=',Proj_option%AMPtype
+            write(*,*) 'Euler_Symmetry=',Proj_option%Euler_Symmetry
             stop "Wrong AMPtype or Euler_Symmetry ! "
         end if 
     end subroutine 

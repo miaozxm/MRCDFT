@@ -11,7 +11,7 @@ PROGRAM MR_CDFT
     use omp_lib
     use CDFT
     use Proj
-    use Globals, only: pko_option,outputfile
+    use Globals, only: Proj_option,outputfile
     use MathMethods, only: math_gfv
     use CDFT_Inout, only: handle_input_config,read_file_b23,read_CDFT_configuration
     use Proj_Inout, only: read_Proj_configuration
@@ -42,10 +42,10 @@ PROGRAM MR_CDFT
     call math_gfv
     call set_nucleus_attributes(.True.)
     call set_force_parameters(.True.)
-    if(pko_option%ProjectionType == 0 .or. pko_option%ProjectionType==1) then
+    if(Proj_option%ProjectionType == 0 .or. Proj_option%ProjectionType==1) then
         call CDFT_Main
     endif
-    if(pko_option%ProjectionType == 1 .or. pko_option%ProjectionType==2) then
+    if(Proj_option%ProjectionType == 1 .or. Proj_option%ProjectionType==2) then
         call Proj_Main
     endif
     close(outputfile%u_config)

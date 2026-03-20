@@ -264,14 +264,14 @@ contains
         !       \rho_{m2 m1} = <q1|c^+_{m2}c_{m1} P^{J}_{K1 K2} P^N P^Z P^{Pi}|q2>
         !      \rho_{m4 m3 m2 m1} = <q1|c^+_{m1}c^+_{m2}c_{m3}c_{m4} P^{J}_{K1 K2}P^N P^Z P^{Pi}|q2>
         !-------------------------------------------------------------------------------------------
-        use Globals, only: gcm_space,pko_option,BS,kernels
+        use Globals, only: gcm_space,Proj_option,BS,kernels
         use Proj_Density, only: calculate_one_body_density_matrix_element,calculate_two_body_density_matrix_element
         integer :: J,K1_start,K1_end,K2_start,K2_end,K1,K2,iParity,Parity,ifg1,m1,ifg2,m2,ifg3,m3,ifg4,m4,total_iter,iter
         complex(r64) :: ME1B(2),ME2B(2),Eccentricity_1B(2),Eccentricity_2B(2)
         real(r64) :: e_1B,e_2B 
         write(*,'(5x,A)') 'calculate_Eccentricity_kernel_by_density_matrix_element ... '
         do J = 0,0
-            if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+            if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
                 K1_start = 0
                 K1_end = 0
                 K2_start = 0

@@ -44,7 +44,7 @@ type Input_Parameter
     integer(i8),dimension(2) :: Pi ! block parity for neutron and proton
     integer(i16) :: option_blockMethod          ! 1: Block at the beginning of the iteration; 2:Block after non-blocking iteration converges; 3: Convergence blocking after convergence of non-blocking iterations
     integer(i16) :: option_Erot ! Rotation correction energy formula: 0: no; 1:Belyaev formula; 2: Nilsson formula; 3: Odd A formula
-    ! PKO
+    ! Proj
     integer :: ProjectionType ! 0 : no 1: RMF+AMP 2: only AMP
     integer :: AMPType  ! 0:no ; 1: 1DAMP; 2: 3DAMP
     integer :: PNPType ! Particle Number Projection; 0: no; 1: yes
@@ -552,9 +552,9 @@ type(OddA_) OddA
 
 
 !!==================================================================================  
-!! PKO global variables 
+!! Proj global variables 
 
-type Option_PKO
+type Option_Proj
     integer :: ProjectionType ! 0 : no 1: RMF+AMP 2: only AMP
     integer :: ihf ! Norm overlap calculation method; 1: Bertsch & Robledo (2011) formula; 2: Robledo (2009) formula
     integer :: AMPtype ! 0: no; 1: 1DAMP; 2: 3DAMP
@@ -566,7 +566,7 @@ type Option_PKO
     integer :: TDType
     integer :: EccentriType
 end type
-type(Option_PKO) :: pko_option
+type(Option_Proj) :: Proj_option
 
 type ProjectionMesh
     ! particle-number projection:  gauge angles

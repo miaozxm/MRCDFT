@@ -26,7 +26,7 @@ Module Kernel
     
     subroutine set_projection_mesh_points()
         use Constants, only: pi
-        use Globals, only: input_par,pko_option,projection_mesh,gcm_space
+        use Globals, only: input_par,Proj_option,projection_mesh,gcm_space
         use MathMethods, only: GaussLegendre_X1toX2
         integer :: it
         ! Set the parameters for the PNP mesh (gauge angles)
@@ -35,7 +35,7 @@ Module Kernel
         projection_mesh%nphi(2) = input_par%nphi ! same as neutron
         projection_mesh%dphi(1) = pi/projection_mesh%nphi(1)
         projection_mesh%dphi(2) = pi/projection_mesh%nphi(2)
-        if(pko_option%PNPtype==0) then 
+        if(Proj_option%PNPtype==0) then 
             ! no PNP
             do it = 1,2
                 projection_mesh%nphi(it) = 1
@@ -57,7 +57,7 @@ Module Kernel
         call GaussLegendre_X1toX2(0.d0,pi,projection_mesh%alpha,projection_mesh%walpha,projection_mesh%nalpha) ! reduce [0, 2pi] to [0,pi] ! D2 symmetry is required.
         call GaussLegendre_X1toX2(0.d0,pi,projection_mesh%beta,projection_mesh%wbeta,projection_mesh%nbeta) ! [0,pi]
         call GaussLegendre_X1toX2(0.d0,pi,projection_mesh%gamma,projection_mesh%wgamma,projection_mesh%ngamma)  ! reduce [0, 2pi] to [0,pi] ! D2 symmetry is required.
-        if(pko_option%AMPtype==0) then
+        if(Proj_option%AMPtype==0) then
             ! alpha
             projection_mesh%nalpha = 1
             projection_mesh%alpha(1) = 0.d0
@@ -74,7 +74,7 @@ Module Kernel
             gcm_space%Jmin = 0
             gcm_space%Jmax = 0
             ! write(*,*) 'no AMP'
-        else if(pko_option%AMPtype==1) then! 1DAMP
+        else if(Proj_option%AMPtype==1) then! 1DAMP
             ! alpha
             projection_mesh%nalpha = 1
             projection_mesh%alpha(1) = 0.d0
@@ -102,7 +102,7 @@ Module Kernel
         ! where R is rotation operator and P is parity operator
         !----------------------------------------------------------------------
         use Constants, only: pi
-        use Globals, only: projection_mesh,pko_option
+        use Globals, only: projection_mesh,Proj_option
         integer :: nalpha,nbeta,ngamma
 
         nalpha = projection_mesh%nalpha
@@ -126,7 +126,7 @@ Module Kernel
         call calculate_J2_kernels ! <J   K_f q_1 Pi  | J^2 |J   K_i q_2 Pi>
         call calculate_EM_kernels ! calcualate <J_f K_f q_1 Pi_f ||T_lambda|| J_i K_i q_2 Pi_i >
         call calculate_E0_kernel ! <J   K_f q_1 Pi  | r^2 |J   K_i q_2 Pi>
-        if( pko_option%EccentriType == 1 .or. pko_option%EccentriType == 3) then
+        if( Proj_option%EccentriType == 1 .or. Proj_option%EccentriType == 3) then
             call calculate_Eccentricity_kernel ! <J   K_f q_1 Pi  | E_n |J   K_i q_2 Pi>
         end if 
         
@@ -142,7 +142,7 @@ Module Kernel
     end subroutine
 
     subroutine calculate_overlaps_arrays
-        use Globals, only: projection_mesh,pko_option
+        use Globals, only: projection_mesh,Proj_option
         use Proj_Density, only: store_mix_density_matrix_elements
         use CDFT_Inout, only: adjust_left
         integer :: nalpha,nbeta,ngamma,ialpha,ibeta,igamma,mu
@@ -162,7 +162,7 @@ Module Kernel
                     !#    using the symmetry(D2 and Axial+Parity) of the Euler angles
                     !##########################################################
                     ! D2
-                    if(pko_option%AMPtype==2 .and. pko_option%Euler_Symmetry==2 .and. ialpha > (nalpha+1)/2 ) then
+                    if(Proj_option%AMPtype==2 .and. Proj_option%Euler_Symmetry==2 .and. ialpha > (nalpha+1)/2 ) then
                         write(*,'(A)') '(alpha) symmetry(D2).'
                         ! because <O R(alpha,beta,gamma)> = <O R(pi-alpha,beta,pi-gamma)>, 
                         Norm_PNP_AMParray(ialpha,ibeta,igamma)  = Norm_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma)
@@ -197,7 +197,7 @@ Module Kernel
                         call store_mix_density_matrix_elements(ialpha,ibeta,igamma)
                         cycle
                     end if                   
-                    if(pko_option%AMPtype==2 .and. pko_option%Euler_Symmetry==2 .and. ibeta > (nbeta+1)/2 ) then
+                    if(Proj_option%AMPtype==2 .and. Proj_option%Euler_Symmetry==2 .and. ibeta > (nbeta+1)/2 ) then
                         write(*,'(A)') '(beta) symmetry(D2).'
                         ! because <O R(alpha,beta,gamma)> = <O R(alpha,pi-beta,pi-gamma)>, 
                         Norm_PNP_AMParray(ialpha,ibeta,igamma)  = Norm_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma)
@@ -233,7 +233,7 @@ Module Kernel
                         cycle
                     end if
                     ! Axial+Parity
-                    if(pko_option%AMPtype==1 .and. pko_option%Euler_Symmetry==1 .and. ibeta > (nbeta+1)/2) then 
+                    if(Proj_option%AMPtype==1 .and. Proj_option%Euler_Symmetry==1 .and. ibeta > (nbeta+1)/2) then 
                         write(*,'(A)') '(beta) symmetry (Axially+Parity).'
                         ! because <O R(0,beta,0)> = <O R(0,pi-beta,0)P> 
                         ! because <O R(0,beta,0)P> = <O R(0,pi-beta,0)>
@@ -316,7 +316,7 @@ Module Kernel
         !     This factor allows alpha and gamma to be reduced to [0, pi], but D2 symmetry is required.
         !-------------------------------------------------------------------------------------------------------------------------------------
         use Constants, only: pi
-        use Globals, only: gcm_space,projection_mesh,kernels,pko_option
+        use Globals, only: gcm_space,projection_mesh,kernels,Proj_option
         use Basis, only: djmk
         integer :: ialpha,ibeta,igamma,J,K1_start,K1_end,K2_start,K2_end,K1,K2,it
         real(r64) :: alpha, beta, gamma, w
@@ -326,7 +326,7 @@ Module Kernel
         kernels%X_KK = (0.d0,0.d0)
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
             ! H, N kernels
-            if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+            if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
                 K1_start = 0
                 K1_end = 0
                 K2_start = 0
@@ -347,9 +347,9 @@ Module Kernel
                         cgamma = DCMPLX(0.d0,gamma)
                         do K1 = K1_start, K1_end
                             do K2 = K2_start, K2_end
-                                if(pko_option%AMPtype==0) then
+                                if(Proj_option%AMPtype==0) then
                                     fac = 1.d0
-                                else if (pko_option%AMPtype==1) then
+                                else if (Proj_option%AMPtype==1) then
                                     w = projection_mesh%wbeta(ibeta)
                                     fac1 = (2*J+1)/(2.0d0)*dsin(beta)*djmk(J,K1,K2,dcos(beta),0)
                                     fac = fac1*w
@@ -406,7 +406,7 @@ Module Kernel
         !                          * <q_1| N^2 R(alpha,beta,gamma) P^{Pi} |q_2 >
         !-------------------------------------------------------------------------------------------------------------------------------------
         use Constants, only: pi
-        use Globals, only: gcm_space,projection_mesh,kernels,pko_option
+        use Globals, only: gcm_space,projection_mesh,kernels,Proj_option
         use Basis, only: djmk
         integer :: ialpha,ibeta,igamma,J,Ji,Jf,Ki_start,Ki_end,Kf_start,Kf_end,Kf,Ki,it
         real(r64) :: alpha, beta, gamma, w
@@ -415,7 +415,7 @@ Module Kernel
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
             Ji = J
             Jf = J
-            if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+            if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
                 Ki_start = 0
                 Ki_end = 0
                 Kf_start = 0
@@ -436,9 +436,9 @@ Module Kernel
                         cgamma = DCMPLX(0.d0,gamma)
                         do Kf = Kf_start, Kf_end
                             do Ki = Ki_start, Ki_end            
-                                if(pko_option%AMPtype==0) then
+                                if(Proj_option%AMPtype==0) then
                                     fac = 1
-                                else if (pko_option%AMPtype==1) then
+                                else if (Proj_option%AMPtype==1) then
                                     w = projection_mesh%wbeta(ibeta)
                                     fac1 = (2*Ji+1)/(2.0d0)*dsin(beta)*djmk(Ji,Kf,Ki,dcos(beta),0)
                                     fac = fac1*w
@@ -476,7 +476,7 @@ Module Kernel
         !                          * <q_1| J^2 R(alpha,beta,gamma) P^{Pi} |q_2 >
         !-------------------------------------------------------------------------------------------------------------------------------------
         use Constants, only: pi
-        use Globals, only: gcm_space,projection_mesh,kernels,pko_option
+        use Globals, only: gcm_space,projection_mesh,kernels,Proj_option
         use Basis, only: djmk
         integer :: ialpha,ibeta,igamma,J,Ji,Jf,Ki_start,Ki_end,Kf_start,Kf_end,Kf,Ki,it
         real(r64) :: alpha, beta, gamma, w
@@ -485,7 +485,7 @@ Module Kernel
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
             Ji = J
             Jf = J
-            if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+            if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
                 Ki_start = 0
                 Ki_end = 0
                 Kf_start = 0
@@ -506,9 +506,9 @@ Module Kernel
                         cgamma = DCMPLX(0.d0,gamma)
                         do Kf = Kf_start, Kf_end
                             do Ki = Ki_start, Ki_end            
-                                if(pko_option%AMPtype==0) then
+                                if(Proj_option%AMPtype==0) then
                                     fac = 1
-                                else if (pko_option%AMPtype==1) then
+                                else if (Proj_option%AMPtype==1) then
                                     w = projection_mesh%wbeta(ibeta)
                                     fac1 = (2*Ji+1)/(2.0d0)*dsin(beta)*djmk(Ji,Kf,Ki,dcos(beta),0)
                                     fac = fac1*w
@@ -572,7 +572,7 @@ Module Kernel
         !       This factor allows alpha and gamma to be reduced to [0, pi], but D2 symmetry is required.
         !-------------------------------------------------------------------------------------------------------------------------------------
         use Constants, only: pi
-        use Globals, only: gcm_space,projection_mesh,kernels,pko_option
+        use Globals, only: gcm_space,projection_mesh,kernels,Proj_option
         use Basis, only: djmk
         use EM, only: wigner3j
         integer :: ialpha,ibeta,igamma,J,Ji,Jf,Ki_start,Ki_end,Kf_start,Kf_end,Kf,Ki,mu,K1,it,nu
@@ -584,7 +584,7 @@ Module Kernel
             ! Q2 Kernels
             Ji = J
             Jf = J + 2
-            if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+            if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
                 Ki_start = 0
                 Ki_end = 0
                 Kf_start = 0
@@ -607,9 +607,9 @@ Module Kernel
                             do Ki = Ki_start, Ki_end            
                                 do mu = -2, 2 ! lambda = 2
                                     K1 = Kf - mu
-                                    if(pko_option%AMPtype==0) then
+                                    if(Proj_option%AMPtype==0) then
                                         fac = 1.d0
-                                    else if (pko_option%AMPtype==1) then
+                                    else if (Proj_option%AMPtype==1) then
                                         w = projection_mesh%wbeta(ibeta)
                                         fac1 = (2*Ji+1)/(2.0d0)*dsin(beta)*djmk(Ji,K1,Ki,dcos(beta),0) ! Note: djmk(Ji,K1,Ki,dcos(beta),0) = d^{Ji}_{K1 Ki}(beta)
                                         fac = fac1*w
@@ -639,9 +639,9 @@ Module Kernel
                                 ! q_i, q_f exchange
                                 do mu = -2, 2 ! lambda = 2
                                     K1 = Kf - mu
-                                    if(pko_option%AMPtype==0) then
+                                    if(Proj_option%AMPtype==0) then
                                         fac = 1
-                                    else if (pko_option%AMPtype==1) then
+                                    else if (Proj_option%AMPtype==1) then
                                         w = projection_mesh%wbeta(ibeta)
                                         fac1 = (2*Ji+1)/(2.0d0)*dsin(beta)*djmk(Ji,Ki,K1,dcos(beta),0) ! Note: djmk(Ji,Ki,K1,dcos(beta),0) = d^{Ji}_{Ki K1}(beta)
                                         fac = fac1*w
@@ -686,7 +686,7 @@ Module Kernel
         !                          * <q_1| r2 R(alpha,beta,gamma) P^{Pi} |q_2 >
         !-------------------------------------------------------------------------------------------------------------------------------------
         use Constants, only: pi
-        use Globals, only: gcm_space,projection_mesh,kernels,pko_option
+        use Globals, only: gcm_space,projection_mesh,kernels,Proj_option
         use Basis, only: djmk
         integer :: ialpha,ibeta,igamma,J,Ji,Jf,Ki_start,Ki_end,Kf_start,Kf_end,Kf,Ki,it
         real(r64) :: alpha, beta, gamma, w
@@ -695,7 +695,7 @@ Module Kernel
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
             Ji = J
             Jf = J
-            if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+            if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
                 Ki_start = 0
                 Ki_end = 0
                 Kf_start = 0
@@ -716,9 +716,9 @@ Module Kernel
                         cgamma = DCMPLX(0.d0,gamma)
                         do Kf = Kf_start, Kf_end
                             do Ki = Ki_start, Ki_end            
-                                if(pko_option%AMPtype==0) then
+                                if(Proj_option%AMPtype==0) then
                                     fac = 1
-                                else if (pko_option%AMPtype==1) then
+                                else if (Proj_option%AMPtype==1) then
                                     w = projection_mesh%wbeta(ibeta)
                                     fac1 = (2*Ji+1)/(2.0d0)*dsin(beta)*djmk(Ji,Kf,Ki,dcos(beta),0)
                                     fac = fac1*w
@@ -754,7 +754,7 @@ Module Kernel
         !                          * <q_1| E_n R(alpha,beta,gamma) P^{Pi} |q_2 >
         !-------------------------------------------------------------------------------------------------------------------------------------
         use Constants, only: pi
-        use Globals, only: gcm_space,projection_mesh,kernels,pko_option
+        use Globals, only: gcm_space,projection_mesh,kernels,Proj_option
         use Basis, only: djmk
         integer :: ialpha,ibeta,igamma,J,Ji,Jf,Ki_start,Ki_end,Kf_start,Kf_end,Kf,Ki,it
         real(r64) :: alpha, beta, gamma, w
@@ -763,7 +763,7 @@ Module Kernel
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
             Ji = J
             Jf = J
-            if(pko_option%AMPtype==0 .or. pko_option%AMPtype==1) then
+            if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
                 Ki_start = 0
                 Ki_end = 0
                 Kf_start = 0
@@ -784,9 +784,9 @@ Module Kernel
                         cgamma = DCMPLX(0.d0,gamma)
                         do Kf = Kf_start, Kf_end
                             do Ki = Ki_start, Ki_end            
-                                if(pko_option%AMPtype==0) then
+                                if(Proj_option%AMPtype==0) then
                                     fac = 1
-                                else if (pko_option%AMPtype==1) then
+                                else if (Proj_option%AMPtype==1) then
                                     w = projection_mesh%wbeta(ibeta)
                                     fac1 = (2*Ji+1)/(2.0d0)*dsin(beta)*djmk(Ji,Kf,Ki,dcos(beta),0)
                                     fac = fac1*w
@@ -817,7 +817,7 @@ Module Kernel
     !------------------------------------------------
     subroutine calculate_overlaps_after_PNP_at_Euler_angles(alpha, beta, gamma, Norm_PNP, pNorm_PNP, Etot_PNP, pEtot_PNP, Particle_PNP, pParticle_PNP,&
                                         N2_PNP,pN2_PNP,J2_PNP, pJ2_PNP, Q2m_PNP, pQ2m_PNP,cQ2m_PNP,pcQ2m_PNP,r2_PNP, pr2_PNP,Eccentri_PNP,pEccentri_PNP)
-        use Globals, only: pko_option
+        use Globals, only: Proj_option
         use Mixed, only: calculate_mixed_DensCurrTens_and_norm_overlap
         real(r64), intent(in) :: alpha, beta, gamma
         complex(r64),intent(out) :: Norm_PNP, pNorm_PNP, Etot_PNP, pEtot_PNP, Particle_PNP(2), pParticle_PNP(2),N2_PNP(2),pN2_PNP(2),J2_PNP, pJ2_PNP, &
@@ -836,7 +836,7 @@ Module Kernel
         call calculate_J2_after_PNP(J2_PNP, pJ2_PNP)
         call calculate_Qlm_after_PNP(Q2m_PNP,pQ2m_PNP,cQ2m_PNP,pcQ2m_PNP)
         call calculate_r2_after_PNP(r2_PNP, pr2_PNP)
-        if( pko_option%EccentriType == 1 .or. pko_option%EccentriType == 3) then
+        if( Proj_option%EccentriType == 1 .or. Proj_option%EccentriType == 3) then
             call calculate_Eccentricity_after_PNP(Eccentri_PNP,pEccentri_PNP)
         end if 
     end subroutine

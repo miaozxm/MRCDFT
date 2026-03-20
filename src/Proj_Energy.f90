@@ -312,15 +312,15 @@ Module Energy
         !--------------------------------------------------------------------------------------
         !  calculate center of mass correction energy term:
         !--------------------------------------------------------------------------------------
-        use Globals,only: pko_option,wf1,wf2,BS
+        use Globals,only: Proj_option,wf1,wf2,BS
         complex(r64),intent(out) :: E_cm
         ! zero
-        if(pko_option%icm==0) then
+        if(Proj_option%icm==0) then
             E_cm = (0.0d0,0.0d0)
         !q-dependent. average 
-        else if ( pko_option%icm==1 ) then
+        else if ( Proj_option%icm==1 ) then
             E_cm = (wf1%ecm + wf2%ecm)/2.d0
-        else if (pko_option%icm==2) then 
+        else if (Proj_option%icm==2) then 
             E_cm = -0.75d0*BS%HO_sph%hom
         else 
             write(*,*) "[Center_of_Mass_Correction_term] Worning : Invalid value for icm "

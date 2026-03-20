@@ -89,7 +89,7 @@ end subroutine
 
 
 subroutine calculate_mixed_DensCurrTens_and_norm_overlap(alpha, beta, gamma)
-    use Globals, only: pko_option,projection_mesh
+    use Globals, only: Proj_option,projection_mesh
     real(r64), intent(in) :: alpha, beta, gamma
     integer :: it, iphi
     real(r64) :: phi
@@ -1376,20 +1376,20 @@ subroutine calculate_norm_overlap(iphi,phi,it)
     !  2) Pfaffian: Robledo, PRC79,021302(R)(2009)
     !  3) Pfaffian: Bertsch and Robledo, PRL108, 042505 (2012)
     !--------------------------------------------------------------------------------------
-    use Globals, only: pko_option
+    use Globals, only: Proj_option
     integer,intent(in)::  iphi,it
     real(r64) :: phi
     complex(r64) :: norm_overlap, pnorm_overlap
 
-    if(pko_option%ihf==1) then
+    if(Proj_option%ihf==1) then
         ! way 1 
         mix%norm(iphi,it) = cdsqrt(D_Deter(it) * RT_Deter(it))
         mix%pnorm(iphi,it) = cdsqrt(pD_Deter(it) * pRT_Deter(it))
         write(222,*) 'it', it,'iphi', iphi,  'norm', mix%norm(iphi,it), 'pnorm',mix%pnorm(iphi,it)
-    else if(pko_option%ihf==2) then
+    else if(Proj_option%ihf==2) then
         ! way 2 
         call Pfaffian_Robledo()
-    else if(pko_option%ihf==3) then
+    else if(Proj_option%ihf==3) then
         ! way 3
         call Pfaffian_Bertsch(phi,it,norm_overlap,pnorm_overlap)
         mix%norm(iphi,it) = norm_overlap

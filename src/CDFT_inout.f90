@@ -265,7 +265,7 @@ subroutine read_CDFT_configuration(ifPrint)
     end subroutine printParameters
 end subroutine
 
-subroutine set_output_filename(constraint_beta2,constraint_beta3)
+subroutine set_CDFT_output_filename(constraint_beta2,constraint_beta3)
     use Globals, only: BS,nucleus_attributes
     real(r64),intent(in):: constraint_beta2,constraint_beta3
     character :: sign_beta2, sign_beta3
@@ -316,7 +316,7 @@ subroutine set_output_filename(constraint_beta2,constraint_beta3)
                         //'_eMax'//char(name_nf1)//char(name_nf2) &
                         //sign_beta2//char(name(1))//char(name(2))//char(name(3)) &
                         //sign_beta3//char(name(4))//char(name(5))//char(name(6))//'.dens'
-end subroutine set_output_filename
+end subroutine set_CDFT_output_filename
 
 subroutine read_fields
     !--------------------------------------------------------------------------------------!
