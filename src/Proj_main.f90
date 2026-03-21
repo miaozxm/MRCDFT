@@ -49,7 +49,7 @@ contains
                 if (Proj_option%DsType > 0) then
                     call calculate_density_matrix_element(q1,q2)
                 end if 
-                if (Proj_option%TDType == 1) then
+                if (Proj_option%AMPtype > 0 .and. Proj_option%TDType > 0) then
                     call calculate_reduced_transition_density_matrix_element(q1,q2)
                 end if 
                 call write_Proj_output(q1,q2)
