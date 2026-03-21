@@ -515,6 +515,7 @@ subroutine write_Proj_expectation(q1,q2)
             end do
         end do
     end do
+    write(Proj_outputfile%u_outExpectation,format2) 
 end subroutine
 
 ! density matrix elements
