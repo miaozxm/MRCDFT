@@ -49,6 +49,7 @@ subroutine read_Proj_configuration(ifPrint)
     read(u_Proj, format2) input_par%DsType
     read(u_Proj, format2) input_par%TDType
     read(u_Proj, format2) input_par%lambda_max
+    read(u_Proj, format2) input_par%checkN2J2
     read(u_Proj, format2) input_par%EccentriType
     call set_Proj_parameters
     if(ifPrint) call printParameters
@@ -106,10 +107,13 @@ subroutine read_Proj_configuration(ifPrint)
         ! set calculate density matrix element option
         Proj_option%DsType = input_par%DsType
         if(Proj_option%DsType<0 .or. Proj_option%DsType>3) stop "DsType should be 0 or 1 or 2 or 3"
-        ! set TD type
+        ! set calculate transition density matrix element option
         Proj_option%TDType = input_par%TDType
         if(Proj_option%TDType<0 .or. Proj_option%TDType>1) stop "TDType should be 0 or 1"
         TDs%lambda_max = input_par%lambda_max ! max lambda of 1B transition density
+        ! set calculate N^2 and J^2 option
+        Proj_option%checkN2J2 = input_par%checkN2J2
+        if(Proj_option%checkN2J2<0 .or. Proj_option%checkN2J2>1) stop "checkN2J2 should be 0 or 1"
         ! set calculate eccentricity kernel option
         Proj_option%EccentriType = input_par%EccentriType
         if(Proj_option%EccentriType<0 .or. Proj_option%EccentriType>3) stop "EccentriType should be 0 or 1 or 2 or 3"
@@ -269,10 +273,12 @@ subroutine write_Proj_output(q1,q2)
 
     ! write kernels
     call write_kernels
-    if(Proj_option%EccentriType==2 .or. Proj_option%EccentriType==3) then
-        call calculate_Eccentricity_kernel_by_density_matrix_element
+    if(Proj_option%EccentriType/=0)then 
+        if(Proj_option%EccentriType==2 .or. Proj_option%EccentriType==3) then
+            call calculate_Eccentricity_kernel_by_density_matrix_element
+        end if 
+        call write_eccentricity_operators_kernels(q1,q2)
     end if 
-    call write_eccentricity_operators_kernels(q1,q2)
 
     ! write matrix elemets of operator
     if(q1== gcm_space%q1_start .and. q2==gcm_space%q2_start) then 

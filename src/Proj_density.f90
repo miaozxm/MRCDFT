@@ -161,10 +161,10 @@ contains
                             end do
                         end do
                         !$OMP END PARALLEL
-                        write(*,"(8x,4(a,i3,4x),a,f15.10)") "J=",J,"K=",K1,"K'=",K2,'Parity=',Parity,'    N     =',Real(N(1)/(kernels%N_KK(J,K1,K2,iParity)+1.0d-30))
-                        write(*,"(8x,4(a,i3,4x),a,f15.10)") "J=",J,"K=",K1,"K'=",K2,'Parity=',Parity,'    Z     =',Real(N(2)/(kernels%N_KK(J,K1,K2,iParity)+1.0d-30))
-                        write(*,"(8x,4(a,i3,4x),a,f15.10)") "J=",J,"K=",K1,"K'=",K2,'Parity=',Parity,'    N(1-N)=',Real(N2(1)/(kernels%N_KK(J,K1,K2,iParity)+1.0d-30))
-                        write(*,"(8x,4(a,i3,4x),a,f15.10)") "J=",J,"K=",K1,"K'=",K2,'Parity=',Parity,'    Z(1-Z)=',Real(N2(2)/(kernels%N_KK(J,K1,K2,iParity)+1.0d-30))
+                        ! write(*,"(8x,4(a,i3,4x),a,f15.10)") "J=",J,"K=",K1,"K'=",K2,'Parity=',Parity,'    N     =',Real(N(1)/(kernels%N_KK(J,K1,K2,iParity)+1.0d-30))
+                        ! write(*,"(8x,4(a,i3,4x),a,f15.10)") "J=",J,"K=",K1,"K'=",K2,'Parity=',Parity,'    Z     =',Real(N(2)/(kernels%N_KK(J,K1,K2,iParity)+1.0d-30))
+                        ! write(*,"(8x,4(a,i3,4x),a,f15.10)") "J=",J,"K=",K1,"K'=",K2,'Parity=',Parity,'    N(1-N)=',Real(N2(1)/(kernels%N_KK(J,K1,K2,iParity)+1.0d-30))
+                        ! write(*,"(8x,4(a,i3,4x),a,f15.10)") "J=",J,"K=",K1,"K'=",K2,'Parity=',Parity,'    Z(1-Z)=',Real(N2(2)/(kernels%N_KK(J,K1,K2,iParity)+1.0d-30))
                     end do 
                 end do 
             end do 

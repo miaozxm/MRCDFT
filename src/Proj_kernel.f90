@@ -116,14 +116,16 @@ Module Kernel
                  Q2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),pQ2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),&
                  cQ2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),pcQ2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),&
                  r2_PNP_AMParray(nalpha,nbeta,ngamma,2),pr2_PNP_AMParray(nalpha,nbeta,ngamma,2),&
-                 Eccentri_PNP_AMParray(nalpha,nbeta,ngamma,2),pEccentri_PNP_AMParray(nalpha,nbeta,ngamma,2))
+                 Eccentri_PNP_AMParray(nalpha,nbeta,ngamma,2),pEccentri_PNP_AMParray(nalpha,nbeta,ngamma,2),source=(0.0d0,0.0d0))
 
         call calculate_overlaps_arrays
 
         ! Integration over AMP mesh points(alpha beta gamma)
         call calcualate_Norm_Hamiltonian_ParticleNumber_kernels  ! calculate <J K_1 q_1 Pi | O | J K_2 q_2 Pi >
-        call calculate_N2_kernels ! <J   K_f q_1 Pi  | N^2 |J   K_i q_2 Pi>
-        call calculate_J2_kernels ! <J   K_f q_1 Pi  | J^2 |J   K_i q_2 Pi>
+        if( Proj_option%checkN2J2 == 1) then 
+            call calculate_N2_kernels ! <J   K_f q_1 Pi  | N^2 |J   K_i q_2 Pi>
+            call calculate_J2_kernels ! <J   K_f q_1 Pi  | J^2 |J   K_i q_2 Pi>
+        end if 
         call calculate_EM_kernels ! calcualate <J_f K_f q_1 Pi_f ||T_lambda|| J_i K_i q_2 Pi_i >
         call calculate_E0_kernel ! <J   K_f q_1 Pi  | r^2 |J   K_i q_2 Pi>
         if( Proj_option%EccentriType == 1 .or. Proj_option%EccentriType == 3) then
@@ -832,8 +834,10 @@ Module Kernel
         ! Integration over PNP mesh points(phi_it) and spatial coordinates (r,theta,phi)  
         call calculate_norm_overlap_and_particle_number_after_PNP(Norm_PNP,pNorm_PNP,Particle_PNP,pParticle_PNP)
         call calculate_Rotated_Energy_after_PNP(Etot_PNP,pEtot_PNP)
-        call calculate_N2_after_PNP(N2_PNP,pN2_PNP)
-        call calculate_J2_after_PNP(J2_PNP, pJ2_PNP)
+        if(Proj_option%checkN2J2 == 1) then
+            call calculate_N2_after_PNP(N2_PNP,pN2_PNP)
+            call calculate_J2_after_PNP(J2_PNP, pJ2_PNP)
+        end if 
         call calculate_Qlm_after_PNP(Q2m_PNP,pQ2m_PNP,cQ2m_PNP,pcQ2m_PNP)
         call calculate_r2_after_PNP(r2_PNP, pr2_PNP)
         if( Proj_option%EccentriType == 1 .or. Proj_option%EccentriType == 3) then
