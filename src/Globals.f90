@@ -366,7 +366,7 @@ end type
 type(expectation_) expectations
 
 
-type Output_FileName
+type CDFT_Output_FileName
     ! config file
     character(len=40) :: config = OUTPUT_PATH//'config.out'
     integer :: u_config   = u_config
@@ -374,51 +374,28 @@ type Output_FileName
 
     ! --------------- CDFT ---------------------
     ! standard output
-    character(len=40) :: outputf
+    character(len=50) :: outputf
     integer :: u_outputf  = u_config + 1
     ! 
-    character(len=40) :: outputw
+    character(len=50) :: outputw
     integer :: u_outputw  = u_config + 2
     !
-    character(len=40) :: outdel
+    character(len=50) :: outdel
     integer :: u_outdel   = u_config + 3
     !
-    character(len=40) :: outputwf
+    character(len=50) :: outputwf
     integer :: u_outputwf = u_config + 4
     ! density
-    character(len=40) :: outputd
+    character(len=50) :: outputd
     integer :: u_outputd = u_config + 5
     ! rotational correction energy
-    character(len=40) :: rotationalE = OUTPUT_PATH//'CDFT_Erot.out'
+    character(len=50) :: rotationalE
     integer :: u_rotationalE = u_config + 6
     ! 
-    character(len=40) :: outExpectation = OUTPUT_PATH//'CDFT_Expectation.out'
+    character(len=50) :: outExpectation
     integer :: u_outExpectation = u_config + 7
-
-    ! --------------- Projection ---------------------
-    ! kernel
-    character(len=60) :: outputelem
-    integer :: u_outputelem = u_config + 11
-    ! Density 1B
-    character(len=60) :: outputDsME1B ! q1-q2
-    integer :: u_outputDsME1B = u_config + 12
-    ! TD 1B
-    character(len=60) :: outputTDME1B ! q1-q2
-    integer :: u_outputTDME1B = u_config + 13
-    character(len=60) :: outputTDME1B_c ! q2-q1
-    integer :: u_outputTDME1B_c = u_config + 14
-    ! EM me
-    character(len=60) :: outputEMme
-    integer :: u_outputEMme = u_config + 15
-    ! m-scheme 1B me
-    character(len=60) :: outputm1Bme
-    integer :: u_outputm1Bme = u_config + 16
-    ! Eccentricity 
-    character(len=70) :: outputEccentricityKernel
-    integer :: u_outputEccentricityKernel = u_config + 17
-
 end type
-type(Output_FileName) :: outputfile
+type(CDFT_Output_FileName) :: outputfile
 
 ! -----define force parameters
 type mass_parameters
@@ -567,6 +544,35 @@ type Option_Proj
     integer :: EccentriType
 end type
 type(Option_Proj) :: Proj_option
+
+
+type Proj_Output_FileName
+    ! --------------- Projection ---------------------
+    !
+    character(len=60) :: outExpectation
+    integer :: u_outExpectation = u_config + 10
+    ! kernel
+    character(len=70) :: outputelem
+    integer :: u_outputelem = u_config + 11
+    ! Density 1B
+    character(len=60) :: outputDsME1B ! q1-q2
+    integer :: u_outputDsME1B = u_config + 12
+    ! TD 1B
+    character(len=60) :: outputTDME1B ! q1-q2
+    integer :: u_outputTDME1B = u_config + 13
+    character(len=60) :: outputTDME1B_c ! q2-q1
+    integer :: u_outputTDME1B_c = u_config + 14
+    ! EM me
+    character(len=60) :: outputEMme
+    integer :: u_outputEMme = u_config + 15
+    ! m-scheme 1B me
+    character(len=60) :: outputm1Bme
+    integer :: u_outputm1Bme = u_config + 16
+    ! Eccentricity 
+    character(len=70) :: outputEccentricityKernel
+    integer :: u_outputEccentricityKernel = u_config + 17
+end type
+type(Proj_Output_FileName) :: Proj_outputfile
 
 type ProjectionMesh
     ! particle-number projection:  gauge angles

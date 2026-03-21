@@ -265,6 +265,20 @@ subroutine read_CDFT_configuration(ifPrint)
     end subroutine printParameters
 end subroutine
 
+subroutine set_CDFT_Expectation_filename
+    use Globals, only: BS,nucleus_attributes
+    integer :: A
+    integer(i16) :: name_nf1,name_nf2
+    A = nucleus_attributes%mass_number_int
+    name_nf1 = mod(BS%HO_cyl%n0f/10,10) + 48
+    name_nf2 = mod(BS%HO_cyl%n0f,10) + 48
+    ! the structure of ouput filenames are `CDFT_ANuclear_eMax`//HO%n0f//type
+    outputfile%outExpectation = OUTPUT_PATH//'CDFT_'//int2str(A)//nucleus_attributes%name &
+                                //'_eMax' //char(name_nf1)//char(name_nf2)//'_Expectation.out'
+    outputfile%rotationalE = OUTPUT_PATH//'CDFT_'//int2str(A)//nucleus_attributes%name &
+                                //'_eMax'//char(name_nf1)//char(name_nf2)//'_Erot.out'
+end subroutine set_CDFT_Expectation_filename
+
 subroutine set_CDFT_output_filename(constraint_beta2,constraint_beta3)
     use Globals, only: BS,nucleus_attributes
     real(r64),intent(in):: constraint_beta2,constraint_beta3
@@ -294,7 +308,7 @@ subroutine set_CDFT_output_filename(constraint_beta2,constraint_beta3)
     name(6) = mod(abs3c*100,10.d0)+48
     name_nf1 = mod(BS%HO_cyl%n0f/10,10) + 48
     name_nf2 = mod(BS%HO_cyl%n0f,10) + 48
-    ! the structure of ouput filenames are `CDFT_eMax`//HO%n0f//constraint_beta2*100//constraint_beta3*100//type
+    ! the structure of ouput filenames are `CDFT_ANuclear_eMax`//HO%n0f//constraint_beta2*100//constraint_beta3*100//type
     ! like 'CDFT_eMax08+140+080.out' means HO%n0f=08, constraint_beta2= +1.40, constraint_beta3= +0.80, type is '.out'
     outputfile%outputf = OUTPUT_PATH//'CDFT_'//int2str(A)//nucleus_attributes%name &
                         //'_eMax' //char(name_nf1)//char(name_nf2) &
@@ -462,6 +476,8 @@ end function find_file
 
 subroutine write_result_DIR
     use Expectation, only: calculate_expectation_DIR
+    use ExpectationRotation, only: calculate_rotational_correction_energy_DIR
+    call calculate_rotational_correction_energy_DIR
     call calculate_expectation_DIR(.True.) ! keep True
     call print_single_particle_energies
     call write_expectation

@@ -10,7 +10,7 @@ MODULE CDFT
 contains
     subroutine CDFT_Main
         use Globals, only: constraint, iteration, outputfile,expectations,option,pairing
-        use CDFT_Inout, only: set_CDFT_output_filename,write_result_DIR,adjust_left
+        use CDFT_Inout, only: set_CDFT_Expectation_filename,set_CDFT_output_filename,write_result_DIR,adjust_left
         use Field, only: set_woodssaxon_parameters,calculate_meson_propagators,initial_potential_fields,calculate_fields
         use Forces, only : calculate_density_dependence_of_coupling_constants
         use Basis, only : set_Cylindrical_HO_basis,set_Spherical_HO_basis,transform_coefficients_form_cylindrical_to_spherical
@@ -22,7 +22,7 @@ contains
         use Broyden, only: set_broyden_parameters,mix_potentials_DIR,mix_matrix_elements_RHB
         use DeltaField, only: calculate_pairing_matrix_element_W,set_separable_pairing_parameters,initial_delta_field
         use RHBEquation, only: solve_RHB_equation
-        use ExpectationRotation, only: calculate_rotational_correction_energy_DIR
+
         implicit none
         logical :: ifPrint=.False.
         integer :: constraint_index,iteration_index
@@ -48,6 +48,7 @@ contains
             call calculate_pairing_matrix_element_W 
         endif
 
+        call set_CDFT_Expectation_filename
         open(outputfile%u_rotationalE, file=outputfile%rotationalE, status='unknown')
         open(outputfile%u_outExpectation, file=outputfile%outExpectation, status='unknown')
 
@@ -120,7 +121,6 @@ contains
             if(option%eqType .eq. 0) then
                 ! transform wave function coefficients(F,G) from cylindrical to spherical basis
                 call transform_coefficients_form_cylindrical_to_spherical(ifPrint .and. .True.)
-                call calculate_rotational_correction_energy_DIR
                 call write_result_DIR
             endif
             

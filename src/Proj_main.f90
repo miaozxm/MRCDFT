@@ -10,10 +10,10 @@ MODULE Proj
 implicit none
 contains
     subroutine Proj_Main
-        use Globals, only: gcm_space,Proj_option
+        use Globals, only: gcm_space,Proj_option,Proj_outputfile
         use Energy, only: calculate_sigma_nabla_Spherical
         use Basis, only: set_spherical_oscillator_wave_function
-        use Proj_Inout, only: read_wavefuntion_files,write_Proj_output
+        use Proj_Inout, only: set_Proj_Expectation_filename,read_wavefuntion_files,write_Proj_output
         use Mixed, only: determine_truncated_dimension
         use Kernel, only: set_projection_mesh_points,calculate_Kernel
         use Proj_Density, only: calculate_density_matrix_element
@@ -25,6 +25,9 @@ contains
         call set_projection_mesh_points
         call set_spherical_oscillator_wave_function
         call calculate_sigma_nabla_Spherical
+
+        call set_Proj_Expectation_filename
+        open(Proj_outputfile%u_outExpectation, file=Proj_outputfile%outExpectation, status='unknown')
         do q1 = gcm_space%q1_start, gcm_space%q1_end
             if(Proj_option%Kernel_Symmetry==0) then      ! All Kernels 
                 q2_start = gcm_space%q2_start
@@ -53,6 +56,7 @@ contains
             end do
         end do
 
+        close(Proj_outputfile%u_outExpectation) 
         write(*,*)'Proj_Main: Proj calculations completed'
     end subroutine
 END MODULE Proj

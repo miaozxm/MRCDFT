@@ -7,7 +7,7 @@
 ! - subroutine                                                                 !
 !==============================================================================!
 MODULE Proj_Inout
-use Globals, only: outputfile
+use Globals, only: Proj_outputfile
 use Constants, only: i16,r64,u_start,pi,ngl,OUTPUT_PATH, Jmax_max
 use CDFT_Inout, only: file_path_para,set_CDFT_output_filename, int2str, adjust_left
 implicit none
@@ -193,7 +193,7 @@ end subroutine
 
 subroutine read_wavefuntion_files(q1,q2)
     use Constants, only: nb_max 
-    use Globals, only: wf1,wf2,constraint
+    use Globals, only: wf1,wf2,constraint,outputfile
     integer :: q1,q2,nb,it,temp,ib
     integer, dimension(nb_max,2) :: kd
     call set_CDFT_output_filename(constraint%betac(q1),constraint%bet3c(q1))
@@ -236,34 +236,66 @@ subroutine read_wavefuntion_files(q1,q2)
     enddo
 end subroutine
 
+subroutine set_Proj_Expectation_filename
+    use Globals, only:BS,projection_mesh,nucleus_attributes,Proj_option
+    integer :: AMPType,A
+    integer(i16) :: AMP,name_nf1,name_nf2,nphi_1,nphi_2,nbeta_1,nbeta_2
+    A = nucleus_attributes%mass_number_int
+    !------
+    AMPType = Proj_option%AMPType
+    if(AMPType==0) AMP = 0 + 48
+    if(AMPType==1) AMP = 1 + 48
+    if(AMPType==3) AMP = 3 + 48
+    !-----Nf
+    name_nf1 = mod(BS%HO_sph%n0f/10,10) + 48
+    name_nf2 = mod(BS%HO_sph%n0f,10) + 48
+    !-----nphi,nbeta
+    nphi_1 = mod(projection_mesh%nphi(1)/10,10) + 48
+    nphi_2 = mod(projection_mesh%nphi(1),10) + 48
+    nbeta_1 = mod(projection_mesh%nbeta/10,10) + 48
+    nbeta_2 = mod(projection_mesh%nbeta,10) + 48
+    Proj_outputfile%outExpectation = OUTPUT_PATH//'Proj_'//int2str(A)//nucleus_attributes%name &
+                        //'_'//char(AMP)//'D'//'_eMax'//char(name_nf1)//char(name_nf2) &
+                        //'.'//char(nphi_1)//char(nphi_2) &
+                        //'.'//char(nbeta_1)//char(nbeta_2)//'_Expectation.out'
+end subroutine
+
 subroutine write_Proj_output(q1,q2)
     use Globals, only: gcm_space,Proj_option
     use Eccentricity, only: calculate_Eccentricity_kernel_by_density_matrix_element
     integer,intent(in) :: q1,q2
-    call set_Proj_output_filename(q1,q2,Proj_option%AMPType)
+
+    call set_Proj_output_filename(q1,q2)
+
+    ! write kernels
     call write_kernels
-    
     if(Proj_option%EccentriType==2 .or. Proj_option%EccentriType==3) then
         call calculate_Eccentricity_kernel_by_density_matrix_element
     end if 
     call write_eccentricity_operators_kernels(q1,q2)
 
-    if (Proj_option%DsType > 0 )then
-        if (Proj_option%DsType==1 .or. Proj_option%DsType==3) call write_1B_density_matrix_elements
-    end if 
-
-    if (Proj_option%TDType==1) then
-        call write_reduced_1B_transition_density_matrix_elements(q1,q2)
-    end if 
-
+    ! write matrix elemets of operator
     if(q1== gcm_space%q1_start .and. q2==gcm_space%q2_start) then 
         call write_reduced_1B_multipole_matrix_elements
         call write_1B_operators_matrix_elements
     end if 
+
+    ! write density and transition_density
+    if (Proj_option%DsType > 0 )then
+        if (Proj_option%DsType==1 .or. Proj_option%DsType==3) call write_1B_density_matrix_elements
+    end if 
+    if (Proj_option%TDType==1) then
+        call write_reduced_1B_transition_density_matrix_elements(q1,q2)
+    end if 
+
+    ! write expectation
+    if(q1==q2) then 
+        call write_Proj_expectation(q1,q2)
+    end if 
 end subroutine
 
-subroutine set_Proj_output_filename(q1,q2,AMPType)
-    use Globals, only:constraint,BS,projection_mesh,nucleus_attributes
+subroutine set_Proj_output_filename(q1,q2)
+    use Globals, only:constraint,BS,projection_mesh,nucleus_attributes,Proj_option
     integer :: q1,q2,AMPType,A
     real(r64) :: beta2_1, beta3_1,beta2_2,beta3_2,abs2c1,abs3c1,abs2c2,abs3c2
     character :: signb21,signb31,signb22,signb32
@@ -283,6 +315,7 @@ subroutine set_Proj_output_filename(q1,q2,AMPType)
     if(beta3_2 >= 0.d0) signb32 = '+'
     if(beta3_2 < 0.d0)  signb32 = '-'
     !------
+    AMPType = Proj_option%AMPType
     if(AMPType==0) AMP = 0 + 48
     if(AMPType==1) AMP = 1 + 48
     if(AMPType==3) AMP = 3 + 48
@@ -312,46 +345,41 @@ subroutine set_Proj_output_filename(q1,q2,AMPType)
     nphi_2 = mod(projection_mesh%nphi(1),10) + 48
     nbeta_1 = mod(projection_mesh%nbeta/10,10) + 48
     nbeta_2 = mod(projection_mesh%nbeta,10) + 48
-    outputfile%outputelem = OUTPUT_PATH//'Proj_kern.'//char(AMP)//'D' &
-                        //'_eMax'//char(name_nf1)//char(name_nf2) &
-                        //'.'//char(nphi_1)//char(nphi_2) &
-                        //'.'//char(nbeta_1)//char(nbeta_2) &
+    Proj_outputfile%outputelem = OUTPUT_PATH//'Proj_'//int2str(A)//nucleus_attributes%name &
+                        //'_kern.'//char(AMP)//'D'//'_eMax'//char(name_nf1)//char(name_nf2) &
+                        //'.'//char(nphi_1)//char(nphi_2)//'.'//char(nbeta_1)//char(nbeta_2) &
                         //signb21//char(name1(1))//char(name1(2))//char(name1(3)) &
                         //signb31//char(name1(4))//char(name1(5))//char(name1(6)) &
                         //'_'//signb22//char(name2(1))//char(name2(2))//char(name2(3)) &
                         //signb32//char(name2(4))//char(name2(5))//char(name2(6))//'.elem'
-    outputfile%outputDsME1B = OUTPUT_PATH//'Proj_D1B.'//char(AMP)//'D' &
-                        //'_eMax'//char(name_nf1)//char(name_nf2) &
-                        //'.'//char(nphi_1)//char(nphi_2) &
-                        //'.'//char(nbeta_1)//char(nbeta_2) &
+    Proj_outputfile%outputDsME1B = OUTPUT_PATH//'Proj_'//int2str(A)//nucleus_attributes%name &
+                        //'_D1B.'//char(AMP)//'D'//'_eMax'//char(name_nf1)//char(name_nf2) &
+                        //'.'//char(nphi_1)//char(nphi_2)//'.'//char(nbeta_1)//char(nbeta_2) &
                         //signb21//char(name1(1))//char(name1(2))//char(name1(3)) &
                         //signb31//char(name1(4))//char(name1(5))//char(name1(6)) &
                         //'_'//signb22//char(name2(1))//char(name2(2))//char(name2(3)) &
                         //signb32//char(name2(4))//char(name2(5))//char(name2(6))//'.me'
-    outputfile%outputTDME1B = OUTPUT_PATH//'Proj_TD1B.'//char(AMP)//'D' &
-                        //'_eMax'//char(name_nf1)//char(name_nf2) &
-                        //'.'//char(nphi_1)//char(nphi_2) &
-                        //'.'//char(nbeta_1)//char(nbeta_2) &
+    Proj_outputfile%outputTDME1B = OUTPUT_PATH//'Proj_'//int2str(A)//nucleus_attributes%name &
+                        //'_TD1B.'//char(AMP)//'D'//'_eMax'//char(name_nf1)//char(name_nf2) &
+                        //'.'//char(nphi_1)//char(nphi_2)//'.'//char(nbeta_1)//char(nbeta_2) &
                         //signb21//char(name1(1))//char(name1(2))//char(name1(3)) &
                         //signb31//char(name1(4))//char(name1(5))//char(name1(6)) &
                         //'_'//signb22//char(name2(1))//char(name2(2))//char(name2(3)) &
                         //signb32//char(name2(4))//char(name2(5))//char(name2(6))//'.me'
-    outputfile%outputTDME1B_c = OUTPUT_PATH//'Proj_TD1B.'//char(AMP)//'D' &
-                        //'_eMax'//char(name_nf1)//char(name_nf2) &
-                        //'.'//char(nphi_1)//char(nphi_2) &
-                        //'.'//char(nbeta_1)//char(nbeta_2) &
+    Proj_outputfile%outputTDME1B_c = OUTPUT_PATH//'Proj_'//int2str(A)//nucleus_attributes%name &
+                        //'_TD1B.'//char(AMP)//'D'//'_eMax'//char(name_nf1)//char(name_nf2) &
+                        //'.'//char(nphi_1)//char(nphi_2)//'.'//char(nbeta_1)//char(nbeta_2) &
                         //signb22//char(name2(1))//char(name2(2))//char(name2(3)) &
                         //signb32//char(name2(4))//char(name2(5))//char(name2(6)) &
                         //'_'//signb21//char(name1(1))//char(name1(2))//char(name1(3)) &
                         //signb31//char(name1(4))//char(name1(5))//char(name1(6)) //'.me'
-    outputfile%outputEMme = OUTPUT_PATH//'EM'//'_A'//int2str(A) &
+    Proj_outputfile%outputEMme = OUTPUT_PATH//'jScheme_EM'//'_A'//int2str(A) &
                         //'_eMax'//char(name_nf1)//char(name_nf2)//'.me'       
-    outputfile%outputm1Bme = OUTPUT_PATH//'mScheme_1B'//'_A'//int2str(A) &
+    Proj_outputfile%outputm1Bme = OUTPUT_PATH//'mScheme_1B'//'_A'//int2str(A) &
                         //'_eMax'//char(name_nf1)//char(name_nf2)//'.me'
-    outputfile%outputEccentricityKernel = OUTPUT_PATH//'Proj_kern.Eccen.'//char(AMP)//'D' &
-                        //'_eMax'//char(name_nf1)//char(name_nf2) &
-                        //'.'//char(nphi_1)//char(nphi_2) &
-                        //'.'//char(nbeta_1)//char(nbeta_2) &
+    Proj_outputfile%outputEccentricityKernel = OUTPUT_PATH//'Proj_'//int2str(A)//nucleus_attributes%name &
+                        //'_Eccen.'//char(AMP)//'D'//'_eMax'//char(name_nf1)//char(name_nf2) &
+                        //'.'//char(nphi_1)//char(nphi_2)//'.'//char(nbeta_1)//char(nbeta_2) &
                         //signb21//char(name1(1))//char(name1(2))//char(name1(3)) &
                         //signb31//char(name1(4))//char(name1(5))//char(name1(6)) &
                         //'_'//signb22//char(name2(1))//char(name2(2))//char(name2(3)) &
@@ -365,7 +393,7 @@ subroutine write_kernels
     character(1), dimension(2) :: ParityChar = ['+', '-']
     character(len=*), parameter ::  format1 = "(3i5,4x,a,4x,3f9.3)", &
                                     format2 = "(4e15.8)"
-    open(outputfile%u_outputelem ,form='formatted',file=outputfile%outputelem)
+    open(Proj_outputfile%u_outputelem ,form='formatted',file=Proj_outputfile%outputelem)
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
             do K1 = -0,0
                 do K2 = -0,0
@@ -377,28 +405,28 @@ subroutine write_kernels
                     else
                         parity = 2 ! -
                     end if
-                    write(outputfile%u_outputelem,format1)  J,K1,K2,ParityChar(parity),&
-                                                            Real(kernels%N2_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! N^2
-                                                            Real(kernels%N2_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! Z^2
-                                                            Real(kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))      ! J^2
-                    write(outputfile%u_outputelem,format2)  kernels%N_KK(J,K1,K2,parity), &
-                                                            kernels%H_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
-                    write(outputfile%u_outputelem,format2)  kernels%X_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30),&
-                                                            kernels%X_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
+                    write(Proj_outputfile%u_outputelem,format1) J,K1,K2,ParityChar(parity),&
+                                                                Real(kernels%N2_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! N^2
+                                                                Real(kernels%N2_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! Z^2
+                                                                Real(kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))      ! J^2
+                    write(Proj_outputfile%u_outputelem,format2) kernels%N_KK(J,K1,K2,parity), &
+                                                                kernels%H_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
+                    write(Proj_outputfile%u_outputelem,format2) kernels%X_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30),&
+                                                                kernels%X_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
                     ! ! proton part
-                    write(outputfile%u_outputelem,format2)  kernels%Q2_KK_12(J,K1,K2,2,parity),&
-                                                            kernels%Q2_KK_21(J,K1,K2,2,parity)
-                    write(outputfile%u_outputelem,format2)  kernels%E0_KK(J,K1,K2,2,parity), &
-                                                            kernels%E0_KK(J,K1,K2,2,parity)
+                    write(Proj_outputfile%u_outputelem,format2) kernels%Q2_KK_12(J,K1,K2,2,parity),&
+                                                                kernels%Q2_KK_21(J,K1,K2,2,parity)
+                    write(Proj_outputfile%u_outputelem,format2) kernels%E0_KK(J,K1,K2,2,parity), &
+                                                                kernels%E0_KK(J,K1,K2,2,parity)
                     ! ! neutron part
-                    write(outputfile%u_outputelem,format2)  kernels%Q2_KK_12(J,K1,K2,1,parity),&
-                                                            kernels%Q2_KK_21(J,K1,K2,1,parity)
-                    write(outputfile%u_outputelem,format2)  kernels%E0_KK(J,K1,K2,1,parity), &
-                                                            kernels%E0_KK(J,K1,K2,1,parity)
+                    write(Proj_outputfile%u_outputelem,format2) kernels%Q2_KK_12(J,K1,K2,1,parity),&
+                                                                kernels%Q2_KK_21(J,K1,K2,1,parity)
+                    write(Proj_outputfile%u_outputelem,format2) kernels%E0_KK(J,K1,K2,1,parity), &
+                                                                kernels%E0_KK(J,K1,K2,1,parity)
                 end do
             end do
         end do 
-    close(outputfile%u_outputelem)
+    close(Proj_outputfile%u_outputelem)
 end subroutine
 
 subroutine write_eccentricity_operators_kernels(q1,q2)
@@ -408,7 +436,7 @@ subroutine write_eccentricity_operators_kernels(q1,q2)
     character(1), dimension(2) :: ParityChar = ['+', '-']
     character(len=*), parameter ::  format1 = "(3i5,4x,a,4(4x,f5.3))", &
                                     format2 = "(3e15.8)"
-    open(outputfile%u_outputEccentricityKernel,form='formatted',file=outputfile%outputEccentricityKernel)
+    open(Proj_outputfile%u_outputEccentricityKernel,form='formatted',file=Proj_outputfile%outputEccentricityKernel)
         do J = 0,0 
             do K1 = -0,0
                 do K2 = -0,0
@@ -420,35 +448,70 @@ subroutine write_eccentricity_operators_kernels(q1,q2)
                     else
                         parity = 2 ! -
                     end if
-                    write(outputfile%u_outputEccentricityKernel,format1)  J,K1,K2,ParityChar(parity),constraint%betac(q1),constraint%bet3c(q1),constraint%betac(q2),constraint%bet3c(q2)
+                    write(Proj_outputfile%u_outputEccentricityKernel,format1)  J,K1,K2,ParityChar(parity),constraint%betac(q1),constraint%bet3c(q1),constraint%betac(q2),constraint%bet3c(q2)
 
-                    write(outputfile%u_outputEccentricityKernel,format2)  Real(kernels%Eccentricity_KK(J,K1,K2,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
-                                                                          Real(kernels%Eccentricity_KK(J,K1,K2,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
-                              Real((kernels%Eccentricity_KK(J,K1,K2,parity,1)+kernels%Eccentricity_KK(J,K1,K2,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
+                    write(Proj_outputfile%u_outputEccentricityKernel,format2)   Real(kernels%Eccentricity_KK(J,K1,K2,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
+                                                                                Real(kernels%Eccentricity_KK(J,K1,K2,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
+                                     Real((kernels%Eccentricity_KK(J,K1,K2,parity,1)+kernels%Eccentricity_KK(J,K1,K2,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
 
-                    write(outputfile%u_outputEccentricityKernel,*) "By Density:"
+                    write(Proj_outputfile%u_outputEccentricityKernel,*) "By Density:"
                     ! ! proton part
-                    write(outputfile%u_outputEccentricityKernel,format2)   Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,2,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
-                                                                           Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,2,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
-                    Real((kernels%Eccentricity_KK_byDensity(J,K1,K2,2,parity,1)+kernels%Eccentricity_KK_byDensity(J,K1,K2,2,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
+                    write(Proj_outputfile%u_outputEccentricityKernel,format2)   Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,2,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
+                                                                                Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,2,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
+                         Real((kernels%Eccentricity_KK_byDensity(J,K1,K2,2,parity,1)+kernels%Eccentricity_KK_byDensity(J,K1,K2,2,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
                     ! ! neutron part
-                    write(outputfile%u_outputEccentricityKernel,format2)   Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
-                                                                           Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
-                    Real((kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,1)+kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
+                    write(Proj_outputfile%u_outputEccentricityKernel,format2)   Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
+                                                                                Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
+                         Real((kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,1)+kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
                 end do
             end do
         end do 
-    close(outputfile%u_outputEccentricityKernel)
+    close(Proj_outputfile%u_outputEccentricityKernel)
+end subroutine
+
+! write expectation of different (q1,q2)
+subroutine write_Proj_expectation(q1,q2)
+    use Globals,only: gcm_space,Proj_outputfile,kernels,constraint,nucleus_attributes
+    integer :: q1, q2,J,K1,K2,parity
+    character(1), dimension(2) :: ParityChar = ['+', '-']
+    character(len=*), parameter ::  format1 = "(4a9,3(a2,2x),a6,(1x,a9,2x),(a10,2x),(6x,a,5x),2(6x,a,3x),2(a9,2x),2(a7,2x))", &
+                                    format2 = "(4(2x,f6.3,1x),3(i2,2x),(3x,a,3x),(f9.6,2x),2(f10.5,2x),2(f8.3,2x),2(f9.3,2x),(f7.3,2x),(f7.4,2x))"
+    if(q1==gcm_space%q1_start .and. q2==gcm_space%q2_start) then
+        write(Proj_outputfile%u_outExpectation,format1) "beta2_1","beta3_1","beta2_2","beta3_2","J","K1","K2","Parity",&
+                                                        "N_Kernel","H_kernel","E","N","Z","N^2","Z^2","J^2", &
+                                                        "r^2_p"
+    endif
+    do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
+        do K1 = -0,0
+            do K2 = -0,0
+                if ((-1)**J == 1) then
+                    parity = 1 ! +
+                else
+                    parity = 2 ! -
+                end if
+                write(Proj_outputfile%u_outExpectation,format2) constraint%betac(q1),constraint%bet3c(q1), &
+                                    constraint%betac(q2),constraint%bet3c(q2),J,K1,K2,ParityChar(parity),  &
+                                    Real(kernels%N_KK(J,K1,K2,parity)),Real(kernels%H_KK(J,K1,K2,parity)), &
+                                    Real(kernels%H_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), &
+                                    Real(kernels%X_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), &
+                                    Real(kernels%X_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)),  &
+                                    Real(kernels%N2_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! N^2
+                                    Real(kernels%N2_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! Z^2
+                                    Real(kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)),   & ! J^2
+                                    (Real(kernels%E0_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))/nucleus_attributes%proton_number)**0.5d0 !R_p  
+            end do
+        end do
+    end do
 end subroutine
 
 ! density matrix elements
 subroutine write_1B_density_matrix_elements
-    use Globals, only: gcm_space,Proj_option,BS,outputfile,Proj_densities
+    use Globals, only: gcm_space,Proj_option,BS,Proj_outputfile,Proj_densities
     integer :: J,K1_start,K1_end,K2_start,K2_end,K1,K2,iParity,Parity,ifg,m1,m2
     character(1), dimension(2) :: ParityChar = ['+', '-']
     character(1) :: Parity_c
-    open(outputfile%u_outputDsME1B,form='formatted',file=outputfile%outputDsME1B)
-    write(outputfile%u_outputDsME1B,*) "Pi   J  K1  K2  ifg  m1   m2    neutron            proton"
+    open(Proj_outputfile%u_outputDsME1B,form='formatted',file=Proj_outputfile%outputDsME1B)
+    write(Proj_outputfile%u_outputDsME1B,*) "Pi   J  K1  K2  ifg  m1   m2    neutron            proton"
     do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
         if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
             K1_start = 0
@@ -471,7 +534,7 @@ subroutine write_1B_density_matrix_elements
                     do m1 = 1, BS%HO_sph%idsp(1,ifg)
                         do m2 = 1, BS%HO_sph%idsp(1,ifg)
                         ! 1 Body
-                        write(outputfile%u_outputDsME1B,"(1x,a1,6i4,2x,2f18.14)")Parity_c,J,K1,K2,ifg,m1,m2,&
+                        write(Proj_outputfile%u_outputDsME1B,"(1x,a1,6i4,2x,2f18.14)")Parity_c,J,K1,K2,ifg,m1,m2,&
                                     Real(Proj_densities%ME1B(J,K1,K2,iParity,1,ifg,m1,m2)),&
                                     Real(Proj_densities%ME1B(J,K1,K2,iParity,2,ifg,m1,m2))
                         end do
@@ -481,22 +544,22 @@ subroutine write_1B_density_matrix_elements
             end do 
         end do 
     end do
-    close(outputfile%u_outputDsME1B)
+    close(Proj_outputfile%u_outputDsME1B)
 end subroutine
 
 subroutine write_reduced_1B_transition_density_matrix_elements(q1,q2)
-    use Globals, only: outputfile,gcm_space,Proj_option,TDs
+    use Globals, only: Proj_outputfile,gcm_space,Proj_option,TDs
     integer, intent(in) :: q1,q2
     integer :: J,Ji,Jf,lambda,Ki_start,Ki_end,Kf_start,Kf_end,Kf,Ki,ifg,a,b,Parity_i,Parity_f,iPi,iPf
     character(1), dimension(2) :: ParityChar = ['+', '-']
     character(1) :: Parity_f_c,Parity_i_c
     ! q1-q2
-    open(outputfile%u_outputTDME1B ,form='formatted',file=outputfile%outputTDME1B)
-    write(outputfile%u_outputTDME1B,*) "Pf Pi  Jf  Ji  l   Kf  Ki  ifg a   b    neutron            proton"
+    open(Proj_outputfile%u_outputTDME1B ,form='formatted',file=Proj_outputfile%outputTDME1B)
+    write(Proj_outputfile%u_outputTDME1B,*) "Pf Pi  Jf  Ji  l   Kf  Ki  ifg a   b    neutron            proton"
     ! q2-q1
     if (Proj_option%Kernel_Symmetry == 1 .and. q1/=q2) then
-        open(outputfile%u_outputTDME1B_c ,form='formatted',file=outputfile%outputTDME1B_c)
-        write(outputfile%u_outputTDME1B_c,*) "Pf Pi  Jf  Ji  l   Kf  Ki  ifg a   b    neutron            proton"
+        open(Proj_outputfile%u_outputTDME1B_c ,form='formatted',file=Proj_outputfile%outputTDME1B_c)
+        write(Proj_outputfile%u_outputTDME1B_c,*) "Pf Pi  Jf  Ji  l   Kf  Ki  ifg a   b    neutron            proton"
     end if 
     do Ji = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
         do Jf = Ji, Ji+TDs%lambda_max
@@ -523,11 +586,11 @@ subroutine write_reduced_1B_transition_density_matrix_elements(q1,q2)
                                     do iPf = 1,2
                                         Parity_f = (-1)**(iPf+1) ! 1: +1 , 2: -1
                                         Parity_f_c = ParityChar(iPf)
-                                        write(outputfile%u_outputTDME1B,"(1x,a1,2x,a1,8i4,2x,2f18.14)") Parity_f_c,Parity_i_c,Jf,Ji,lambda,Kf,Ki,ifg,a,b, &
+                                        write(Proj_outputfile%u_outputTDME1B,"(1x,a1,2x,a1,8i4,2x,2f18.14)") Parity_f_c,Parity_i_c,Jf,Ji,lambda,Kf,Ki,ifg,a,b, &
                                             Real(TDs%reduced_TDME1B(Jf,Kf,iPf,lambda,Ji,Ki,iPi,ifg,a,b,1)),&
                                             Real(TDs%reduced_TDME1B(Jf,Kf,iPf,lambda,Ji,Ki,iPi,ifg,a,b,2))
                                         if (Proj_option%Kernel_Symmetry == 1 .and. q1/=q2) then
-                                            write(outputfile%u_outputTDME1B_c,"(1x,a1,2x,a1,8i4,2x,2f18.14)")Parity_f_c,Parity_i_c,Jf,Ji,lambda,Kf,Ki,ifg,a,b, &
+                                            write(Proj_outputfile%u_outputTDME1B_c,"(1x,a1,2x,a1,8i4,2x,2f18.14)")Parity_f_c,Parity_i_c,Jf,Ji,lambda,Kf,Ki,ifg,a,b, &
                                                 Real(TDs%reduced_TDME1B_c(Jf,Kf,iPf,lambda,Ji,Ki,iPi,ifg,a,b,1)),&
                                                 Real(TDs%reduced_TDME1B_c(Jf,Kf,iPf,lambda,Ji,Ki,iPi,ifg,a,b,2))
                                         end if 
@@ -540,21 +603,21 @@ subroutine write_reduced_1B_transition_density_matrix_elements(q1,q2)
             end do
         end do 
     end do
-    close(outputfile%u_outputTDME1B)
+    close(Proj_outputfile%u_outputTDME1B)
     if (Proj_option%Kernel_Symmetry == 1 .and. q1/=q2) then 
-        close(outputfile%u_outputTDME1B_c)
+        close(Proj_outputfile%u_outputTDME1B_c)
     end if 
 end subroutine
 
 ! matrix elements of operator
 subroutine write_1B_operators_matrix_elements
-    use Globals, only: BS, outputfile
+    use Globals, only: BS, Proj_outputfile
     use Eccentricity, only: f_n,eccentricity_matrix_element_one_body
     use EM, only: rl_nl,ylm_ljm
     integer :: ifg,ndsp,i0sp,m1,m2,nr1,nl1,nj1,nm1,nr2,nl2,nj2,nm2
     real(r64) :: r2, r4, r2Y20, r4Y20, r4Y40, fn, e_1B
-    open(outputfile%u_outputm1Bme ,form='formatted',file=outputfile%outputm1Bme) 
-    write(outputfile%u_outputm1Bme,'(9A5,2A7,7A11)')  'ifg','m1','m2','n1','n2','l1','l2','2j1','2j2','2j_m1','2j_m2', &
+    open(Proj_outputfile%u_outputm1Bme ,form='formatted',file=Proj_outputfile%outputm1Bme) 
+    write(Proj_outputfile%u_outputm1Bme,'(9A5,2A7,7A11)')  'ifg','m1','m2','n1','n2','l1','l2','2j1','2j2','2j_m1','2j_m2', &
                                                          'r^2','r^4',"r^2Y20","r^4Y20","r^4Y40",'f2','Eps1B'
     do ifg = 1, 2
         ndsp = BS%HO_sph%idsp(1,ifg)
@@ -588,7 +651,7 @@ subroutine write_1B_operators_matrix_elements
                 ! eccentricity operator matrix element
                 fn = f_n(ifg,m1,ifg,m2,2)
                 call eccentricity_matrix_element_one_body(ifg,m1,ifg,m2,2,e_1B)
-                write(outputfile%u_outputm1Bme,"(9i5,2i7,1x,7(f10.5,1x))") ifg,m1,m2,nr1,nr2,nl1,nl2,2*nj1-1,2*nj2-1,2*nm1-1,2*nm2-1,&
+                write(Proj_outputfile%u_outputm1Bme,"(9i5,2i7,1x,7(f10.5,1x))") ifg,m1,m2,nr1,nr2,nl1,nl2,2*nj1-1,2*nj2-1,2*nm1-1,2*nm2-1,&
                                                                             r2,r4,r2Y20,r4Y20,r4Y40,fn,e_1B
             end do 
         end do 
@@ -596,7 +659,7 @@ subroutine write_1B_operators_matrix_elements
 end subroutine
 
 subroutine  write_reduced_1B_multipole_matrix_elements
-    use Globals, only: outputfile,BS,TDs,gcm_space
+    use Globals, only: Proj_outputfile,BS,TDs,gcm_space
     use EM, only: reduced_multipole_matrix_elements,reduced_monopole_matrix_elements,rl_nl
     use TD, only: set_nlj_mapping
     integer :: ifg,lambda_start,lambda_end,lambda,a,b,i0sp,a_index,nra,nla,nja,b_index,nrb,nlb,njb
@@ -604,12 +667,12 @@ subroutine  write_reduced_1B_multipole_matrix_elements
     real(r64) :: monopole_ab
     character(len=200) :: header, temp
     call set_nlj_mapping
-    open(outputfile%u_outputEMme ,form='formatted',file=outputfile%outputEMme)
+    open(Proj_outputfile%u_outputEMme ,form='formatted',file=Proj_outputfile%outputEMme)
     ! store the nlj of a/b
-    write(outputfile%u_outputEMme,*) "--------------------------------------------------------"
-    write(outputfile%u_outputEMme,*) " n l j of a/b "
-    write(outputfile%u_outputEMme,*) "--------------------------------------------------------"
-    write(outputfile%u_outputEMme,*) " ifg a/b  n   l   j"   
+    write(Proj_outputfile%u_outputEMme,*) "--------------------------------------------------------"
+    write(Proj_outputfile%u_outputEMme,*) " n l j of a/b "
+    write(Proj_outputfile%u_outputEMme,*) "--------------------------------------------------------"
+    write(Proj_outputfile%u_outputEMme,*) " ifg a/b  n   l   j"   
     do ifg =1, 2 
         do a = 1, TDs%nlj_length(ifg)
             i0sp = BS%HO_sph%iasp(1,ifg)
@@ -617,7 +680,7 @@ subroutine  write_reduced_1B_multipole_matrix_elements
             nra= BS%HO_sph%nljm(i0sp+a_index,1) ! n_r
             nla= BS%HO_sph%nljm(i0sp+a_index,2) ! l
             nja= BS%HO_sph%nljm(i0sp+a_index,3) ! j +1/2
-            write(outputfile%u_outputEMme,"(5i4,'/2')") ifg, a, nra, nla, (nja*2-1)
+            write(Proj_outputfile%u_outputEMme,"(5i4,'/2')") ifg, a, nra, nla, (nja*2-1)
         end do 
     end do
 
@@ -630,10 +693,10 @@ subroutine  write_reduced_1B_multipole_matrix_elements
         header = trim(header)//temp
     end do
 
-    write(outputfile%u_outputEMme,*) "------------------------------------------------------------------------"
-    write(outputfile%u_outputEMme,*) " reduced single-particle matrix element of the electromagnetic operator "
-    write(outputfile%u_outputEMme,*) "-------------------------------------------------------------------------"
-    write(outputfile%u_outputEMme,'(A)') trim(header)
+    write(Proj_outputfile%u_outputEMme,*) "------------------------------------------------------------------------"
+    write(Proj_outputfile%u_outputEMme,*) " reduced single-particle matrix element of the electromagnetic operator "
+    write(Proj_outputfile%u_outputEMme,*) "-------------------------------------------------------------------------"
+    write(Proj_outputfile%u_outputEMme,'(A)') trim(header)
 
     allocate(Ql_ab(lambda_start:lambda_end))
     ifg =  2 
@@ -652,7 +715,7 @@ subroutine  write_reduced_1B_multipole_matrix_elements
                 call reduced_multipole_matrix_elements(nra,nla,nja,lambda,nrb,nlb,njb,Ql_ab(lambda))
             end do
             call reduced_monopole_matrix_elements(nra,nla,nja,nrb,nlb,njb,monopole_ab)
-            write(outputfile%u_outputEMme,'(2i4,1x,f17.10,8x,15(1x,f17.10))') a,b, monopole_ab,(Ql_ab(lambda), lambda=lambda_start,lambda_end)
+            write(Proj_outputfile%u_outputEMme,'(2i4,1x,f17.10,8x,15(1x,f17.10))') a,b, monopole_ab,(Ql_ab(lambda), lambda=lambda_start,lambda_end)
         end do 
     end do
 end subroutine

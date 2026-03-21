@@ -119,10 +119,11 @@ ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_RHB_delta_field.o : ${OBJ_DIR}/Constants.o ${OBJ
 ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_RHB_equation.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o ${OBJ_DIR}/Mathmethods.o \
 												 ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_broyden.o
 
-${OBJ_DIR}/${SRC_FILE_PREFIX_1}_expectation_rotation.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o \
+${OBJ_DIR}/${SRC_FILE_PREFIX_1}_expectation_rotation.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o
 
 ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_inout.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o \
-					 					  ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_expectation.o
+					 			  		  ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_expectation.o \
+										  ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_expectation_rotation.o
 
 ## Proj Dependencies
 ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_main.o : $(filter-out ${OBJ_DIR}/main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_main.o,  ${OBJECTS})
