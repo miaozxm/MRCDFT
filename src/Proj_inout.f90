@@ -180,13 +180,13 @@ subroutine read_Proj_configuration(ifPrint)
             write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'No'
         end if 
 
-        if(Proj_option%ihf == 1) then 
-            write(*,"(5x,a,':   ',a)") adjust_left('Norm overlap formula',Strlength),'sqrt(det(D) det(R))'
-        else if(Proj_option%ihf == 2) then
-            write(*,"(5x,a,':   ',a)") adjust_left('Norm overlap formula',Strlength),'Robledo (2009) formula'
-        else if(Proj_option%ihf == 3) then
-            write(*,"(5x,a,':   ',a)") adjust_left('Norm overlap formula',Strlength),'Bertsch & Robledo (2011) formula'
-        end if 
+        ! if(Proj_option%ihf == 1) then 
+        !     write(*,"(5x,a,':   ',a)") adjust_left('Norm overlap formula',Strlength),'sqrt(det(D) det(R))'
+        ! else if(Proj_option%ihf == 2) then
+        !     write(*,"(5x,a,':   ',a)") adjust_left('Norm overlap formula',Strlength),'Robledo (2009) formula'
+        ! else if(Proj_option%ihf == 3) then
+        !     write(*,"(5x,a,':   ',a)") adjust_left('Norm overlap formula',Strlength),'Bertsch & Robledo (2011) formula'
+        ! end if 
         write(*,"(a)") '=========================================================================================='
     end subroutine
 end subroutine
