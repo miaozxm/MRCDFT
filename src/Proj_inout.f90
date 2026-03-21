@@ -161,7 +161,14 @@ subroutine read_Proj_configuration(ifPrint)
         write(*,"(5x,a,':   ',a,i3,a,i3,a)") adjust_left('Quadratic constraint q2 range',Strlength), '[',gcm_space%q2_start,',',gcm_space%q2_end,' ]'
 
         write(*,"(5x,a,':   ',i3)") adjust_left('Maximal J value',Strlength), gcm_space%Jmax
-        if (Proj_option%DsType /=0 ) then
+
+        if (Proj_option%checkN2J2 == 1) then
+            write(*,"(5x,a,':   ',a)") adjust_left('Check N2 and J2',Strlength),'Yes'
+        else 
+            write(*,"(5x,a,':   ',a)") adjust_left('Check N2 and J2',Strlength),'No'
+        end if
+
+        if (Proj_option%DsType /= 0 ) then
             if(Proj_option%DsType==1) write(*,"(5x,a,':   ',a)") adjust_left('Calculate density ME',Strlength),'1B'
             if(Proj_option%DsType==2) write(*,"(5x,a,':   ',a)") adjust_left('Calculate density ME',Strlength),'2B'
             if(Proj_option%DsType==3) write(*,"(5x,a,':   ',a)") adjust_left('Calculate density ME',Strlength),'1B + 2B'
@@ -169,14 +176,14 @@ subroutine read_Proj_configuration(ifPrint)
             write(*,"(5x,a,':   ',a)") adjust_left('Calculate density ME',Strlength),'No'
         end if 
 
-        if (Proj_option%TDType /=0 ) then
+        if (Proj_option%AMPtype > 0 .and. Proj_option%TDType /=0 ) then
             if(Proj_option%TDType==1)write(*,"(5x,a,':   ',a)") adjust_left('Calculate reduced transition density ME',Strlength),'1B'
             write(*,"(5x,a,':   ',i3)") adjust_left('Maximal lambda value(1BTD)',Strlength),TDs%lambda_max
         else 
             write(*,"(5x,a,':   ',a)") adjust_left('Calculate reduced transition density ME',Strlength),'No'
         end if 
 
-        if (Proj_option%EccentriType /=0 ) then
+        if (Proj_option%EccentriType /= 0) then
             if(Proj_option%EccentriType==1) write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'(1)'
             if(Proj_option%EccentriType==2) write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'(2)'
             if(Proj_option%EccentriType==3) write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'(3)'
