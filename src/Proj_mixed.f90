@@ -243,8 +243,8 @@ subroutine calculate_Rotated_Wavefunction(alpha, beta, gamma,it)
                 nl2= BS%HO_sph%nljm(i0sp+m2,2) ! l
                 nj2= BS%HO_sph%nljm(i0sp+m2,3) ! j +1/2
                 nm2= BS%HO_sph%nljm(i0sp+m2,4) ! m_j + 1/2
-                nj2_half = nj2 - 0.5 ! j
-                nm2_half = nm2 - 0.5 ! m_j
+                nj2_half = nj2 - 0.5d0 ! j
+                nm2_half = nm2 - 0.5d0 ! m_j
                 fgrot = (0.d0,0.d0)
                 fgrotr = (0.d0,0.d0)
                 pfgrot = (0.d0,0.d0)
@@ -254,8 +254,8 @@ subroutine calculate_Rotated_Wavefunction(alpha, beta, gamma,it)
                     nl3= BS%HO_sph%nljm(i0sp+m3,2) ! l
                     nj3= BS%HO_sph%nljm(i0sp+m3,3) ! j +1/2
                     nm3= BS%HO_sph%nljm(i0sp+m3,4) ! m_j + 1/2
-                    nj3_half = nj3 - 0.5 ! j
-                    nm3_half = nm3 - 0.5 ! m_j
+                    nj3_half = nj3 - 0.5d0 ! j
+                    nm3_half = nm3 - 0.5d0 ! m_j
 
                     ! time reversed |-m> = |n_r l j -m_j>
                     ! m3_reversed = m3 - 2*nm3 + 1
@@ -266,7 +266,7 @@ subroutine calculate_Rotated_Wavefunction(alpha, beta, gamma,it)
                     ! if(nr3.ne.nr3_reversed .and. nl3 .ne. nl3_reversed .and. nj3.ne.nj3_reversed) stop 'Wrong time reversed!'
                     ! if(nm3 + nm3_reversed .ne. 1) stop 'wrong nm3_reversed'
                     nm3_reversed = 1 - nm3 ! -m_j + 1/2
-                    nm3_reversed_half = nm3_reversed - 0.5 ! -m_j
+                    nm3_reversed_half = nm3_reversed - 0.5d0 ! -m_j
                     if(nr3.ne.nr2 .or. nl3.ne.nl2 .or. nj3.ne.nj2) cycle
                     Rm2m3_11=CDEXP(nm2_half*calpha+nm3_half*cgamma)*djmk(nj2,nm2,nm3,cos_beta,1) ! <m|R(alpha,beta,gamma)|m'>
                     Rm2m3_12=CDEXP(nm2_half*calpha+nm3_reversed_half*cgamma)*djmk(nj2,nm2,nm3_reversed,cos_beta,1) ! <m|R(alpha,beta,gamma)|-m'>
@@ -336,19 +336,19 @@ subroutine calculate_Rotation_Matrix(alpha,beta,gamma,it)
                     nl2= BS%HO_sph%nljm(i0sp+m2,2) ! l'
                     nj2= BS%HO_sph%nljm(i0sp+m2,3) ! j' +1/2
                     nm2= BS%HO_sph%nljm(i0sp+m2,4) ! m'_j + 1/2
-                    nj2_half = nj2 - 0.5 ! j'
-                    nm2_half = nm2 - 0.5 ! m'_j
+                    nj2_half = nj2 - 0.5d0 ! j'
+                    nm2_half = nm2 - 0.5d0 ! m'_j
                     nm2_reversed = 1 - nm2 ! -m'_j + 1/2
-                    nm2_reversed_half = nm2_reversed - 0.5 ! -m'_j
+                    nm2_reversed_half = nm2_reversed - 0.5d0 ! -m'_j
                     do m1 = 1, ndsp
                         nr1= BS%HO_sph%nljm(i0sp+m1,1) ! n_r
                         nl1= BS%HO_sph%nljm(i0sp+m1,2) ! l
                         nj1= BS%HO_sph%nljm(i0sp+m1,3) ! j +1/2
                         nm1= BS%HO_sph%nljm(i0sp+m1,4) ! m_j + 1/2
-                        nj1_half = nj1 - 0.5 ! j
-                        nm1_half = nm1 - 0.5 ! m_j
+                        nj1_half = nj1 - 0.5d0 ! j
+                        nm1_half = nm1 - 0.5d0 ! m_j
                         nm1_reversed = 1 - nm1 ! -m_j + 1/2
-                        nm1_reversed_half = nm1_reversed - 0.5 ! -m_j
+                        nm1_reversed_half = nm1_reversed - 0.5d0 ! -m_j
                         if(nr1.ne.nr2 .or. nl1.ne.nl2 .or. nj1.ne.nj2) cycle
                         Rm1m2_11=CDEXP(nm1_half*calpha+nm2_half*cgamma)*djmk(nj1,nm1,nm2,cos_beta,1) ! <m|R(alpha,beta,gamma)|m'>
                         Rm1m2_12=CDEXP(nm1_half*calpha+nm2_reversed_half*cgamma)*djmk(nj1,nm1,nm2_reversed,cos_beta,1) ! <m|R(alpha,beta,gamma)|-m'>
@@ -614,10 +614,10 @@ subroutine calculate_mixed_density_tensor_matrix_elements(iphi,phi,it)
                     nl1= BS%HO_sph%nljm(i0sp+m1,2) ! l
                     nj1= BS%HO_sph%nljm(i0sp+m1,3) ! j +1/2
                     nm1= BS%HO_sph%nljm(i0sp+m1,4) ! m_j + 1/2
-                    nj1_half = nj1 - 0.5 ! j
-                    nm1_half = nm1 - 0.5 ! m_j
+                    nj1_half = nj1 - 0.5d0 ! j
+                    nm1_half = nm1 - 0.5d0 ! m_j
                     ! nm1_reversed = 1 - nm1 ! -m_j + 1/2
-                    ! nm1_reversed_half = nm1_reversed - 0.5 ! -m_j
+                    ! nm1_reversed_half = nm1_reversed - 0.5d0 ! -m_j
                     m1_reversed = m1 - 2*nm1 + 1 ! location of |-m1>
                     C(truncated_k,m1) = wf1%fg(nfgsp+m1,k,it)*vk
                     C(truncated_dim+truncated_k,m1) = wf1%fg(nfgsp+m1_reversed,k,it)*vk*(-1)**(Int(nl1+nj1_half+nm1_half+ifg-1))
@@ -680,10 +680,10 @@ subroutine calculate_mixed_density_tensor_matrix_elements(iphi,phi,it)
                 nl1= BS%HO_sph%nljm(i0f+m1,2) ! l
                 nj1= BS%HO_sph%nljm(i0f+m1,3) ! j +1/2
                 nm1= BS%HO_sph%nljm(i0f+m1,4) ! m_j + 1/2
-                nj1_half = nj1 - 0.5 ! j
-                nm1_half = nm1 - 0.5 ! m_j
+                nj1_half = nj1 - 0.5d0 ! j
+                nm1_half = nm1 - 0.5d0 ! m_j
                 ! nm1_reversed = 1 - nm1 ! -m_j + 1/2
-                ! nm1_reversed_half = nm1_reversed - 0.5 ! -m_j
+                ! nm1_reversed_half = nm1_reversed - 0.5d0 ! -m_j
                 m1_reversed = m1 - 2*nm1 + 1 ! location of |-m1>
                 F(truncated_k,m1) = wf1%fg(m1,k,it)*vk
                 F(truncated_dim+truncated_k,m1) = wf1%fg(m1_reversed,k,it)*vk*(-1)**(Int(nl1+nj1_half+nm1_half))
@@ -694,8 +694,8 @@ subroutine calculate_mixed_density_tensor_matrix_elements(iphi,phi,it)
                 nl2= BS%HO_sph%nljm(i0g+m2,2) ! l
                 nj2= BS%HO_sph%nljm(i0g+m2,3) ! j +1/2
                 nm2= BS%HO_sph%nljm(i0g+m2,4) ! m_j + 1/2
-                nj2_half = nj2 - 0.5 ! j
-                nm2_half = nm2 - 0.5 ! m_j
+                nj2_half = nj2 - 0.5d0 ! j
+                nm2_half = nm2 - 0.5d0 ! m_j
                 m2_reversed = m2 - 2*nm2 + 1 ! location of |-m2>
                 G(truncated_k,m2) = wf1%fg(nf+m2,k,it)*vk
                 G(truncated_dim+truncated_k,m2)  = - wf1%fg(nf+m2_reversed,k,it)*vk*(-1)**(Int(nl2+nj2_half+nm2_half))
@@ -804,10 +804,10 @@ subroutine calculate_mixed_density_tensor_matrix_elements(iphi,phi,it)
                     nl1= BS%HO_sph%nljm(i0sp+m1,2) ! l
                     nj1= BS%HO_sph%nljm(i0sp+m1,3) ! j +1/2
                     nm1= BS%HO_sph%nljm(i0sp+m1,4) ! m_j + 1/2
-                    nj1_half = nj1 - 0.5 ! j
-                    nm1_half = nm1 - 0.5 ! m_j
+                    nj1_half = nj1 - 0.5d0 ! j
+                    nm1_half = nm1 - 0.5d0 ! m_j
                     ! nm1_reversed = 1 - nm1 ! -m_j + 1/2
-                    ! nm1_reversed_half = nm1_reversed - 0.5 ! -m_j
+                    ! nm1_reversed_half = nm1_reversed - 0.5d0 ! -m_j
                     m1_reversed = m1 - 2*nm1 + 1 ! location of |-m1>
                     Cu(truncated_k,m1) = wf1%fg(nfgsp+m1,k,it)*uk*dsqrt(f_k)
                     Cu(truncated_dim+truncated_k,m1) = wf1%fg(nfgsp+m1_reversed,k,it)*uk*dsqrt(f_k) &
@@ -972,10 +972,10 @@ subroutine calculate_mixed_density_tensor_matrix_elements(iphi,phi,it)
                     nl1= BS%HO_sph%nljm(i0sp+m1,2) ! l
                     nj1= BS%HO_sph%nljm(i0sp+m1,3) ! j +1/2
                     nm1= BS%HO_sph%nljm(i0sp+m1,4) ! m_j + 1/2
-                    nj1_half = nj1 - 0.5 ! j
-                    nm1_half = nm1 - 0.5 ! m_j
+                    nj1_half = nj1 - 0.5d0 ! j
+                    nm1_half = nm1 - 0.5d0 ! m_j
                     ! nm1_reversed = 1 - nm1 ! -m_j + 1/2
-                    ! nm1_reversed_half = nm1_reversed - 0.5 ! -m_j
+                    ! nm1_reversed_half = nm1_reversed - 0.5d0 ! -m_j
                     m1_reversed = m1 - 2*nm1 + 1 ! location of |-m1>
                     Cu(truncated_k,m1) = wf1%fg(nfgsp+m1,k,it)*uk*dsqrt(f_k)
                     Cu(truncated_dim+truncated_k,m1) = wf1%fg(nfgsp+m1_reversed,k,it)*uk*dsqrt(f_k) &
@@ -1088,8 +1088,8 @@ subroutine calculate_mixed_density_tensor_matrix_elements(iphi,phi,it)
                 nl1= BS%HO_sph%nljm(i0f+m1,2) ! l
                 nj1= BS%HO_sph%nljm(i0f+m1,3) ! j +1/2
                 nm1= BS%HO_sph%nljm(i0f+m1,4) ! m_j + 1/2
-                nj1_half = nj1 - 0.5 ! j
-                nm1_half = nm1 - 0.5 ! m_j
+                nj1_half = nj1 - 0.5d0 ! j
+                nm1_half = nm1 - 0.5d0 ! m_j
                 ! nm1_reversed = 1 - nm1 ! -m_j + 1/2
                 ! nm1_reversed_half = nm1_reversed - 0.5 ! -m_j
                 m1_reversed = m1 - 2*nm1 + 1 ! location of |-m1>
@@ -1111,8 +1111,8 @@ subroutine calculate_mixed_density_tensor_matrix_elements(iphi,phi,it)
                 nl2= BS%HO_sph%nljm(i0g+m2,2) ! l
                 nj2= BS%HO_sph%nljm(i0g+m2,3) ! j +1/2
                 nm2= BS%HO_sph%nljm(i0g+m2,4) ! m_j + 1/2
-                nj2_half = nj2 - 0.5 ! j
-                nm2_half = nm2 - 0.5 ! m_j
+                nj2_half = nj2 - 0.5d0 ! j
+                nm2_half = nm2 - 0.5d0 ! m_j
                 ! nm2_reversed = 1 - nm2 ! -m_j + 1/2
                 ! nm2_reversed_half = nm2_reversed - 0.5 ! -m_j
                 m2_reversed = m2 - 2*nm2 + 1 ! location of |-m2>

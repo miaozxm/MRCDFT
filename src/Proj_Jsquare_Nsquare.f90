@@ -179,8 +179,8 @@ function compute_angular_matrix_element(case,ifg1,m1,ifg2,m2)
     nl1 = BS%HO_sph%nljm(i0sp1+m1,2)
     nj1 = BS%HO_sph%nljm(i0sp1+m1,3)
     nm1 = BS%HO_sph%nljm(i0sp1+m1,4)
-    nj1_half = nj1 - 0.5 ! j
-    nm1_half = nm1 - 0.5 ! m_j
+    nj1_half = nj1 - 0.5d0 ! j
+    nm1_half = nm1 - 0.5d0 ! m_j
 
     i0sp2 = BS%HO_sph%iasp(1,ifg2)
     nr2 = BS%HO_sph%nljm(i0sp2+m2,1)

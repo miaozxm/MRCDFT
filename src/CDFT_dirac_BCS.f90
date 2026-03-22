@@ -434,13 +434,13 @@ subroutine calculate_new_cutoff_energy
     ecl = ecut
   1 continue
     if(ecl.gt.0.d0 .and. sfk(ecl).gt.0.d0) then
-        ecl = ecl-0.5
+        ecl = ecl-0.5d0
         goto 1
     endif
     ech = ecut
   2 continue            
     if(sfk(ech).lt.0.d0) then
-        ech = ech+0.5
+        ech = ech+0.5d0
         goto 2
     endif
     sl = sfk(ecl)
