@@ -44,4 +44,3 @@ DsType   =  0                       ! calculate density matrix element: (0) no  
 TDType   =  0                       ! calculate reduced transition density matrix element: (0) no (1) 1B
 lambda   =  3                       ! max lambda of 1B transition density
 checkNJ2 =  1                       ! calculate N^2 and J^2: (0) no (1) yes
-Eccentri =  0                       ! calculate eccentricity kernel: (0) no (1) by Kernel Module (2) by density matrix element (3) (1)+(2)

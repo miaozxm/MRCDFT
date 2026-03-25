@@ -50,7 +50,6 @@ subroutine read_Proj_configuration(ifPrint)
     read(u_Proj, format2) input_par%TDType
     read(u_Proj, format2) input_par%lambda_max
     read(u_Proj, format2) input_par%checkN2J2
-    read(u_Proj, format2) input_par%EccentriType
     call set_Proj_parameters
     if(ifPrint) call printParameters
     contains
@@ -114,9 +113,6 @@ subroutine read_Proj_configuration(ifPrint)
         ! set calculate N^2 and J^2 option
         Proj_option%checkN2J2 = input_par%checkN2J2
         if(Proj_option%checkN2J2<0 .or. Proj_option%checkN2J2>1) stop "checkN2J2 should be 0 or 1"
-        ! set calculate eccentricity kernel option
-        Proj_option%EccentriType = input_par%EccentriType
-        if(Proj_option%EccentriType<0 .or. Proj_option%EccentriType>3) stop "EccentriType should be 0 or 1 or 2 or 3"
     end subroutine
     subroutine printParameters
         use Globals, only: input_par,Proj_option,gcm_space,TDs
@@ -183,13 +179,6 @@ subroutine read_Proj_configuration(ifPrint)
             write(*,"(5x,a,':   ',a)") adjust_left('Calculate reduced transition density ME',Strlength),'No'
         end if 
 
-        if (Proj_option%EccentriType /= 0) then
-            if(Proj_option%EccentriType==1) write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'(1)'
-            if(Proj_option%EccentriType==2) write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'(2)'
-            if(Proj_option%EccentriType==3) write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'(3)'
-        else 
-            write(*,"(5x,a,':   ',a)") adjust_left('Calculate eccentricity kernel',Strlength),'No'
-        end if 
 
         ! if(Proj_option%ihf == 1) then 
         !     write(*,"(5x,a,':   ',a)") adjust_left('Norm overlap formula',Strlength),'sqrt(det(D) det(R))'
@@ -273,19 +262,12 @@ end subroutine
 
 subroutine write_Proj_output(q1,q2)
     use Globals, only: gcm_space,Proj_option
-    use Eccentricity, only: calculate_Eccentricity_kernel_by_density_matrix_element
     integer,intent(in) :: q1,q2
 
     call set_Proj_output_filename(q1,q2)
 
     ! write kernels
     call write_kernels
-    if(Proj_option%EccentriType/=0)then 
-        if(Proj_option%EccentriType==2 .or. Proj_option%EccentriType==3) then
-            call calculate_Eccentricity_kernel_by_density_matrix_element
-        end if 
-        call write_eccentricity_operators_kernels(q1,q2)
-    end if 
 
     ! write matrix elemets of operator
     if(q1== gcm_space%q1_start .and. q2==gcm_space%q2_start) then 
@@ -390,13 +372,6 @@ subroutine set_Proj_output_filename(q1,q2)
                         //'_eMax'//char(name_nf1)//char(name_nf2)//'.me'       
     Proj_outputfile%outputm1Bme = OUTPUT_PATH//'mScheme_1B'//'_A'//int2str(A) &
                         //'_eMax'//char(name_nf1)//char(name_nf2)//'.me'
-    Proj_outputfile%outputEccentricityKernel = OUTPUT_PATH//'Proj_'//int2str(A)//nucleus_attributes%name &
-                        //'_Eccen.'//char(AMP)//'D'//'_eMax'//char(name_nf1)//char(name_nf2) &
-                        //'.'//char(nphi_1)//char(nphi_2)//'.'//char(nbeta_1)//char(nbeta_2) &
-                        //signb21//char(name1(1))//char(name1(2))//char(name1(3)) &
-                        //signb31//char(name1(4))//char(name1(5))//char(name1(6)) &
-                        //'_'//signb22//char(name2(1))//char(name2(2))//char(name2(3)) &
-                        //signb32//char(name2(4))//char(name2(5))//char(name2(6))//'.elem'
 
 end subroutine
 
@@ -442,45 +417,7 @@ subroutine write_kernels
     close(Proj_outputfile%u_outputelem)
 end subroutine
 
-subroutine write_eccentricity_operators_kernels(q1,q2)
-    use Globals, only: kernels,constraint
-    integer :: q1,q2
-    integer :: J,K1,K2,parity
-    character(1), dimension(2) :: ParityChar = ['+', '-']
-    character(len=*), parameter ::  format1 = "(3i5,4x,a,4(4x,f5.3))", &
-                                    format2 = "(3e15.8)"
-    open(Proj_outputfile%u_outputEccentricityKernel,form='formatted',file=Proj_outputfile%outputEccentricityKernel)
-        do J = 0,0 
-            do K1 = -0,0
-                do K2 = -0,0
-                    ! In the axially symmetric case, the kernel is non-zero only when
-                    ! the parity satisfies  Pi  = (-1)^J for  N_KK, H_KK, X_KK and E0_KK
-                    ! the parity satisfies Pi_i = (-1)^J_i for  Q2_KK_12
-                    if ((-1)**J == 1) then
-                        parity = 1 ! +
-                    else
-                        parity = 2 ! -
-                    end if
-                    write(Proj_outputfile%u_outputEccentricityKernel,format1)  J,K1,K2,ParityChar(parity),constraint%betac(q1),constraint%bet3c(q1),constraint%betac(q2),constraint%bet3c(q2)
 
-                    write(Proj_outputfile%u_outputEccentricityKernel,format2)   Real(kernels%Eccentricity_KK(J,K1,K2,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
-                                                                                Real(kernels%Eccentricity_KK(J,K1,K2,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
-                                     Real((kernels%Eccentricity_KK(J,K1,K2,parity,1)+kernels%Eccentricity_KK(J,K1,K2,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
-
-                    write(Proj_outputfile%u_outputEccentricityKernel,*) "By Density:"
-                    ! ! proton part
-                    write(Proj_outputfile%u_outputEccentricityKernel,format2)   Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,2,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
-                                                                                Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,2,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
-                         Real((kernels%Eccentricity_KK_byDensity(J,K1,K2,2,parity,1)+kernels%Eccentricity_KK_byDensity(J,K1,K2,2,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
-                    ! ! neutron part
-                    write(Proj_outputfile%u_outputEccentricityKernel,format2)   Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
-                                                                                Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
-                         Real((kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,1)+kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
-                end do
-            end do
-        end do 
-    close(Proj_outputfile%u_outputEccentricityKernel)
-end subroutine
 
 ! write expectation of different (q1,q2)
 subroutine write_Proj_expectation(q1,q2)
@@ -626,7 +563,6 @@ end subroutine
 ! matrix elements of operator
 subroutine write_1B_operators_matrix_elements
     use Globals, only: BS, Proj_outputfile
-    use Eccentricity, only: f_n,eccentricity_matrix_element_one_body
     use EM, only: rl_nl,ylm_ljm
     integer :: ifg,ndsp,i0sp,m1,m2,nr1,nl1,nj1,nm1,nr2,nl2,nj2,nm2
     real(r64) :: r2, r4, r2Y20, r4Y20, r4Y40, fn, e_1B
@@ -662,11 +598,8 @@ subroutine write_1B_operators_matrix_elements
                 r4Y20 = rl_nl(nr1,nl1,4,nr2,nl2)*ylm_ljm(nl1,nj1,nm1,2,0,nl2,nj2,nm2)
                 ! r^4 Y40
                 r4Y40 = rl_nl(nr1,nl1,4,nr2,nl2)*ylm_ljm(nl1,nj1,nm1,4,0,nl2,nj2,nm2)
-                ! eccentricity operator matrix element
-                fn = f_n(ifg,m1,ifg,m2,2)
-                call eccentricity_matrix_element_one_body(ifg,m1,ifg,m2,2,e_1B)
                 write(Proj_outputfile%u_outputm1Bme,"(9i5,2i7,1x,7(f10.5,1x))") ifg,m1,m2,nr1,nr2,nl1,nl2,2*nj1-1,2*nj2-1,2*nm1-1,2*nm2-1,&
-                                                                            r2,r4,r2Y20,r4Y20,r4Y40,fn,e_1B
+                                                                            r2,r4,r2Y20,r4Y20,r4Y40
             end do 
         end do 
     end do
