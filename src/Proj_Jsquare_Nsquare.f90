@@ -191,12 +191,12 @@ function compute_angular_matrix_element(case,ifg1,m1,ifg2,m2)
     if(nr1/=nr2 .or. nl1 /= nl2 .or. nj1/= nj2) return 
     if(case==1) then
         ! <n1 l1 j1 m1|Jx|n2 l2 j2 m2>
-        if (nm2==(nm1+1)) compute_angular_matrix_element = 0.5d0*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half+1.0d0))
         if (nm2==(nm1-1)) compute_angular_matrix_element = 0.5d0*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half-1.0d0))
+        if (nm2==(nm1+1)) compute_angular_matrix_element = 0.5d0*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half+1.0d0))
     else if(case==2) then
         ! <n1 l1 j1 m1|Jy|n2 l2 j2 m2>
-        if (nm2==(nm1+1)) compute_angular_matrix_element = -(0.0, 0.5d0)*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half+1.0d0)) 
-        if (nm2==(nm1-1)) compute_angular_matrix_element =  (0.0, 0.5d0)*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half-1.0d0))
+        if (nm2==(nm1-1)) compute_angular_matrix_element =  -(0.0, 0.5d0)*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half-1.0d0))
+        if (nm2==(nm1+1)) compute_angular_matrix_element =   (0.0, 0.5d0)*sqrt(nj1_half*(nj1_half+1.0d0)-nm1_half*(nm1_half+1.0d0)) 
     else if(case==3) then
         ! <n1 l1 j1 m1|Jz|n2 l2 j2 m2>
         if(nm1==nm2) compute_angular_matrix_element = nm1_half
