@@ -1,9 +1,8 @@
-bin/
 *.dens
 *.out
 *.wel
 *.wf
 *.elem
 *.o
-# examples/
+examples/
 
