@@ -706,7 +706,8 @@ c     &         name6  = '0'//char(jphi)
 !      &          //char(name42)//char(name52)//'.'
 !      &          //char(name62)//char(name72)//char(namer2)//'.elem'
      
-       elem = 'Proj_kern.'//char(name)//'D' 
+       elem = 'Proj_.'//int2str(nama)//nucnam
+     &    //'_kern.'//char(name)//'D' 
      &     //'_eMax'//char(name_nf1)//char(name_nf2) 
      &     //'.'//char(name81)//char(name82) 
      &     //'.'//char(name91)//char(name92) 
@@ -729,6 +730,15 @@ c     &         name6  = '0'//char(jphi)
       return
       end
 c______________________________________________________________________________
+      function int2str(i) result(str)
+            implicit none
+            integer, intent(in) :: i
+            character(len=:), allocatable :: str
+            character(len=32) :: buf
+            write(buf,'(I0)') i
+            str = trim(buf)
+      end function int2str
+
       subroutine kernels(jmn,jmx,jdf,iq1,iq2,icase,nmaxdi,lpr) 
 
 c..............................................................................  

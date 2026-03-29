@@ -4,5 +4,7 @@
 *.wf
 *.elem
 *.o
+*.mod
+bin
 examples/
 
