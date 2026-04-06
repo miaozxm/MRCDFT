@@ -668,7 +668,7 @@ type Kernel_
     complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2,2) :: Q2_KK_21 ! Q2_KK(J,Kf,Ki,it,Pi_i(+/-)), <Ji+2 Kf q2 Pi_f ||Q2||Ji Ki q1 Pi_i>
     complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2,2) :: E0_KK    ! E0_KK(J,Kf,Ki,it,Pi(+/-)), <J_f K_f q_1 Pi| r2 |J_i K_i q_2 Pi> 
     complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2,2) :: Eccentricity_KK    ! Eccentricity_KK(J,Kf,Ki,Pi(+/-),1B/2B), <J_f K_f q_1 Pi| E_n |J_i K_i q_2 Pi> 
-    complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2,2,2) :: Eccentricity_KK_byDensity    ! Eccentricity_KK_byDensity(J,Kf,Ki,it,Pi(+/-),1B/2B), <J_f K_f q_1 Pi| E_n |J_i K_i q_2 Pi> 
+    complex(r64),dimension(0:Jmax_max,-Jmax_max:Jmax_max,-Jmax_max:Jmax_max,2,2,3) :: Eccentricity_KK_byDensity    ! Eccentricity_KK_byDensity(J,Kf,Ki,it,Pi(+/-),1B/2B), <J_f K_f q_1 Pi| E_n |J_i K_i q_2 Pi> 
 endtype 
 type(Kernel_) :: kernels
 
