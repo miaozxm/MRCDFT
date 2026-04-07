@@ -65,7 +65,7 @@ contains
         use Globals, only: gcm_space,Proj_option,BS,kernels
         integer, intent(in) :: q1,q2
         integer :: dim_m_max,J,K1_start,K1_end,K2_start,K2_end,K1,K2,iParity,Parity,ifg1,m1,ifg2,m2,ifg3,m3,ifg4,m4,total_iter,iter
-        complex(r64) :: ME1B(2),ME2B(2)
+        complex(r64) :: ME1B(2),ME2B(4)
         complex(r64) :: N(2), N2(2)
         ! logical :: q2_q1_Symmetry
         write(*,'(5x,A)') 'calculate_density_matrix_element ...'
@@ -269,7 +269,7 @@ contains
         use Globals, only: projection_mesh,Proj_option,nucleus_attributes
         use Basis, only: djmk
         integer,intent(in) :: J,K1,K2,Parity,ifg1,m1,ifg2,m2,ifg3,m3,ifg4,m4
-        complex(r64), intent(out) :: ME2B(2)
+        complex(r64), intent(out) :: ME2B(4)
         integer :: ialpha,ibeta,igamma,L_n,L_p,phi_n_index,phi_p_index,it
         real(r64) :: alpha,beta,gamma,w,phi_n,phi_p
         complex(r64) :: calpha,cgamma,fac_AMP,cpi,fac1,fac2,emiNphi,emiZphi,fac_PNP,norm,pnorm
@@ -341,6 +341,16 @@ contains
                                             -Proj_densities%prho_mm(m2,m4,indexfg(ifg2,ifg4),phi_p_index,it,ialpha,ibeta,igamma)*Proj_densities%prho_mm(m1,m3,indexfg(ifg1,ifg3),phi_p_index,it,ialpha,ibeta,igamma) &
                                             +Proj_densities%pkappa01c_mm(m4,m3,indexfg(ifg4,ifg3),phi_p_index,it,ialpha,ibeta,igamma)*Proj_densities%pkappa10_mm(m1,m2,indexfg(ifg1,ifg2),phi_p_index,it,ialpha,ibeta,igamma)) &
                                             )/2.0d0
+                            ! n-p part <c_n^+ c_p^+ c_n' c_p' >
+                            ME2B(3) = ME2B(3) + fac_AMP*fac_PNP* &
+                                            (       norm* (-Proj_densities%rho_mm(m2,m4,indexfg(ifg2,ifg4),phi_n_index,it,ialpha,ibeta,igamma)*Proj_densities%rho_mm(m1,m3,indexfg(ifg1,ifg3),phi_p_index,it,ialpha,ibeta,igamma)) &
+                                            +Parity*pnorm*(-Proj_densities%prho_mm(m2,m4,indexfg(ifg2,ifg4),phi_n_index,it,ialpha,ibeta,igamma)*Proj_densities%prho_mm(m1,m3,indexfg(ifg1,ifg3),phi_p_index,it,ialpha,ibeta,igamma)) &
+                                            )/2.0d0
+                            ! p-n part <c_p^+ c_n^+ c_p' c_n' >
+                            ME2B(4) = ME2B(4) + fac_AMP*fac_PNP* &
+                                            (       norm* (-Proj_densities%rho_mm(m2,m4,indexfg(ifg2,ifg4),phi_p_index,it,ialpha,ibeta,igamma)*Proj_densities%rho_mm(m1,m3,indexfg(ifg1,ifg3),phi_n_index,it,ialpha,ibeta,igamma)) &
+                                            +Parity*pnorm*(-Proj_densities%prho_mm(m2,m4,indexfg(ifg2,ifg4),phi_p_index,it,ialpha,ibeta,igamma)*Proj_densities%prho_mm(m1,m3,indexfg(ifg1,ifg3),phi_n_index,it,ialpha,ibeta,igamma)) &
+                                            )/2.0d0
                         end do
                     end do
                 end do
@@ -351,9 +361,13 @@ contains
             ! If we have implemented the symmetry of rho_mm, No need to multiply by 2.
             ME2B(1) = ME2B(1)*2.d0
             ME2B(2) = ME2B(2)*2.d0   
+            ME2B(3) = ME2B(3)*2.d0
+            ME2B(4) = ME2B(4)*2.d0
         else if(Proj_option%Euler_Symmetry==0 .or. Proj_option%AMPtype==0) then
             ME2B(1) = ME2B(1)
             ME2B(2) = ME2B(2)
+            ME2B(3) = ME2B(3)
+            ME2B(4) = ME2B(4)
         else 
             write(*,*) 'AMPtype=',Proj_option%AMPtype
             write(*,*) 'Euler_Symmetry=',Proj_option%Euler_Symmetry
