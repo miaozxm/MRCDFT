@@ -328,7 +328,7 @@ contains
                                             end if 
                                         end if 
                                         ! nn-pp and pp-nn 
-                                        if(ifg1==ifg2 .and. ifg2==ifg3) then
+                                        if(ifg1==ifg2 .and. ifg3==ifg4) then
                                             call calculate_one_body_density_matrix_element(J,K1,K2,Parity,ifg2,m2,ifg1,m1,ME1B_21) ! rho_{m2 m1}
                                             call calculate_one_body_density_matrix_element(J,K1,K2,Parity,ifg4,m4,ifg3,m3,ME1B_43) ! rho_{m4 m3}
                                             do mu = -2, 2

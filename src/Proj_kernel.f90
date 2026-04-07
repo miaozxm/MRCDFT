@@ -1198,7 +1198,7 @@ Module Kernel
         end do 
         do phi_p_index = 1, L_p
             it = 2
-            call calculate_Eccentri_n(2,phi_p_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu)
+            call calculate_Eccentri_n(n,phi_p_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu)
             Eccentri_arry(:,phi_p_index,it) = Eccentri(:)
             pEccentri_arry(:,phi_p_index,it) = pEccentri(:)
             Qn_mu_arry(:,phi_p_index,it) = Qn_mu(:)
