@@ -343,13 +343,13 @@ contains
                                             )/2.0d0
                             ! n-p part <c_n^+ c_p^+ c_n' c_p' >
                             ME2B(3) = ME2B(3) + fac_AMP*fac_PNP* &
-                                            (       norm* (-Proj_densities%rho_mm(m2,m4,indexfg(ifg2,ifg4),phi_n_index,it,ialpha,ibeta,igamma)*Proj_densities%rho_mm(m1,m3,indexfg(ifg1,ifg3),phi_p_index,it,ialpha,ibeta,igamma)) &
-                                            +Parity*pnorm*(-Proj_densities%prho_mm(m2,m4,indexfg(ifg2,ifg4),phi_n_index,it,ialpha,ibeta,igamma)*Proj_densities%prho_mm(m1,m3,indexfg(ifg1,ifg3),phi_p_index,it,ialpha,ibeta,igamma)) &
+                                            (       norm* (-Proj_densities%rho_mm(m2,m4,indexfg(ifg2,ifg4),phi_n_index,1,ialpha,ibeta,igamma)*Proj_densities%rho_mm(m1,m3,indexfg(ifg1,ifg3),phi_p_index,2,ialpha,ibeta,igamma)) &
+                                            +Parity*pnorm*(-Proj_densities%prho_mm(m2,m4,indexfg(ifg2,ifg4),phi_n_index,1,ialpha,ibeta,igamma)*Proj_densities%prho_mm(m1,m3,indexfg(ifg1,ifg3),phi_p_index,2,ialpha,ibeta,igamma)) &
                                             )/2.0d0
                             ! p-n part <c_p^+ c_n^+ c_p' c_n' >
                             ME2B(4) = ME2B(4) + fac_AMP*fac_PNP* &
-                                            (       norm* (-Proj_densities%rho_mm(m2,m4,indexfg(ifg2,ifg4),phi_p_index,it,ialpha,ibeta,igamma)*Proj_densities%rho_mm(m1,m3,indexfg(ifg1,ifg3),phi_n_index,it,ialpha,ibeta,igamma)) &
-                                            +Parity*pnorm*(-Proj_densities%prho_mm(m2,m4,indexfg(ifg2,ifg4),phi_p_index,it,ialpha,ibeta,igamma)*Proj_densities%prho_mm(m1,m3,indexfg(ifg1,ifg3),phi_n_index,it,ialpha,ibeta,igamma)) &
+                                            (       norm* (-Proj_densities%rho_mm(m2,m4,indexfg(ifg2,ifg4),phi_p_index,2,ialpha,ibeta,igamma)*Proj_densities%rho_mm(m1,m3,indexfg(ifg1,ifg3),phi_n_index,1,ialpha,ibeta,igamma)) &
+                                            +Parity*pnorm*(-Proj_densities%prho_mm(m2,m4,indexfg(ifg2,ifg4),phi_p_index,2,ialpha,ibeta,igamma)*Proj_densities%prho_mm(m1,m3,indexfg(ifg1,ifg3),phi_n_index,1,ialpha,ibeta,igamma)) &
                                             )/2.0d0
                         end do
                     end do
