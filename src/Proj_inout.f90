@@ -640,7 +640,7 @@ subroutine write_1B_operators_matrix_elements
     integer :: ifg,ndsp,i0sp,m1,m2,nr1,nl1,nj1,nm1,nr2,nl2,nj2,nm2
     real(r64) :: r2, r4, r2Y20, r4Y20, r4Y40, fn, e_1B
     open(Proj_outputfile%u_outputm1Bme ,form='formatted',file=Proj_outputfile%outputm1Bme) 
-    write(Proj_outputfile%u_outputm1Bme,'(9A5,2A7,7A11)')  'ifg','m1','m2','n1','n2','l1','l2','2j1','2j2','2j_m1','2j_m2', &
+    write(Proj_outputfile%u_outputm1Bme,'(9A5,2A7,7A16)')  'ifg','m1','m2','n1','n2','l1','l2','2j1','2j2','2j_m1','2j_m2', &
                                                          'r^2','r^4',"r^2Y20","r^4Y20","r^4Y40",'f2','Eps1B'
     do ifg = 1, 2
         ndsp = BS%HO_sph%idsp(1,ifg)
@@ -674,7 +674,7 @@ subroutine write_1B_operators_matrix_elements
                 ! eccentricity operator matrix element
                 fn = f_n(ifg,m1,ifg,m2,2)
                 call eccentricity_matrix_element_one_body(ifg,m1,ifg,m2,2,e_1B)
-                write(Proj_outputfile%u_outputm1Bme,"(9i5,2i7,1x,7(f10.5,1x))") ifg,m1,m2,nr1,nr2,nl1,nl2,2*nj1-1,2*nj2-1,2*nm1-1,2*nm2-1,&
+                write(Proj_outputfile%u_outputm1Bme,"(9i5,2i7,1x,7(f15.5,1x))") ifg,m1,m2,nr1,nr2,nl1,nl2,2*nj1-1,2*nj2-1,2*nm1-1,2*nm2-1,&
                                                                             r2,r4,r2Y20,r4Y20,r4Y40,fn,e_1B
             end do 
         end do 
