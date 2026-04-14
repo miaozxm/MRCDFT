@@ -8,10 +8,97 @@
 ! - subroutine                                                                 !
 !==============================================================================!
 MODULE MathMethods
-
-implicit none
+    ! BLAS external
+    implicit none
+    external :: zgemv,zdotu,zdotc,zGEMM
 
 contains
+
+subroutine blas_set_num_threads_local(n)
+    integer :: n 
+    call mkl_set_num_threads_local(1)
+end subroutine
+
+subroutine print_blas_num_threads
+    integer :: mkl_get_max_threads
+    print *, "Global target threads:", mkl_get_max_threads()
+end subroutine
+
+function zTrace(A, N) result(tr)
+    implicit none
+    complex*16, intent(in) :: A(:, :)
+    integer, intent(in) :: N
+    complex :: tr
+    integer :: i, max_dim
+    max_dim = min(N, size(A, 1), size(A, 2))
+    tr = 0.0
+    do i = 1, max_dim
+        tr = tr + A(i, i)
+    end do
+end function
+
+
+subroutine zGEMM_Trace(transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc)
+    implicit none
+    character(len=1), intent(in) :: transa, transb
+    integer, intent(in) :: m, n, k, lda, ldb, ldc
+    complex*16, intent(in) :: alpha, beta
+    complex*16, intent(in) :: A(lda, *)
+    complex*16, intent(in) :: B(ldb, *)
+    complex*16, intent(inout) :: C(ldc, *)
+
+    integer :: i, l
+    complex*16 :: temp
+    
+    !$omp parallel do private(i,temp,l)
+    do i = 1, min(m,n)
+
+        if ((transa=='T' .or. transa=='t') .and. &
+            (transb=='N' .or. transb=='n')) then
+            ! C_ii = sum_l A(l,i) * B(l,i)
+            call zdotu(temp, k, A(1,i), 1, B(1,i), 1)
+
+        else if ((transa=='C' .or. transa=='c') .and. &
+                 (transb=='N' .or. transb=='n')) then
+            ! C_ii = sum_l conj(A(l,i)) * B(l,i)
+            call zdotc(temp, k, A(1,i), 1, B(1,i), 1)
+
+        else
+            temp = (0.0d0,0.0d0)
+            do l = 1, k
+                select case (transa)
+                case ('N','n')
+                    temp = temp + A(i,l) * select_b(transb, B, i, l)
+                case ('T','t')
+                    temp = temp + A(l,i) * select_b(transb, B, i, l)
+                case ('C','c')
+                    temp = temp + conjg(A(l,i)) * select_b(transb, B, i, l)
+                end select
+            end do
+        end if
+        C(i,i) = alpha * temp + beta * C(i,i)
+    end do
+    !$omp end parallel do
+
+    contains
+
+    pure function select_b(transb, B, i, l) result(val)
+        character(len=1), intent(in) :: transb
+        complex*16, intent(in) :: B(ldb,*)
+        integer, intent(in) :: i, l
+        complex*16 :: val
+
+        select case (transb)
+        case ('N','n')
+            val = B(l,i)
+        case ('T','t')
+            val = B(i,l)
+        case ('C','c')
+            val = conjg(B(i,l))
+        end select
+    end function
+
+end subroutine
 
 subroutine sort(n, e, descending)
     !-----------------------------------------------------------------------

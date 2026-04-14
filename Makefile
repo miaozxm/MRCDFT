@@ -10,11 +10,16 @@ SRC_FILE_PREFIX_2 = Proj
 SOURCES = $(wildcard $(SRC_DIR)/*.f90)
 OBJECTS = $(patsubst $(SRC_DIR)/%.f90, ${OBJ_DIR}/%.o, $(SOURCES))
 
+# export MKL_THREADING_LAYER = GNU
+
 default:  gfortran #ifort
 
 # compiled by gfortran
 gfortran: FC = gfortran
-gfortran: FFLAGS = -O2 -J ${MOD_DIR}  -fopenmp -ffree-line-length-none
+gfortran: FFLAGS = -O2 -g -J ${MOD_DIR} -fopenmp -ffree-line-length-none
+# gfortran: FFLAGS = -O3 -g -J ${MOD_DIR} -fopenmp -ffree-line-length-none
+# gfortran: FFLAGS += -lmkl_rt
+gfortran: FFLAGS += -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
 # gfortran: FFLAGS = -O2 -J ${MOD_DIR}  -fopenmp -ffree-line-length-none  -fstack-arrays -Wl,--stack,1073741824 # use this line if you need to increase stack size
 gfortran: printConfiguration ${EXE_NAME} printEndInformation
 
@@ -23,11 +28,18 @@ debug: FC = gfortran
 # debug: FFLAGS = -std=legacy -g -fcheck=all -Wall -ffree-line-length-none -fopenmp -J ${MOD_DIR} 
 # debug: FFLAGS = -std=legacy -g -fcheck=bounds -Wall -ffree-line-length-none -fopenmp -J ${MOD_DIR} 
 debug: FFLAGS = -std=legacy -g -fcheck=all -fbacktrace -ffpe-trap=invalid,zero,overflow -Wall -ffree-line-length-none -fopenmp -J ${MOD_DIR} 
+debug: FFLAGS += -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
 debug: printConfiguration ${EXE_NAME} printEndInformation
+
+perf : FC = gfortran
+perf : FFLAGS = -g -pthread -O3 -J ${MOD_DIR}  -fopenmp -ffree-line-length-none # -O3 -march=native -flto
+perf : FFLAGS += -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
+perf : printConfiguration ${EXE_NAME} printEndInformation
 
 # compiled by ifort
 ifort: FC = ifort
 ifort: FFLAGS = -O2 -module ${MOD_DIR} -qopenmp
+ifort: FFLAGS += -mkl
 ifort: printConfiguration ${EXE_NAME} printEndInformation
 
 # compiled by ifort with bounds checking and debug info

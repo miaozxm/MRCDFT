@@ -1198,9 +1198,18 @@ subroutine calculate_mixed_density_current_tensor_in_coordinate_space(iphi,it)
     !----------------------------------------------------------------------------------------------------------------
 
     integer,intent(in)::  iphi,it
-    call mixed_density
-    call mixed_current
-    call mixed_tensor
+    ! call mixed_density
+    ! call mixed_current
+    ! call mixed_tensor
+
+    ! call mixed_density_MV
+    ! call mixed_current_MV
+    ! call mixed_tensor_MV
+
+    call mixed_density_MM
+    call mixed_current_MM
+    call mixed_tensor_MM
+
     contains
     subroutine mixed_density
         !---------------------------------------------------------------------------------------------------------------
@@ -1364,6 +1373,490 @@ subroutine calculate_mixed_density_current_tensor_in_coordinate_space(iphi,it)
             mix%pkappac_it(i,iphi,it) = tmp_pkappac(1) + tmp_pkappac(2)
         end do
         !$omp end parallel do
+    end subroutine
+
+    subroutine mixed_density_MV
+        !---------------------------------------------------------------------------------------------------------------
+        !  calculate mixed density in coordinate space
+        !
+        !  \rho_S = \sum_{mm'\sigma}\rho_mm'++\Phi^\dagger_m'\Phi_m - \sum_{nn'\sigma}\rho__nn'--\Phi^\dagger_n'\Phi_n
+        !  \rho_V = \sum_{mm'\sigma}\rho_mm'++\Phi^\dagger_m'\Phi_m + \sum_{nn'\sigma}\rho__nn'--\Phi^\dagger_n'\Phi_n
+        !  \nabla^2\rho_S = \sum_{mm'\sigma}\rho_mm'++ \nabla^2(\Phi^\dagger_m'\Phi_m) 
+        !                   - \sum_{nn'\sigma}\rho__nn'--\nabla^2(\Phi^\dagger_n'\Phi_n)
+        !  \nabla^2\rho_V = \sum_{mm'\sigma}\rho_mm'++ \nabla^2(\Phi^\dagger_m'\Phi_m)
+        !                   + \sum_{nn'\sigma}\rho__nn'--\nabla^2(\Phi^\dagger_n'\Phi_n)
+        !
+        !  where \Phi_m = \Phi_{m}(r, \theta, \phi, \sigma)
+        !     m is the large component spherical harmonic basis index
+        !     n is the small component spherical harmonic basis index
+        !-----------------------------------------------------------------------------------------------------------------
+        use Constants, only: ngr, ntheta, nphi
+        use Globals,   only: BS
+        use MathMethods, only: blas_set_num_threads_local,zgemv,zdotu
+        implicit none
+        integer :: i,ifg,ms,basis_dim,dim_m_max
+        complex(r64), allocatable :: Am(:), Dm(:),Amc(:), Dmc(:),Y1(:), Y2(:), Y3(:),Y1c(:), Y2c(:), Y3c(:),tmp(:)
+        complex(r64) :: rho1(2), rho2(2),prho1(2), prho2(2),res
+
+        call blas_set_num_threads_local(1)
+
+        dim_m_max = max(BS%HO_sph%idsp(1,1), BS%HO_sph%idsp(1,2))
+        !$omp parallel default(none) &
+        !$omp shared(BS, mix, iphi, it, dim_m_max) &
+        !$omp private(i, ifg, ms, basis_dim, Am, Dm, Amc, Dmc, Y1, Y2, Y3, Y1c, Y2c, Y3c, tmp, res,rho1, rho2, prho1, prho2)
+        allocate(Am(dim_m_max), Dm(dim_m_max), Amc(dim_m_max), Dmc(dim_m_max))
+        allocate(Y1(dim_m_max), Y2(dim_m_max), Y3(dim_m_max))
+        allocate(Y1c(dim_m_max), Y2c(dim_m_max), Y3c(dim_m_max))
+        allocate(tmp(dim_m_max)) 
+        !$omp do schedule(static) 
+        do i = 1, ngr*ntheta*nphi
+            rho1 = (0.d0, 0.d0)
+            rho2 = (0.d0, 0.d0)
+            prho1 = (0.d0, 0.d0)
+            prho2 = (0.d0, 0.d0)
+            do ifg = 1, 2
+                basis_dim = BS%HO_sph%idsp(1,ifg)
+                do ms = 0, 1
+                    Am(1:basis_dim) = BS%HO_sph%Am(1:basis_dim, i, ms, ifg)
+                    Dm(1:basis_dim) = BS%HO_sph%Dm(1:basis_dim, i, ms, ifg)
+                    Y1(1:basis_dim) = BS%HO_sph%Y1(1:basis_dim, i, ms, ifg)
+                    Y2(1:basis_dim) = BS%HO_sph%Y2(1:basis_dim, i, ms, ifg)
+                    Y3(1:basis_dim) = BS%HO_sph%Y3(1:basis_dim, i, ms, ifg)
+                    Amc = conjg(Am)
+                    Dmc = conjg(Dm)
+                    Y1c = conjg(Y1)
+                    Y2c = conjg(Y2)
+                    Y3c = conjg(Y3)
+    
+                    ! ========== rho1 = A^T (ρ * conjg(A)) ==========
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%rho_mm(:,:,ifg,iphi,it), dim_m_max, Amc, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res,basis_dim, Am, 1, tmp, 1)
+                    rho1(ifg) = rho1(ifg) + res
+    
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%prho_mm(:,:,ifg,iphi,it), dim_m_max, Amc, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res,basis_dim, Am, 1, tmp, 1)
+                    prho1(ifg) = prho1(ifg) + res 
+    
+                    ! ========== rho2 各项 ==========
+                    ! 1) D^T (ρ * conjg(A))
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%rho_mm(:,:,ifg,iphi,it), dim_m_max, Amc, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res,basis_dim, Dm, 1, tmp, 1)
+                    rho2(ifg) = rho2(ifg) + res
+    
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%prho_mm(:,:,ifg,iphi,it), dim_m_max, Amc, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res,basis_dim, Dm, 1, tmp, 1)
+                    prho2(ifg) = prho2(ifg) + res
+    
+                    ! 2) A^T (ρ * conjg(D))
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%rho_mm(:,:,ifg,iphi,it), dim_m_max, Dmc, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim, Am, 1, tmp, 1)
+                    rho2(ifg) = rho2(ifg) + res
+    
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%prho_mm(:,:,ifg,iphi,it), dim_m_max, Dmc, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim, Am, 1, tmp, 1)        
+                    prho2(ifg) = prho2(ifg) + res
+    
+                    ! 3) 2 * Y1^T (ρ * conjg(Y1))
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%rho_mm(:,:,ifg,iphi,it), dim_m_max, Y1c, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim, Y1, 1, tmp, 1)
+                    rho2(ifg) = rho2(ifg) + 2.d0 * res
+    
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%prho_mm(:,:,ifg,iphi,it), dim_m_max, Y1c, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim, Y1, 1, tmp, 1)
+                    prho2(ifg) = prho2(ifg) + 2.d0 * res
+    
+                    ! 4) 2 * Y2^T (ρ * conjg(Y2))
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%rho_mm(:,:,ifg,iphi,it), dim_m_max, Y2c, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res,basis_dim, Y2, 1, tmp, 1)
+                    rho2(ifg) = rho2(ifg) + 2.d0 * res
+    
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%prho_mm(:,:,ifg,iphi,it), dim_m_max, Y2c, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim, Y2, 1, tmp, 1)
+                    prho2(ifg) = prho2(ifg) + 2.d0 * res
+    
+                    ! 5) 2 * Y3^T (ρ * conjg(Y3))
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%rho_mm(:,:,ifg,iphi,it), dim_m_max, Y3c, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim, Y3, 1, tmp, 1)
+                    rho2(ifg) = rho2(ifg) + 2.d0 * res
+    
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%prho_mm(:,:,ifg,iphi,it), dim_m_max, Y3c, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res,basis_dim, Y3, 1, tmp, 1)
+                    prho2(ifg) = prho2(ifg) + 2.d0 * res
+                end do
+            end do
+    
+            mix%rho_S_it(i,iphi,it)  = rho1(1) - rho1(2)
+            mix%rho_V_it(i,iphi,it)  = rho1(1) + rho1(2)
+            mix%d2rho_S_it(i,iphi,it)= rho2(1) - rho2(2)
+            mix%d2rho_V_it(i,iphi,it)= rho2(1) + rho2(2)
+            !---
+            mix%prho_S_it(i,iphi,it)  = prho1(1) - prho1(2)
+            mix%prho_V_it(i,iphi,it)  = prho1(1) + prho1(2)
+            mix%pd2rho_S_it(i,iphi,it)= prho2(1) - prho2(2)
+            mix%pd2rho_V_it(i,iphi,it)= prho2(1) + prho2(2)
+    
+        end do
+        !$omp end do
+        deallocate(Am, Dm, Amc, Dmc, Y1, Y2, Y3, Y1c, Y2c, Y3c, tmp)
+        !$omp end parallel
+
+        call blas_set_num_threads_local(0)
+    end subroutine
+    subroutine mixed_current_MV
+        !--------------------------------------------------------------------------------------------------------------------------------
+        !  calculate mixed current in coordinate space
+        !
+        !  j_V1 = -i\sum_{mn'\sigma}\rho_mn'+-\Phi^\dagger_n' \sigma_1 \Phi_m + i\sum_{nm'\sigma}\rho_nm'-+\Phi^\dagger_m' \sigma_1 \Phi_n
+        !  j_V2 = -i\sum_{mn'\sigma}\rho_mn'+-\Phi^\dagger_n' \sigma_2 \Phi_m + i\sum_{nm'\sigma}\rho_nm'-+\Phi^\dagger_m' \sigma_2 \Phi_n
+        !  j_V3 = -i\sum_{mn'\sigma}\rho_mn'+-\Phi^\dagger_n' \sigma_3 \Phi_m + i\sum_{nm'\sigma}\rho_nm'-+\Phi^\dagger_m' \sigma_3 \Phi_n
+        !  where \Phi_m = \Phi_{m}(r, \theta, \phi, \sigma)
+        !     m is the large component spherical harmonic basis index
+        !     n is the small component spherical harmonic basis index
+        !---------------------------------------------------------------------------------------------------------------------------------
+        use Constants, only: ngr,ntheta,nphi
+        use Globals, only: BS
+        use MathMethods, only: blas_set_num_threads_local, zgemv,zdotu
+        implicit none
+        integer :: i,ifg,ms,basis_dim_1,basis_dim_2,dim_m_max
+        complex(r64), allocatable :: Am(:), Bm(:), Cm(:),tmp(:)
+        complex(r64), dimension(2) :: j1,j2,j3,pj1,pj2,pj3
+        complex(r64) :: ci,res
+
+        call blas_set_num_threads_local(1)
+
+        ci = dcmplx(0,1) 
+        dim_m_max = max(BS%HO_sph%idsp(1,1), BS%HO_sph%idsp(1,2))
+        !$omp parallel default(none) &
+        !$omp shared(ci,BS, mix, iphi, it, dim_m_max) &
+        !$omp private(i,ifg,basis_dim_1,basis_dim_2,ms,Am,Bm,Cm,j1,j2,j3,pj1,pj2,pj3,tmp,res)
+        allocate(Am(dim_m_max), Bm(dim_m_max), Cm(dim_m_max),tmp(dim_m_max))
+        !$omp do schedule(static) 
+        do i = 1, ngr*ntheta*nphi
+            j1 = (0.d0,0.d0)
+            j2 = (0.d0,0.d0)
+            j3 = (0.d0,0.d0)
+            pj1 = (0.d0,0.d0)
+            pj2 = (0.d0,0.d0)
+            pj3 = (0.d0,0.d0)
+            do ifg = 1,2
+                basis_dim_1 = BS%HO_sph%idsp(1,ifg)
+                basis_dim_2 = BS%HO_sph%idsp(1,3-ifg)
+                do ms = 0,1 
+                    Am(1:basis_dim_1) = BS%HO_sph%Am(1:basis_dim_1,i,ms,ifg)
+                    Bm(1:basis_dim_2) = conjg(BS%HO_sph%Am(1:basis_dim_2,i,1-ms,3-ifg))
+                    Cm(1:basis_dim_2) = conjg(BS%HO_sph%Am(1:basis_dim_2,i,ms,3-ifg))
+                    call zgemv('N', basis_dim_1, basis_dim_2, (1.d0,0.d0), mix%rho_mm(:,:,2+ifg,iphi,it), dim_m_max,Bm, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim_1, Am, 1, tmp, 1) 
+                    j1(ifg) = j1(ifg) + res
+                    j2(ifg) = j2(ifg) + res*(-1)**ms
+                    call zgemv('N', basis_dim_1, basis_dim_2, (1.d0,0.d0), mix%rho_mm(:,:,2+ifg,iphi,it), dim_m_max,Cm, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim_1, Am, 1, tmp, 1)
+                    j3(ifg) = j3(ifg) + res*(-1)**(ms-1)
+                    call zgemv('N', basis_dim_1, basis_dim_2, (1.d0,0.d0), mix%prho_mm(:,:,2+ifg,iphi,it), dim_m_max,Bm, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim_1, Am, 1, tmp, 1) 
+                    pj1(ifg) = pj1(ifg) + res
+                    pj2(ifg) = pj2(ifg) + res*(-1)**ms
+                    call zgemv('N', basis_dim_1, basis_dim_2, (1.d0,0.d0), mix%prho_mm(:,:,2+ifg,iphi,it), dim_m_max,Cm, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim_1, Am, 1, tmp, 1)
+                    pj3(ifg) = pj3(ifg) + res*(-1)**(ms-1)
+                end do 
+            end do
+            mix%j_V1_it(i,iphi,it) =  (- j1(1) + j1(2))*ci
+            mix%j_V2_it(i,iphi,it) =   - j2(1) + j2(2)
+            mix%j_V3_it(i,iphi,it) =  (- j3(1) + j3(2))*ci
+            mix%pj_V1_it(i,iphi,it) =  (- pj1(1) + pj1(2))*ci
+            mix%pj_V2_it(i,iphi,it) =   - pj2(1) + pj2(2)
+            mix%pj_V3_it(i,iphi,it) =  (- pj3(1) + pj3(2))*ci
+        end do 
+        !$omp end do
+        deallocate(Am, Bm, Cm)
+        !$omp end parallel
+
+        call blas_set_num_threads_local(0)
+    end subroutine
+    subroutine mixed_tensor_MV
+        !--------------------------------------------------------------------------------------------------------------------
+        !  calculate mixed tensor matrix elements in coordinate space
+        !
+        !  \kappa  = \sum_{mm'\sigma} \kappa_mm'++\Phi*_m'\Phi_m + \sum_{nn'\sigma} \kappa_nn'--\Phi*_n'\Phi_n
+        !  \kappa* = \sum_{mm'\sigma}\kappa*_mm'++\Phi*_m'\Phi_m + \sum_{nn'\sigma}\kappa*_nn'--\Phi*_n'\Phi_n
+        !  where \Phi_m = \Phi_{m}(r, \theta, \phi, \sigma)
+        !     m is the large component spherical harmonic basis index
+        !     n is the small component spherical harmonic basis index
+        !----------------------------------------------------------------------------------------------------------------------
+        use Constants, only: ngr,ntheta,nphi
+        use Globals, only: BS
+        use MathMethods, only: blas_set_num_threads_local,zgemv,zdotu
+        implicit none
+        integer :: i,ifg,ms,basis_dim,dim_m_max
+        complex(r64), allocatable:: Am(:),Bm(:),tmp(:)
+        complex(r64), dimension(2) ::kappa,kappac,pkappa,pkappac
+        complex(r64) :: res
+
+        call blas_set_num_threads_local(1)
+
+        dim_m_max = max(BS%HO_sph%idsp(1,1), BS%HO_sph%idsp(1,2))
+        !$omp parallel default(none) &
+        !$omp shared(BS,mix, iphi,it,dim_m_max) &
+        !$omp private(i,ifg,basis_dim,ms,Am,Bm,kappa,kappac,pkappa,pkappac,tmp,res)
+        allocate(Am(dim_m_max), Bm(dim_m_max),tmp(dim_m_max))
+        !$omp do schedule(static) 
+        do i = 1, ngr*ntheta*nphi
+            kappa = (0.d0,0.d0)
+            kappac = (0.d0,0.d0)
+            pkappa = (0.d0,0.d0)
+            pkappac = (0.d0,0.d0)
+            do ifg = 1,2 
+                basis_dim = BS%HO_sph%idsp(1,ifg)
+                do ms = 0,1
+                    Am(1:basis_dim) = BS%HO_sph%Am(1:basis_dim,i,ms,ifg)
+                    Bm(1:basis_dim) = conjg(BS%HO_sph%Am(1:basis_dim,i,ms,ifg))
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%kappa_mm(:,:,ifg,iphi,it), dim_m_max,Bm, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim, Am, 1, tmp, 1)
+                    kappa(ifg) = kappa(ifg) + res
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%kappac_mm(:,:,ifg,iphi,it), dim_m_max,Bm, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim, Am, 1, tmp, 1)
+                    kappac(ifg) = kappac(ifg) + res         
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%pkappa_mm(:,:,ifg,iphi,it), dim_m_max,Bm, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim, Am, 1, tmp, 1)
+                    pkappa(ifg) = pkappa(ifg) + res
+                    call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%pkappac_mm(:,:,ifg,iphi,it), dim_m_max,Bm, 1, (0.d0,0.d0), tmp, 1)
+                    call zdotu(res, basis_dim, Am, 1, tmp, 1)
+                    pkappac(ifg) = pkappac(ifg) + res    
+                end do
+            end do
+            mix%kappa_it(i,iphi,it) =  kappa(1) + kappa(2)
+            mix%kappac_it(i,iphi,it) = kappac(1) + kappac(2)
+            mix%pkappa_it(i,iphi,it) = pkappa(1) + pkappa(2)
+            mix%pkappac_it(i,iphi,it) = pkappac(1) + pkappac(2)
+        end do
+        !$omp end do
+        deallocate(Am, Bm)
+        !$omp end parallel
+
+        call blas_set_num_threads_local(0)
+    end subroutine
+
+    subroutine mixed_density_MM
+        !---------------------------------------------------------------------------------------------------------------
+        !  calculate mixed density in coordinate space
+        !
+        !  \rho_S = \sum_{mm'\sigma}\rho_mm'++\Phi^\dagger_m'\Phi_m - \sum_{nn'\sigma}\rho__nn'--\Phi^\dagger_n'\Phi_n
+        !  \rho_V = \sum_{mm'\sigma}\rho_mm'++\Phi^\dagger_m'\Phi_m + \sum_{nn'\sigma}\rho__nn'--\Phi^\dagger_n'\Phi_n
+        !  \nabla^2\rho_S = \sum_{mm'\sigma}\rho_mm'++ \nabla^2(\Phi^\dagger_m'\Phi_m) 
+        !                   - \sum_{nn'\sigma}\rho__nn'--\nabla^2(\Phi^\dagger_n'\Phi_n)
+        !  \nabla^2\rho_V = \sum_{mm'\sigma}\rho_mm'++ \nabla^2(\Phi^\dagger_m'\Phi_m)
+        !                   + \sum_{nn'\sigma}\rho__nn'--\nabla^2(\Phi^\dagger_n'\Phi_n)
+        !
+        !  where \Phi_m = \Phi_{m}(r, \theta, \phi, \sigma)
+        !     m is the large component spherical harmonic basis index
+        !     n is the small component spherical harmonic basis index
+        !-----------------------------------------------------------------------------------------------------------------
+        use Constants, only: ngr, ntheta, nphi
+        use Globals,   only: BS
+        use MathMethods, only: zGEMM,zGEMM_Trace
+        implicit none
+        integer :: i,ifg,ms,basis_dim,dim_m_max,dim_mesh
+        complex(r64), allocatable,dimension(:,:) :: Am,Dm,Y1,Y2,Y3,conj_Am,conj_Dm,conj_Y1,conj_Y2,conj_Y3,rho,prho,Matrix1
+        complex(r64), allocatable,dimension(:,:,:) :: Rho1,pRho1,Rho2,pRho2
+        complex(r64) :: zero,one,two
+
+        zero = (0.d0, 0.d0) 
+        one = (1.d0, 0.d0)
+        two = (2.d0, 0.d0)
+
+        dim_m_max = max(BS%HO_sph%idsp(1,1), BS%HO_sph%idsp(1,2))
+        dim_mesh = ngr*ntheta*nphi
+
+        allocate(Am(dim_m_max,dim_mesh), Dm(dim_m_max,dim_mesh),conj_Am(dim_m_max,dim_mesh), conj_Dm(dim_m_max,dim_mesh),source=(0.d0,0.d0))
+        allocate(Y1(dim_m_max,dim_mesh), Y2(dim_m_max,dim_mesh), Y3(dim_m_max,dim_mesh),&
+                conj_Y1(dim_m_max,dim_mesh), conj_Y2(dim_m_max,dim_mesh), conj_Y3(dim_m_max,dim_mesh),source=(0.d0,0.d0))
+        allocate(rho(dim_m_max,dim_m_max),prho(dim_m_max,dim_m_max),source=(0.d0,0.d0))
+        allocate(Matrix1(dim_m_max,dim_mesh), Rho1(dim_mesh,dim_mesh,2),Rho2(dim_mesh,dim_mesh,2),&
+                 pRho1(dim_mesh,dim_mesh,2), pRho2(dim_mesh,dim_mesh,2),source=(0.d0,0.d0))
+        do ifg = 1, 2
+            basis_dim = BS%HO_sph%idsp(1,ifg)
+            rho(1:dim_m_max,1:dim_m_max) = mix%rho_mm(1:dim_m_max,1:dim_m_max,ifg,iphi,it)
+            prho(1:dim_m_max,1:dim_m_max) = mix%prho_mm(1:dim_m_max,1:dim_m_max,ifg,iphi,it)
+            do ms = 0, 1
+                Am(1:dim_m_max,1:dim_mesh) = BS%HO_sph%Am(1:dim_m_max,1:dim_mesh,ms,ifg)
+                Dm(1:dim_m_max,1:dim_mesh) = BS%HO_sph%Dm(1:dim_m_max,1:dim_mesh,ms,ifg)
+                Y1(1:dim_m_max,1:dim_mesh) = BS%HO_sph%Y1(1:dim_m_max,1:dim_mesh,ms,ifg)
+                Y2(1:dim_m_max,1:dim_mesh) = BS%HO_sph%Y2(1:dim_m_max,1:dim_mesh,ms,ifg)
+                Y3(1:dim_m_max,1:dim_mesh) = BS%HO_sph%Y3(1:dim_m_max,1:dim_mesh,ms,ifg)
+                conj_Am = conjg(Am)
+                conj_Dm = conjg(Dm)
+                conj_Y1 = conjg(Y1)
+                conj_Y2 = conjg(Y2)
+                conj_Y3 = conjg(Y3)
+                !========== rho1 = A^T (ρ * conjg(A)) ==========
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,rho,dim_m_max,conj_Am,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Am,dim_m_max,Matrix1,dim_m_max,one,Rho1(:,:,ifg),dim_mesh)
+                ! ========== rho2 各项 ==========
+                ! 1) D^T (ρ * conjg(A))
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Dm,dim_m_max,Matrix1,dim_m_max,one,Rho2(:,:,ifg),dim_mesh)
+                ! 2) A^T (ρ * conjg(D))
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,rho,dim_m_max,conj_Dm,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Am,dim_m_max,Matrix1,dim_m_max,one,Rho2(:,:,ifg),dim_mesh)
+                ! 3) 2 * Y1^T (ρ * conjg(Y1))
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,rho,dim_m_max,conj_Y1,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,two,Y1,dim_m_max,Matrix1,dim_m_max,one,Rho2(:,:,ifg),dim_mesh)
+                ! 4) 2 * Y2^T (ρ * conjg(Y2))
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,rho,dim_m_max,conj_Y2,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,two,Y2,dim_m_max,Matrix1,dim_m_max,one,Rho2(:,:,ifg),dim_mesh)
+                ! 5) 2 * Y3^T (ρ * conjg(Y3))
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,rho,dim_m_max,conj_Y3,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,two,Y3,dim_m_max,Matrix1,dim_m_max,one,Rho2(:,:,ifg),dim_mesh)
+                !-------------------------------------------------
+                ! ========== rho1 = A^T (ρ * conjg(A)) ==========
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,prho,dim_m_max,conj_Am,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Am,dim_m_max,Matrix1,dim_m_max,one,pRho1(:,:,ifg),dim_mesh)
+                ! ========== rho2 各项 ==========
+                ! 1) D^T (ρ * conjg(A))
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Dm,dim_m_max,Matrix1,dim_m_max,one,pRho2(:,:,ifg),dim_mesh)
+                ! 2) A^T (ρ * conjg(D))
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,prho,dim_m_max,conj_Dm,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Am,dim_m_max,Matrix1,dim_m_max,one,pRho2(:,:,ifg),dim_mesh)
+                ! 3) 2 * Y1^T (ρ * conjg(Y1))
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,prho,dim_m_max,conj_Y1,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,two,Y1,dim_m_max,Matrix1,dim_m_max,one,pRho2(:,:,ifg),dim_mesh)
+                ! 4) 2 * Y2^T (ρ * conjg(Y2))
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,prho,dim_m_max,conj_Y2,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,two,Y2,dim_m_max,Matrix1,dim_m_max,one,pRho2(:,:,ifg),dim_mesh)
+                ! 5) 2 * Y3^T (ρ * conjg(Y3))
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,prho,dim_m_max,conj_Y3,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,two,Y3,dim_m_max,Matrix1,dim_m_max,one,pRho2(:,:,ifg),dim_mesh)
+            end do
+        end do
+        do i = 1,dim_mesh
+            mix%rho_S_it(i,iphi,it)  = Rho1(i,i,1) - Rho1(i,i,2)
+            mix%rho_V_it(i,iphi,it)  = Rho1(i,i,1) + Rho1(i,i,2)
+            mix%d2rho_S_it(i,iphi,it)= Rho2(i,i,1) - Rho2(i,i,2)
+            mix%d2rho_V_it(i,iphi,it)= Rho2(i,i,1) + Rho2(i,i,2)
+            !---
+            mix%prho_S_it(i,iphi,it)  = pRho1(i,i,1) - pRho1(i,i,2)
+            mix%prho_V_it(i,iphi,it)  = pRho1(i,i,1) + pRho1(i,i,2)
+            mix%pd2rho_S_it(i,iphi,it)= pRho2(i,i,1) - pRho2(i,i,2)
+            mix%pd2rho_V_it(i,iphi,it)= pRho2(i,i,1) + pRho2(i,i,2)
+        end do
+        deallocate(Am,Dm,Y1,Y2,Y3,conj_Am,conj_Dm,conj_Y1,conj_Y2,conj_Y3,rho,prho,Matrix1,Rho1,pRho1,Rho2,pRho2)
+    end subroutine
+    subroutine mixed_current_MM
+        !--------------------------------------------------------------------------------------------------------------------------------
+        !  calculate mixed current in coordinate space
+        !
+        !  j_V1 = -i\sum_{mn'\sigma}\rho_mn'+-\Phi^\dagger_n' \sigma_1 \Phi_m + i\sum_{nm'\sigma}\rho_nm'-+\Phi^\dagger_m' \sigma_1 \Phi_n
+        !  j_V2 = -i\sum_{mn'\sigma}\rho_mn'+-\Phi^\dagger_n' \sigma_2 \Phi_m + i\sum_{nm'\sigma}\rho_nm'-+\Phi^\dagger_m' \sigma_2 \Phi_n
+        !  j_V3 = -i\sum_{mn'\sigma}\rho_mn'+-\Phi^\dagger_n' \sigma_3 \Phi_m + i\sum_{nm'\sigma}\rho_nm'-+\Phi^\dagger_m' \sigma_3 \Phi_n
+        !  where \Phi_m = \Phi_{m}(r, \theta, \phi, \sigma)
+        !     m is the large component spherical harmonic basis index
+        !     n is the small component spherical harmonic basis index
+        !---------------------------------------------------------------------------------------------------------------------------------
+        use Constants, only: ngr,ntheta,nphi
+        use Globals, only: BS
+        use MathMethods, only: zGEMM, zGEMM_Trace
+        implicit none
+        integer :: i,ifg,ms,basis_dim_1,basis_dim_2,dim_m_max,dim_mesh
+        complex(r64), allocatable :: Am(:,:), Bm(:,:), Cm(:,:),rho(:,:) ,prho(:,:),Matrix1(:,:)
+        complex(r64), allocatable :: J1(:,:,:),J2(:,:,:),J3(:,:,:),pJ1(:,:,:),pJ2(:,:,:),pJ3(:,:,:)
+        complex(r64) :: ci,zero,one
+
+        zero = (0.d0, 0.d0) 
+        one = (1.d0, 0.d0)
+        ci = dcmplx(0,1)
+
+        dim_m_max = max(BS%HO_sph%idsp(1,1), BS%HO_sph%idsp(1,2))
+        dim_mesh = ngr*ntheta*nphi
+
+        allocate(Am(dim_m_max,dim_mesh), Bm(dim_m_max,dim_mesh), Cm(dim_m_max,dim_mesh),source=(0.d0,0.d0))
+        allocate(rho(dim_m_max,dim_m_max),prho(dim_m_max,dim_m_max),source=(0.d0,0.d0))
+        allocate(Matrix1(dim_m_max,dim_mesh),J1(dim_mesh,dim_mesh,2),J2(dim_mesh,dim_mesh,2),J3(dim_mesh,dim_mesh,2),&
+                pJ1(dim_mesh,dim_mesh,2),pJ2(dim_mesh,dim_mesh,2),pJ3(dim_mesh,dim_mesh,2),source=(0.d0,0.d0))
+        
+        do ifg = 1,2
+            basis_dim_1 = BS%HO_sph%idsp(1,ifg)
+            basis_dim_2 = BS%HO_sph%idsp(1,3-ifg)
+            rho(1:dim_m_max,1:dim_m_max) = mix%rho_mm(1:dim_m_max,1:dim_m_max,2+ifg,iphi,it)
+            prho(1:dim_m_max,1:dim_m_max) = mix%prho_mm(1:dim_m_max,1:dim_m_max,2+ifg,iphi,it)
+            do ms = 0,1 
+                Am(1:dim_m_max,1:dim_mesh) = BS%HO_sph%Am(1:dim_m_max,1:dim_mesh,ms,ifg)
+                Bm(1:dim_m_max,1:dim_mesh) = conjg(BS%HO_sph%Am(1:dim_m_max,1:dim_mesh,1-ms,3-ifg))
+                Cm(1:dim_m_max,1:dim_mesh) = conjg(BS%HO_sph%Am(1:dim_m_max,1:dim_mesh,ms,3-ifg))
+                !
+                call zGEMM('N' ,'N' ,basis_dim_1,dim_mesh,basis_dim_2,one,rho,dim_m_max,Bm,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim_1,one,Am,dim_m_max,Matrix1,dim_m_max,one,J1(:,:,ifg),dim_mesh)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim_1,(-1)**ms*one,Am,dim_m_max,Matrix1,dim_m_max,one,J2(:,:,ifg),dim_mesh)
+                call zGEMM('N' ,'N' ,basis_dim_1,dim_mesh,basis_dim_2,one,rho,dim_m_max,Cm,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim_1,(-1)**(ms-1)*one,Am,dim_m_max,Matrix1,dim_m_max,one,J3(:,:,ifg),dim_mesh)
+                !
+                call zGEMM('N' ,'N' ,basis_dim_1,dim_mesh,basis_dim_2,one,prho,dim_m_max,Bm,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim_1,one,Am,dim_m_max,Matrix1,dim_m_max,one,pJ1(:,:,ifg),dim_mesh)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim_1,(-1)**ms*one,Am,dim_m_max,Matrix1,dim_m_max,one,pJ2(:,:,ifg),dim_mesh)
+                call zGEMM('N' ,'N' ,basis_dim_1,dim_mesh,basis_dim_2,one,prho,dim_m_max,Cm,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim_1,(-1)**(ms-1)*one,Am,dim_m_max,Matrix1,dim_m_max,one,pJ3(:,:,ifg),dim_mesh)
+            end do 
+        end do
+        do i = 1,dim_mesh
+            mix%j_V1_it(i,iphi,it) =  (- J1(i,i,1) + J1(i,i,2))*ci
+            mix%j_V2_it(i,iphi,it) =   - J2(i,i,1) + J2(i,i,2)
+            mix%j_V3_it(i,iphi,it) =  (- J3(i,i,1) + J3(i,i,2))*ci
+            mix%pj_V1_it(i,iphi,it) =  (- pJ1(i,i,1) + pJ1(i,i,2))*ci
+            mix%pj_V2_it(i,iphi,it) =  - pJ2(i,i,1) + pJ2(i,i,2)
+            mix%pj_V3_it(i,iphi,it) =  (- pJ3(i,i,1) + pJ3(i,i,2))*ci
+        end do
+        deallocate(Am,Bm,Cm,rho,prho,Matrix1,J1,J2,J3,pJ1,pJ2,pJ3)
+    end subroutine
+    subroutine mixed_tensor_MM
+        !--------------------------------------------------------------------------------------------------------------------
+        !  calculate mixed tensor matrix elements in coordinate space
+        !
+        !  \kappa  = \sum_{mm'\sigma} \kappa_mm'++\Phi*_m'\Phi_m + \sum_{nn'\sigma} \kappa_nn'--\Phi*_n'\Phi_n
+        !  \kappa* = \sum_{mm'\sigma}\kappa*_mm'++\Phi*_m'\Phi_m + \sum_{nn'\sigma}\kappa*_nn'--\Phi*_n'\Phi_n
+        !  where \Phi_m = \Phi_{m}(r, \theta, \phi, \sigma)
+        !     m is the large component spherical harmonic basis index
+        !     n is the small component spherical harmonic basis index
+        !----------------------------------------------------------------------------------------------------------------------
+        use Constants, only: ngr,ntheta,nphi
+        use Globals, only: BS
+        use MathMethods, only: zGEMM, zGEMM_Trace
+        implicit none
+        integer :: i,ifg,ms,basis_dim,dim_m_max,dim_mesh
+        complex(r64), allocatable :: Am(:,:),conj_Am(:,:),Matrix1(:,:),Kappa(:,:,:),Kappac(:,:,:),pKappa(:,:,:),pKappac(:,:,:)
+        complex(r64) :: zero,one
+
+        zero = (0.d0, 0.d0) 
+        one = (1.d0, 0.d0)
+        
+        dim_m_max = max(BS%HO_sph%idsp(1,1), BS%HO_sph%idsp(1,2))
+        dim_mesh = ngr*ntheta*nphi
+        allocate(Am(dim_m_max,dim_mesh),conj_Am(dim_m_max,dim_mesh),Matrix1(dim_m_max,dim_mesh),&
+                 Kappa(dim_mesh,dim_mesh,2),Kappac(dim_mesh,dim_mesh,2),&
+                 pKappa(dim_mesh,dim_mesh,2), pKappac(dim_mesh,dim_mesh,2),source=(0.d0,0.d0))
+
+        do ifg = 1,2
+            basis_dim = BS%HO_sph%idsp(1,ifg)   
+            do ms = 0,1
+                Am(1:dim_m_max,1:dim_mesh) = BS%HO_sph%Am(1:dim_m_max,1:dim_mesh,ms,ifg)
+                conj_Am = conjg(Am)
+                !
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,mix%kappa_mm(:,:,ifg,iphi,it),dim_m_max,conj_Am,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Am,dim_m_max,Matrix1,dim_m_max,one,Kappa(:,:,ifg),dim_mesh)
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,mix%kappac_mm(:,:,ifg,iphi,it),dim_m_max,conj_Am,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Am,dim_m_max,Matrix1,dim_m_max,one,Kappac(:,:,ifg),dim_mesh)
+                !
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,mix%pkappa_mm(:,:,ifg,iphi,it),dim_m_max,conj_Am,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Am,dim_m_max,Matrix1,dim_m_max,one,pKappa(:,:,ifg),dim_mesh)
+                call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,mix%pkappac_mm(:,:,ifg,iphi,it),dim_m_max,conj_Am,dim_m_max,zero,Matrix1,dim_m_max)
+                call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Am,dim_m_max,Matrix1,dim_m_max,one,pKappac(:,:,ifg),dim_mesh)    
+            end do
+        end do
+        do i = 1,dim_mesh
+            mix%kappa_it(i,iphi,it) =  Kappa(i,i,1) + Kappa(i,i,2)
+            mix%kappac_it(i,iphi,it) = Kappac(i,i,1) + Kappac(i,i,2)
+            mix%pkappa_it(i,iphi,it) = pKappa(i,i,1) + pKappa(i,i,2)
+            mix%pkappac_it(i,iphi,it) = pKappac(i,i,1) + pKappac(i,i,2)
+        end do
+        deallocate(Am,conj_Am,Matrix1,Kappa,Kappac,pKappa,pKappac)
     end subroutine
 end subroutine
 

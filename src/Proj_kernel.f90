@@ -1174,7 +1174,7 @@ Module Kernel
         !---------------------------------------------------------------
 
         use Globals, only: projection_mesh,nucleus_attributes,mix
-        use Eccentricity, only: calculate_Eccentri_n
+        use Eccentricity, only: calculate_Eccentri_n_MM
         complex(r64),intent(out) :: Eccentri_PNP(2),pEccentri_PNP(2)
         integer :: L_n,L_p,phi_n_index,phi_p_index,it,mu
         real(r64) :: phi_n,phi_p
@@ -1190,7 +1190,7 @@ Module Kernel
         allocate(Eccentri_arry(n,max(L_n,L_p),2),pEccentri_arry(n,max(L_n,L_p),2),Qn_mu_arry(-n:n,max(L_n,L_p),2),pQn_mu_arry(-n:n,max(L_n,L_p),2))
         do phi_n_index = 1, L_n
             it = 1
-            call calculate_Eccentri_n(n,phi_n_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu)
+            call calculate_Eccentri_n_MM(n,phi_n_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu)
             Eccentri_arry(:,phi_n_index,it) = Eccentri(:)
             pEccentri_arry(:,phi_n_index,it) = pEccentri(:)
             Qn_mu_arry(:,phi_n_index,it) = Qn_mu(:)
@@ -1198,7 +1198,7 @@ Module Kernel
         end do 
         do phi_p_index = 1, L_p
             it = 2
-            call calculate_Eccentri_n(n,phi_p_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu)
+            call calculate_Eccentri_n_MM(n,phi_p_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu)
             Eccentri_arry(:,phi_p_index,it) = Eccentri(:)
             pEccentri_arry(:,phi_p_index,it) = pEccentri(:)
             Qn_mu_arry(:,phi_p_index,it) = Qn_mu(:)
