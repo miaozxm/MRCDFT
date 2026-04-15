@@ -10,4 +10,5 @@ obj/
 mod/
 *.mod
 examples/
+--git-common-dir/
 
