@@ -10,9 +10,10 @@ MODULE Proj
 implicit none
 contains
     subroutine Proj_Main
-        use Globals, only: gcm_space,Proj_option,Proj_outputfile
+        use Globals, only: gcm_space,Proj_option,Proj_outputfile,MPI_Infor
         use Energy, only: calculate_sigma_nabla_Spherical
         use Basis, only: set_spherical_oscillator_wave_function
+        use CDFT_Inout, only: int2str
         use Proj_Inout, only: set_Proj_Expectation_filename,read_wavefuntion_files,write_Proj_output
         use Mixed, only: determine_truncated_dimension
         use Kernel, only: set_projection_mesh_points,calculate_Kernel
@@ -20,14 +21,16 @@ contains
         use TD, only: calculate_reduced_transition_density_matrix_element
         implicit none
         integer :: q1,q2_start,q2_end,q2
+        integer :: task_id
 
-        write(*,*)'Proj_Main: Start Proj calculations'
+        if (MPI_Infor%rank == 0) write(*,*)'Proj_Main: Start Proj calculations'
         call set_projection_mesh_points
         call set_spherical_oscillator_wave_function
         call calculate_sigma_nabla_Spherical
 
         call set_Proj_Expectation_filename
-        open(Proj_outputfile%u_outExpectation, file=Proj_outputfile%outExpectation, status='unknown')
+        task_id = -1
+        open(Proj_outputfile%u_outExpectation, file=trim(Proj_outputfile%outExpectation)//'_'//int2str(MPI_Infor%rank), status='unknown')
         do q1 = gcm_space%q1_start, gcm_space%q1_end
             if(Proj_option%Kernel_Symmetry==0) then      ! All Kernels 
                 q2_start = gcm_space%q2_start
@@ -42,6 +45,8 @@ contains
                 stop 'Kernel_Symmetry should be 0, 1, 2'
             end if
             do q2 = q2_start, q2_end
+                task_id = task_id + 1
+                if (mod(task_id, MPI_Infor%nprocs) /= MPI_Infor%rank) cycle ! MPI process distribution
                 write(*,"(5x,'(q1,q2)=(',i3,',',i3,') >>>>>>>>>>')") q1, q2
                 call read_wavefuntion_files(q1,q2)
                 call determine_truncated_dimension
@@ -57,6 +62,6 @@ contains
         end do
 
         close(Proj_outputfile%u_outExpectation) 
-        write(*,*)'Proj_Main: Proj calculations completed'
+        if (MPI_Infor%rank == 0) write(*,*)'Proj_Main: Proj calculations completed'
     end subroutine
 END MODULE Proj

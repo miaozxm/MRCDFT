@@ -19,6 +19,7 @@ real(r64) :: alx ! fermi energy
 real(r64) :: tzx ! neutron or proton numbers N
 real(r64) :: ecut ! cut-off energy in pairing window
 integer :: block_level ! block_level for neutron or proton
+logical :: first_deformation = .True.
 
 contains
 
@@ -27,7 +28,7 @@ subroutine initial_pairing_field(ifPrint)
     !   set the initial `pairing potential`, `fermi energy`, `cutoff energy`
     !   they will be updated after each iteration
     !--------------------------------------------------------------------
-    use Globals, only: input_par,nucleus_attributes,nghl,constraint,option
+    use Globals, only: input_par,nucleus_attributes,nghl,option
     logical,intent(in),optional :: ifPrint
     integer :: it,ii
     ! set input parameters
@@ -46,11 +47,12 @@ subroutine initial_pairing_field(ifPrint)
             enddo
         endif
         ! only initialize the first loop, and use the calculated value from the previous loop for subsequent loops.
-        if(constraint%index==1) then
+        if(first_deformation) then
             ! initial fermi energy
             pairing%ala(it) = -7.0
             ! inital cutoff energy
             pairing%ecut(it) = 5.d0
+            first_deformation = .False.
         endif
     enddo
     ! set block

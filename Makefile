@@ -16,7 +16,7 @@ default:  gfortran #ifort
 
 # compiled by gfortran
 gfortran: FC = gfortran
-gfortran: FFLAGS = -O2 -g -J ${MOD_DIR} -fopenmp -ffree-line-length-none
+gfortran: FFLAGS = -O3 -J ${MOD_DIR} -fopenmp -ffree-line-length-none
 # gfortran: FFLAGS = -O3 -g -J ${MOD_DIR} -fopenmp -ffree-line-length-none
 # gfortran: FFLAGS += -lmkl_rt
 gfortran: FFLAGS += -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
@@ -35,6 +35,11 @@ perf : FC = gfortran
 perf : FFLAGS = -g -pthread -O3 -J ${MOD_DIR}  -fopenmp -ffree-line-length-none # -O3 -march=native -flto
 perf : FFLAGS += -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
 perf : printConfiguration ${EXE_NAME} printEndInformation
+
+mpif90: FC = mpif90
+mpif90: FFLAGS = -O3 -J ${MOD_DIR} -fopenmp -ffree-line-length-none
+mpif90: FFLAGS += -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
+mpif90: printConfiguration ${EXE_NAME} printEndInformation
 
 # compiled by ifort
 ifort: FC = ifort

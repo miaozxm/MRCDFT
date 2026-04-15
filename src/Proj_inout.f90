@@ -12,11 +12,12 @@ use Constants, only: i16,r64,u_start,pi,ngl,OUTPUT_PATH, Jmax_max
 use CDFT_Inout, only: file_path_para,set_CDFT_output_filename, int2str, adjust_left
 implicit none
 integer, private :: u_Proj = u_start + 11
+logical :: first_kernel = .True.
 
 contains
 
 subroutine read_Proj_configuration(ifPrint)
-    use Globals, only: input_par,Proj_option
+    use Globals, only: input_par,Proj_option,MPI_Infor
     integer :: i,is
     logical,intent(in),optional :: ifPrint
     character(len=*), parameter ::  format1 = "(10x,2f10.4)", &
@@ -52,7 +53,7 @@ subroutine read_Proj_configuration(ifPrint)
     read(u_Proj, format2) input_par%checkN2J2
     read(u_Proj, format2) input_par%EccentriType
     call set_Proj_parameters
-    if(ifPrint) call printParameters
+    if(ifPrint.and. MPI_Infor%rank == 0) call printParameters
     contains
     subroutine set_Proj_parameters
         use Globals, only: input_par,Proj_option,gcm_space,constraint,TDs
@@ -498,10 +499,11 @@ subroutine write_Proj_expectation(q1,q2)
     character(1), dimension(2) :: ParityChar = ['+', '-']
     character(len=*), parameter ::  format1 = "(4a9,3(a2,2x),a6,(1x,a9,2x),(a10,2x),(6x,a,5x),2(6x,a,3x),2(a9,2x),2(a7,2x))", &
                                     format2 = "(4(2x,f6.3,1x),3(i2,2x),(3x,a,3x),(f9.6,2x),2(f10.5,2x),2(f8.3,2x),2(f9.3,2x),(f7.3,2x),(f7.4,2x))"
-    if(q1==gcm_space%q1_start .and. q2==gcm_space%q2_start) then
+    if(first_kernel) then
         write(Proj_outputfile%u_outExpectation,format1) "beta2_1","beta3_1","beta2_2","beta3_2","J","K1","K2","Parity",&
                                                         "N_Kernel","H_kernel","E","N","Z","N^2","Z^2","J^2", &
                                                         "r^2_p"
+        first_kernel = .False.
     endif
     do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
         do K1 = -0,0
@@ -557,7 +559,7 @@ subroutine write_1B_density_matrix_elements
                     do m1 = 1, BS%HO_sph%idsp(1,ifg)
                         do m2 = 1, BS%HO_sph%idsp(1,ifg)
                         ! 1 Body
-                        write(Proj_outputfile%u_outputDsME1B,"(1x,a1,6i4,2x,2f18.14)")Parity_c,J,K1,K2,ifg,m1,m2,&
+                        write(Proj_outputfile%u_outputDsME1B,"(1x,a1,4i4,2i5,2x,2f18.14)")Parity_c,J,K1,K2,ifg,m1,m2,&
                                     Real(Proj_densities%ME1B(J,K1,K2,iParity,1,ifg,m1,m2)),&
                                     Real(Proj_densities%ME1B(J,K1,K2,iParity,2,ifg,m1,m2))
                         end do

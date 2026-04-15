@@ -144,7 +144,7 @@ Module Kernel
     end subroutine
 
     subroutine calculate_overlaps_arrays
-        use Globals, only: projection_mesh,Proj_option
+        use Globals, only: projection_mesh,Proj_option,MPI_Infor
         use Proj_Density, only: store_mix_density_matrix_elements
         use CDFT_Inout, only: adjust_left
         integer :: nalpha,nbeta,ngamma,ialpha,ibeta,igamma,mu
@@ -159,13 +159,13 @@ Module Kernel
                 beta = projection_mesh%beta(ibeta)
                 do igamma = 1, ngamma ! loop of gamma
                     gamma = projection_mesh%gamma(igamma)
-                    write(*,format1,advance='no') ialpha,adjust_left(nalpha,3),ibeta,adjust_left(nbeta,3),igamma,adjust_left(ngamma,3)
+                    if (MPI_Infor%rank == 0) write(*,format1,advance='no') ialpha,adjust_left(nalpha,3),ibeta,adjust_left(nbeta,3),igamma,adjust_left(ngamma,3)
                     !##########################################################
                     !#    using the symmetry(D2 and Axial+Parity) of the Euler angles
                     !##########################################################
                     ! D2
                     if(Proj_option%AMPtype==2 .and. Proj_option%Euler_Symmetry==2 .and. ialpha > (nalpha+1)/2 ) then
-                        write(*,'(A)') '(alpha) symmetry(D2).'
+                        if (MPI_Infor%rank == 0) write(*,'(A)') '(alpha) symmetry(D2).'
                         ! because <O R(alpha,beta,gamma)> = <O R(pi-alpha,beta,pi-gamma)>, 
                         Norm_PNP_AMParray(ialpha,ibeta,igamma)  = Norm_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma)
                         pNorm_PNP_AMParray(ialpha,ibeta,igamma) = pNorm_PNP_AMParray(nalpha+1-ialpha,ibeta,ngamma+1-igamma)
@@ -200,7 +200,7 @@ Module Kernel
                         cycle
                     end if                   
                     if(Proj_option%AMPtype==2 .and. Proj_option%Euler_Symmetry==2 .and. ibeta > (nbeta+1)/2 ) then
-                        write(*,'(A)') '(beta) symmetry(D2).'
+                        if (MPI_Infor%rank == 0) write(*,'(A)') '(beta) symmetry(D2).'
                         ! because <O R(alpha,beta,gamma)> = <O R(alpha,pi-beta,pi-gamma)>, 
                         Norm_PNP_AMParray(ialpha,ibeta,igamma)  = Norm_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma)
                         pNorm_PNP_AMParray(ialpha,ibeta,igamma) = pNorm_PNP_AMParray(ialpha,nbeta+1-ibeta,ngamma+1-igamma)
@@ -236,7 +236,7 @@ Module Kernel
                     end if
                     ! Axial+Parity
                     if(Proj_option%AMPtype==1 .and. Proj_option%Euler_Symmetry==1 .and. ibeta > (nbeta+1)/2) then 
-                        write(*,'(A)') '(beta) symmetry (Axially+Parity).'
+                        if (MPI_Infor%rank == 0) write(*,'(A)') '(beta) symmetry (Axially+Parity).'
                         ! because <O R(0,beta,0)> = <O R(0,pi-beta,0)P> 
                         ! because <O R(0,beta,0)P> = <O R(0,pi-beta,0)>
                         ! In fact, in this case  ialpha = igamma = 1 
@@ -278,7 +278,7 @@ Module Kernel
                     !############################################################
                     !#   calculate the overlap at given Euler angles
                     !#############################################################
-                    write(*,'(A)') 'calculate_overlaps_after_PNP_at_Euler_angles ...'
+                    if (MPI_Infor%rank == 0) write(*,'(A)') 'calculate_overlaps_after_PNP_at_Euler_angles ...'
                     call calculate_overlaps_after_PNP_at_Euler_angles(alpha,beta,gamma,         &
                         Norm_PNP_AMParray(ialpha,ibeta,igamma),         & ! <q_1|   R(alpha,beta,gamma)  |q_2 >
                         pNorm_PNP_AMParray(ialpha,ibeta,igamma),        & ! <q_1|   R(alpha,beta,gamma) P|q_2 >

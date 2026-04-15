@@ -14,6 +14,12 @@ implicit none
 
 public
 
+type MPI_Information
+    integer :: rank
+    integer :: nprocs
+end type
+type(MPI_Information) :: MPI_Infor
+
 type Input_Parameter
     character(len=10) :: force_name     ! Parameterset name of the Lagrangian
     character(len=3) :: nucleus_name    ! nucleus name

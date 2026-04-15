@@ -15,6 +15,7 @@ character(len=256) :: file_path_para=""
 integer, private :: u_cdft = u_start + 2  ! the unit of file_path_para
 character(len=256) :: file_path_b23=""
 integer, private :: u_wfs = u_start + 3  ! the unit of  xxx.wel
+logical :: first_deformation = .True.
 
 interface adjust_left
    module procedure adjust_left_char
@@ -125,7 +126,7 @@ subroutine read_file_b23
 end subroutine read_file_b23
 
 subroutine read_CDFT_configuration(ifPrint)
-    use Globals, only: input_par,iteration,option,OddA
+    use Globals, only: input_par,iteration,option,OddA,MPI_Infor
     logical,intent(in),optional :: ifPrint
     character :: first_character
     real(r64) :: tmp
@@ -190,7 +191,7 @@ subroutine read_CDFT_configuration(ifPrint)
     option%block_type =  input_par%option_iBlock
     option%block_method = input_par%option_blockMethod
     option%Erot_type = input_par%option_Erot
-    if(ifPrint) call printParameters
+    if(ifPrint .and. MPI_Infor%rank == 0) call printParameters
     contains
     subroutine printParameters
         use Globals, only: constraint
@@ -552,10 +553,11 @@ subroutine write_expectation
     use Globals,only: outputfile,constraint,iteration,expectations
     character(len=*), parameter ::  format1 = "(a,2x,a5,4x,2(a5,2x),2(a15,2x),3(a9,5x), (a10,4x),(a13,1x))", &
                                     format2 = "(i3,3x,f12.6,2x,2(f5.2,2x),2(6x,f5.2,6x),5(f12.6,2x))"
-    if(constraint%index==1) then
+    if(first_deformation) then
         write(outputfile%u_outExpectation,format1) "iteration","  epsi","beta2 ","beta3 ",&
                                                     "beta2_calculate","beta3_calculate","Etot","Erot","Etot-Erot",&
                                                     "rms-Radius","charge-Radius"
+        first_deformation = .False.
     endif
     write(outputfile%u_outExpectation,format2) iteration%ii,iteration%si,&
             constraint%betac(constraint%index),constraint%bet3c(constraint%index), &

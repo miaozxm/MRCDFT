@@ -62,13 +62,13 @@ contains
         !      Due to the extremely large memory usage, the two-body density
         !      is not stored in Proj_densities%ME2B.
         !-----------------------------------------------------------------
-        use Globals, only: gcm_space,Proj_option,BS,kernels
+        use Globals, only: gcm_space,Proj_option,BS,kernels,MPI_Infor
         integer, intent(in) :: q1,q2
         integer :: dim_m_max,J,K1_start,K1_end,K2_start,K2_end,K1,K2,iParity,Parity,ifg1,m1,ifg2,m2,ifg3,m3,ifg4,m4,total_iter,iter
         complex(r64) :: ME1B(2),ME2B(4)
         complex(r64) :: N(2), N2(2)
         ! logical :: q2_q1_Symmetry
-        write(*,'(5x,A)') 'calculate_density_matrix_element ...'
+        if(MPI_Infor%rank==0) write(*,'(5x,A)') 'calculate_density_matrix_element ...'
         ! if(q1/=q2 .and. Proj_option%Kernel_Symmetry==1) then
         !     q2_q1_Symmetry = .True.
         ! else

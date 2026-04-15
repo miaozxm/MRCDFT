@@ -9,8 +9,8 @@
 MODULE CDFT
 contains
     subroutine CDFT_Main
-        use Globals, only: constraint, iteration, outputfile,expectations,option,pairing
-        use CDFT_Inout, only: set_CDFT_Expectation_filename,set_CDFT_output_filename,write_result_DIR,adjust_left
+        use Globals, only: constraint, iteration, outputfile,expectations,option,pairing,MPI_Infor
+        use CDFT_Inout, only: set_CDFT_Expectation_filename,set_CDFT_output_filename,write_result_DIR,adjust_left,int2str
         use Field, only: set_woodssaxon_parameters,calculate_meson_propagators,initial_potential_fields,calculate_fields
         use Forces, only : calculate_density_dependence_of_coupling_constants
         use Basis, only : set_Cylindrical_HO_basis,set_Spherical_HO_basis,transform_coefficients_form_cylindrical_to_spherical
@@ -28,13 +28,13 @@ contains
         integer :: constraint_index,iteration_index
         character(len=150) :: format1,format2,format3,format4,format5
 
-        write(*,*)'CDFT_Main: Start CDFT calculations' 
+        if (MPI_Infor%rank == 0) write(*,*)'CDFT_Main: Start CDFT calculations' 
         format1 = "(112(1h=),/, 48x,'Iteration: ',i4,48x,/,(112(1h-)))"
         format2 = "(i3,'. It. si =',f15.10,'  E/A =',f15.10,'  R =',f15.10,'  b2 =',f15.10,'  b3 =',f15.10)"
         ! format2 = "(i3,'. It. si =',f30.25,'  E =',f30.25,'  R =',f30.25,'  b2 =',f30.25,'  b3 =',f30.25)"
         format3 = "(/,112(1h#),/,'#',28x ,'Iteration converged after',i4,' steps, si =',f13.10,28x,'#',/,112(1h#))"
         format4 = "('     Constraint: ',i4,'/',a, 'beta2=',f6.2,'   beat3=',f6.2)"
-        format5 = "('     Iteration converged after',i4,' steps, si =',f13.8, ',  beta2 =',f6.3,',  beta3 =',f6.3)"
+        format5 = "('     Iteration converged after',i4,' steps, si =',f13.8, ',  beta2 =',f6.3,',  beta3 =',f6.3,',',i4,'/',a)"
 
         call set_woodssaxon_parameters(.True.)
         call set_Cylindrical_HO_basis(.True.)
@@ -49,10 +49,11 @@ contains
         endif
 
         call set_CDFT_Expectation_filename
-        open(outputfile%u_rotationalE, file=outputfile%rotationalE, status='unknown')
-        open(outputfile%u_outExpectation, file=outputfile%outExpectation, status='unknown')
+        open(outputfile%u_rotationalE, file=trim(outputfile%rotationalE)//'_'//int2str(MPI_Infor%rank), status='unknown')
+        open(outputfile%u_outExpectation, file=trim(outputfile%outExpectation)//'_'//int2str(MPI_Infor%rank), status='unknown')
 
-        do constraint_index = 1, constraint%length ! loop for different deformation parameters 
+        do constraint_index = 1, constraint%length ! loop for different deformation parameters
+            if (mod(constraint_index-1, MPI_Infor%nprocs) /= MPI_Infor%rank) cycle ! MPI process distribution
             constraint%index = constraint_index  
             call set_constraint_parameters
             call set_CDFT_output_filename(constraint%betac(constraint%index),constraint%bet3c(constraint%index))
@@ -115,7 +116,7 @@ contains
                 end if
             end do
             write(outputfile%u_outputf,format3) iteration%ii,iteration%si
-            write(*,format5) iteration%ii,iteration%si,expectations%betg,expectations%beto
+            write(*,format5) iteration%ii,iteration%si,expectations%betg,expectations%beto,constraint%index,adjust_left(constraint%length,4)
 
             ! after convergence 
             if(option%eqType .eq. 0) then
@@ -129,7 +130,7 @@ contains
 
         close(outputfile%u_rotationalE)
         close(outputfile%u_outExpectation)
-        write(*,*)'CDFT_Main: CDFT calculations completed'
+        if (MPI_Infor%rank == 0) write(*,*)'CDFT_Main: CDFT calculations completed'
     end subroutine
 END MODULE CDFT
 
