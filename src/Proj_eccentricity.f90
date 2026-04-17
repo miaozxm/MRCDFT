@@ -102,7 +102,7 @@ contains
         !$OMP END PARALLEL
     end subroutine
 
-    subroutine calculate_Eccentri_n_MM(n,iphi,it,Eccentri,pEccentri,Q_mu,pQ_mu)
+    subroutine calculate_Eccentri_n_MM(n,iphi,it,Eccentri,pEccentri,Q_mu,pQ_mu,Each_2B_Term,pEach_2B_Term)
         !--------------------------------------------------
         !  calculate <q1| E_n R|q2>/<q1|R|q2>
         !  where R = R(alpha,beta,gamma, phi_n,phi_p) = e^{i alpha J_z} e^{i beta J_y} e^{i gamma J_z} e^{i phi_n N} e^{i phi_p N}
@@ -111,7 +111,7 @@ contains
         use Globals, only: BS, mix
         use MathMethods, only: zGEMM,zTrace,zGEMM_Trace
         integer :: n,iphi,it
-        complex(r64) :: Eccentri(2),pEccentri(2),Q_mu(-n:n),pQ_mu(-n:n)
+        complex(r64) :: Eccentri(2),pEccentri(2),Q_mu(-n:n),pQ_mu(-n:n),Each_2B_Term(3),pEach_2B_Term(3)
         integer :: ifg1,ifg2,mu,dim1,dim2,dim_m_max
         complex(r64), allocatable,dimension(:,:) :: QQ12,Q12,Q34,Matrix1,Matrix2,Matrix3, &
                 rho21,rho43,rho41,rho23,kappa42,kappac13,prho21,prho43,prho41,prho23,pkappa42,pkappac13
@@ -123,6 +123,8 @@ contains
         pEccentri = (0.d0,0.d0)
         Q_mu = (0.d0,0.d0)
         pQ_mu = (0.d0,0.d0)
+        Each_2B_Term = (0.d0,0.d0)
+        pEach_2B_Term = (0.d0,0.d0)
         
         if(.not. precomputed_n(n)) then 
             if(n>max_n) then 
@@ -169,43 +171,50 @@ contains
                 pkappac13(1:dim1,1:dim2) = mix%pkappa01c_mm(1:dim1,1:dim2,indexfg(ifg1,ifg2),iphi,it)
                 ! 2B
                 do mu = -n, n
+                    ! direct term(nn or pp)
                     Q12(1:dim1,1:dim1) =  Q_array(ifg1,1:dim1,ifg1,1:dim1,n,mu)
                     Q34(1:dim2,1:dim2) =  Q_array(ifg2,1:dim2,ifg2,1:dim2,n,-mu)
                     call zGEMM_Trace('N' ,'N' ,dim1,dim1,dim1,one,Q12,dim_m_max,rho21,dim_m_max,zero,Matrix1,dim_m_max)
                     call zGEMM_Trace('N' ,'N' ,dim2,dim2,dim2,one,Q34,dim_m_max,rho43,dim_m_max,zero,Matrix2,dim_m_max)
                     if(ifg2==1) Q_mu(mu) = Q_mu(mu) + zTrace(Matrix1,dim1)
                     Eccentri(2) = Eccentri(2) - (-1)**mu*zTrace(Matrix1,dim1)*zTrace(Matrix2,dim2)
+                    Each_2B_Term(1) = Each_2B_Term(1) - (-1)**mu*zTrace(Matrix1,dim1)*zTrace(Matrix2,dim2)
                     call zGEMM_Trace('N' ,'N' ,dim1,dim1,dim1,one,Q12,dim_m_max,prho21,dim_m_max,zero,Matrix1,dim_m_max)
                     call zGEMM_Trace('N' ,'N' ,dim2,dim2,dim2,one,Q34,dim_m_max,prho43,dim_m_max,zero,Matrix2,dim_m_max)
                     if(ifg2==1) pQ_mu(mu) = pQ_mu(mu) + zTrace(Matrix1,dim1)
                     pEccentri(2) = pEccentri(2) - (-1)**mu*zTrace(Matrix1,dim1)*zTrace(Matrix2,dim2)
+                    pEach_2B_Term(1) = pEach_2B_Term(1) - (-1)**mu*zTrace(Matrix1,dim1)*zTrace(Matrix2,dim2)
 
+                    ! exchange term
                     call zGEMM('N' ,'N' ,dim1,dim2,dim1,one,Q12,dim_m_max,rho23,dim_m_max,zero,Matrix1,dim_m_max)
                     call zGEMM('N' ,'N' ,dim2,dim1,dim2,one,Q34,dim_m_max,rho41,dim_m_max,zero,Matrix2,dim_m_max)
                     call zGEMM_Trace('N' ,'N' ,dim1,dim1,dim2,one,Matrix1,dim_m_max,Matrix2,dim_m_max,zero,Matrix3,dim_m_max)
                     Eccentri(2) = Eccentri(2) + (-1)**mu*zTrace(Matrix3,dim1)
+                    Each_2B_Term(2) = Each_2B_Term(2) + (-1)**mu*zTrace(Matrix3,dim1)
                     call zGEMM('N' ,'N' ,dim1,dim2,dim1,one,Q12,dim_m_max,prho23,dim_m_max,zero,Matrix1,dim_m_max)
                     call zGEMM('N' ,'N' ,dim2,dim1,dim2,one,Q34,dim_m_max,prho41,dim_m_max,zero,Matrix2,dim_m_max)
                     call zGEMM_Trace('N' ,'N' ,dim1,dim1,dim2,one,Matrix1,dim_m_max,Matrix2,dim_m_max,zero,Matrix3,dim_m_max)
                     pEccentri(2) = pEccentri(2) + (-1)**mu*zTrace(Matrix3,dim1)
+                    pEach_2B_Term(2) = pEach_2B_Term(2) + (-1)**mu*zTrace(Matrix3,dim1)
 
+                    ! kappa term
                     call zGEMM('N' ,'T' ,dim2,dim1,dim1,one,kappa42,dim_m_max,Q12,dim_m_max,zero,Matrix1,dim_m_max)
                     call zGEMM('N' ,'N' ,dim1,dim2,dim2,one,kappac13,dim_m_max,Q34,dim_m_max,zero,Matrix2,dim_m_max)
                     call zGEMM_Trace('N' ,'N' ,dim2,dim2,dim1,one,Matrix1,dim_m_max,Matrix2,dim_m_max,zero,Matrix3,dim_m_max)
                     Eccentri(2) = Eccentri(2) + (-1)**mu*zTrace(Matrix3,dim2)
+                    Each_2B_Term(3) = Each_2B_Term(3) + (-1)**mu*zTrace(Matrix3,dim2)
                     call zGEMM('N' ,'T' ,dim2,dim1,dim1,one,pkappa42,dim_m_max,Q12,dim_m_max,zero,Matrix1,dim_m_max)
                     call zGEMM('N' ,'N' ,dim1,dim2,dim2,one,pkappac13,dim_m_max,Q34,dim_m_max,zero,Matrix2,dim_m_max)
                     call zGEMM_Trace('N' ,'N' ,dim2,dim2,dim1,one,Matrix1,dim_m_max,Matrix2,dim_m_max,zero,Matrix3,dim_m_max)
                     pEccentri(2) = pEccentri(2) + (-1)**mu*zTrace(Matrix3,dim2)
+                    pEach_2B_Term(3) = pEach_2B_Term(3) + (-1)**mu*zTrace(Matrix3,dim2)
                 end do 
             end do 
         end do
-        Eccentri(2) = - Eccentri(2)
-        pEccentri(2) = -pEccentri(2)
         deallocate(QQ12,Q12,Q34,Matrix1,Matrix2,Matrix3,rho21,rho43,rho41,rho23,kappa42,kappac13,prho21,prho43,prho41,prho23,pkappa42,pkappac13)
     end subroutine
 
-
+    ! --------      -----------
     double precision function f_n(ifg1,m1,ifg2,m2,n)
         integer,intent(in) :: ifg1,ifg2, m1, m2, n
         if(precomputed_n(n)) then 

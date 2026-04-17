@@ -467,7 +467,11 @@ subroutine write_eccentricity_operators_kernels(q1,q2)
                     write(Proj_outputfile%u_outputEccentricityKernel,format2)   Real(kernels%Eccentricity_KK(J,K1,K2,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
                                                                                 Real(kernels%Eccentricity_KK(J,K1,K2,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
                                      Real((kernels%Eccentricity_KK(J,K1,K2,parity,1)+kernels%Eccentricity_KK(J,K1,K2,parity,2))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))   ! 1B +2B
-
+                    ! Each Term
+                    write(Proj_outputfile%u_outputEccentricityKernel,format2)   Real(kernels%Eccentricity_KK(J,K1,K2,parity,3)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! direct
+                                                                                Real(kernels%Eccentricity_KK(J,K1,K2,parity,4)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! exchange
+                                                                                Real(kernels%Eccentricity_KK(J,K1,K2,parity,5)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))    ! 1B +2B
+                
                     write(Proj_outputfile%u_outputEccentricityKernel,*) "By Density:"
                     ! ! 1B part
                     write(Proj_outputfile%u_outputEccentricityKernel,format2)   Real(kernels%Eccentricity_KK_byDensity(J,K1,K2,1,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), &

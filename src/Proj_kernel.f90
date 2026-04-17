@@ -116,7 +116,7 @@ Module Kernel
                  Q2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),pQ2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),&
                  cQ2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),pcQ2m_PNP_AMParray(nalpha,nbeta,ngamma,-2:2,2),&
                  r2_PNP_AMParray(nalpha,nbeta,ngamma,2),pr2_PNP_AMParray(nalpha,nbeta,ngamma,2),&
-                 Eccentri_PNP_AMParray(nalpha,nbeta,ngamma,2),pEccentri_PNP_AMParray(nalpha,nbeta,ngamma,2),source=(0.0d0,0.0d0))
+                 Eccentri_PNP_AMParray(nalpha,nbeta,ngamma,5),pEccentri_PNP_AMParray(nalpha,nbeta,ngamma,5),source=(0.0d0,0.0d0))
 
         call calculate_overlaps_arrays
 
@@ -803,9 +803,15 @@ Module Kernel
                                 ! Pi = +
                                 kernels%Eccentricity_KK(Ji,Kf,Ki,1,1) = kernels%Eccentricity_KK(Ji,Kf,Ki,1,1) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,1) + pEccentri_PNP_AMParray(ialpha,ibeta,igamma,1))/2.d0 ! 1B
                                 kernels%Eccentricity_KK(Ji,Kf,Ki,1,2) = kernels%Eccentricity_KK(Ji,Kf,Ki,1,2) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,2) + pEccentri_PNP_AMParray(ialpha,ibeta,igamma,2))/2.d0 ! 2B
+                                kernels%Eccentricity_KK(Ji,Kf,Ki,1,3) = kernels%Eccentricity_KK(Ji,Kf,Ki,1,3) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,3) + pEccentri_PNP_AMParray(ialpha,ibeta,igamma,3))/2.d0 ! direct term
+                                kernels%Eccentricity_KK(Ji,Kf,Ki,1,4) = kernels%Eccentricity_KK(Ji,Kf,Ki,1,4) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,4) + pEccentri_PNP_AMParray(ialpha,ibeta,igamma,4))/2.d0 ! exchange term
+                                kernels%Eccentricity_KK(Ji,Kf,Ki,1,5) = kernels%Eccentricity_KK(Ji,Kf,Ki,1,5) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,5) + pEccentri_PNP_AMParray(ialpha,ibeta,igamma,5))/2.d0 ! kappa term
                                 ! Pi = -
                                 kernels%Eccentricity_KK(Ji,Kf,Ki,2,1) = kernels%Eccentricity_KK(Ji,Kf,Ki,2,1) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,1) - pEccentri_PNP_AMParray(ialpha,ibeta,igamma,1))/2.d0 ! 1B
                                 kernels%Eccentricity_KK(Ji,Kf,Ki,2,2) = kernels%Eccentricity_KK(Ji,Kf,Ki,2,2) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,2) - pEccentri_PNP_AMParray(ialpha,ibeta,igamma,2))/2.d0 ! 1B 
+                                kernels%Eccentricity_KK(Ji,Kf,Ki,2,3) = kernels%Eccentricity_KK(Ji,Kf,Ki,2,3) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,3) - pEccentri_PNP_AMParray(ialpha,ibeta,igamma,3))/2.d0 ! direct term
+                                kernels%Eccentricity_KK(Ji,Kf,Ki,2,4) = kernels%Eccentricity_KK(Ji,Kf,Ki,2,4) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,4) - pEccentri_PNP_AMParray(ialpha,ibeta,igamma,4))/2.d0 ! exchange term
+                                kernels%Eccentricity_KK(Ji,Kf,Ki,2,5) = kernels%Eccentricity_KK(Ji,Kf,Ki,2,5) + fac*(Eccentri_PNP_AMParray(ialpha,ibeta,igamma,5) - pEccentri_PNP_AMParray(ialpha,ibeta,igamma,5))/2.d0 ! kappa term
                             end do 
                         end do 
                     end do 
@@ -823,7 +829,7 @@ Module Kernel
         use Mixed, only: calculate_mixed_DensCurrTens_and_norm_overlap
         real(r64), intent(in) :: alpha, beta, gamma
         complex(r64),intent(out) :: Norm_PNP, pNorm_PNP, Etot_PNP, pEtot_PNP, Particle_PNP(2), pParticle_PNP(2),N2_PNP(2),pN2_PNP(2),J2_PNP, pJ2_PNP, &
-                                    r2_PNP(2), pr2_PNP(2),Eccentri_PNP(2),pEccentri_PNP(2)
+                                    r2_PNP(2), pr2_PNP(2),Eccentri_PNP(5),pEccentri_PNP(5)
         complex(r64), dimension(-2:2,2),intent(out) :: Q2m_PNP, pQ2m_PNP,cQ2m_PNP,pcQ2m_PNP
 
         ! 1) calcualate mixed ... matrix elements
@@ -1175,34 +1181,42 @@ Module Kernel
 
         use Globals, only: projection_mesh,nucleus_attributes,mix
         use Eccentricity, only: calculate_Eccentri_n_MM
-        complex(r64),intent(out) :: Eccentri_PNP(2),pEccentri_PNP(2)
+        complex(r64),intent(out) :: Eccentri_PNP(5),pEccentri_PNP(5)
+        complex(r64) :: Eccentri_Each_Term_PNP(3),pEccentri_Each_Term_PNP(3)
         integer :: L_n,L_p,phi_n_index,phi_p_index,it,mu
         real(r64) :: phi_n,phi_p
         complex(r64) :: emiNphi,emiZphi,fac,pfac
         integer,parameter :: n = 2
-        complex(r64) :: Eccentri(2),pEccentri(2),Qn_mu(-n:n),pQn_mu(-n:n)
-        complex(r64), dimension(:,:,:),allocatable :: Eccentri_arry, pEccentri_arry,Qn_mu_arry,pQn_mu_arry
+        complex(r64) :: Eccentri(2),pEccentri(2),Qn_mu(-n:n),pQn_mu(-n:n),Each_2B_Term(3),pEach_2B_Term(3)
+        complex(r64), dimension(:,:,:),allocatable :: Eccentri_arry, pEccentri_arry,Qn_mu_arry,pQn_mu_arry,Each_2B_Term_arry,pEach_2B_Term_arry
         Eccentri_PNP = (0.d0, 0.d0)
         pEccentri_PNP = (0.d0, 0.d0)
+        Eccentri_Each_Term_PNP = (0.d0, 0.d0)
+        pEccentri_Each_Term_PNP = (0.d0, 0.d0)
         L_n = projection_mesh%nphi(1)
         L_p = projection_mesh%nphi(2)
 
-        allocate(Eccentri_arry(n,max(L_n,L_p),2),pEccentri_arry(n,max(L_n,L_p),2),Qn_mu_arry(-n:n,max(L_n,L_p),2),pQn_mu_arry(-n:n,max(L_n,L_p),2))
+        allocate(Eccentri_arry(2,max(L_n,L_p),2),pEccentri_arry(2,max(L_n,L_p),2),Qn_mu_arry(-n:n,max(L_n,L_p),2),pQn_mu_arry(-n:n,max(L_n,L_p),2), &
+                 Each_2B_Term_arry(2,max(L_n,L_p),2), pEach_2B_Term_arry(2,max(L_n,L_p),2))
         do phi_n_index = 1, L_n
             it = 1
-            call calculate_Eccentri_n_MM(n,phi_n_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu)
+            call calculate_Eccentri_n_MM(n,phi_n_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu,Each_2B_Term,pEach_2B_Term)
             Eccentri_arry(:,phi_n_index,it) = Eccentri(:)
             pEccentri_arry(:,phi_n_index,it) = pEccentri(:)
             Qn_mu_arry(:,phi_n_index,it) = Qn_mu(:)
             pQn_mu_arry(:,phi_n_index,it) = pQn_mu(:)
+            Each_2B_Term_arry(:,phi_n_index,it) = Each_2B_Term(:)
+            pEach_2B_Term_arry(:,phi_n_index,it) = pEach_2B_Term(:)
         end do 
         do phi_p_index = 1, L_p
             it = 2
-            call calculate_Eccentri_n_MM(n,phi_p_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu)
+            call calculate_Eccentri_n_MM(n,phi_p_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu,Each_2B_Term,pEach_2B_Term)
             Eccentri_arry(:,phi_p_index,it) = Eccentri(:)
             pEccentri_arry(:,phi_p_index,it) = pEccentri(:)
             Qn_mu_arry(:,phi_p_index,it) = Qn_mu(:)
             pQn_mu_arry(:,phi_p_index,it) = pQn_mu(:)
+            Each_2B_Term_arry(:,phi_p_index,it) = Each_2B_Term(:)
+            pEach_2B_Term_arry(:,phi_p_index,it) = pEach_2B_Term(:)
         end do 
 
         do  phi_n_index = 1, L_n
@@ -1220,21 +1234,49 @@ Module Kernel
                 it = 2
                 Eccentri_PNP(1) = Eccentri_PNP(1) + fac*Eccentri_arry(1,phi_p_index,it)
                 pEccentri_PNP(1) = pEccentri_PNP(1) + pfac*pEccentri_arry(1,phi_p_index,it)
+
                 ! 2B
                 it = 1
-                Eccentri_PNP(2) = Eccentri_PNP(2) + fac*Eccentri_arry(2,phi_n_index,it)
-                pEccentri_PNP(2) = pEccentri_PNP(2) + pfac*pEccentri_arry(2,phi_n_index,it)
+                Eccentri_PNP(2) = Eccentri_PNP(2) - fac*Eccentri_arry(2,phi_n_index,it)
+                pEccentri_PNP(2) = pEccentri_PNP(2) - pfac*pEccentri_arry(2,phi_n_index,it)
+                ! each teram of nn
+                Eccentri_Each_Term_PNP(1) = Eccentri_Each_Term_PNP(1) - fac*Each_2B_Term_arry(1,phi_n_index,it)
+                Eccentri_Each_Term_PNP(2) = Eccentri_Each_Term_PNP(2) - fac*Each_2B_Term_arry(2,phi_n_index,it)
+                Eccentri_Each_Term_PNP(3) = Eccentri_Each_Term_PNP(3) - fac*Each_2B_Term_arry(3,phi_n_index,it)
+                pEccentri_Each_Term_PNP(1) = pEccentri_Each_Term_PNP(1) - pfac*pEach_2B_Term_arry(1,phi_n_index,it)
+                pEccentri_Each_Term_PNP(2) = pEccentri_Each_Term_PNP(2) - pfac*pEach_2B_Term_arry(2,phi_n_index,it)
+                pEccentri_Each_Term_PNP(3) = pEccentri_Each_Term_PNP(3) - pfac*pEach_2B_Term_arry(3,phi_n_index,it)
                 it = 2
-                Eccentri_PNP(2) = Eccentri_PNP(2) + fac*Eccentri_arry(2,phi_p_index,it)
-                pEccentri_PNP(2) = pEccentri_PNP(2) + pfac*pEccentri_arry(2,phi_p_index,it)
+                Eccentri_PNP(2) = Eccentri_PNP(2) - fac*Eccentri_arry(2,phi_p_index,it)
+                pEccentri_PNP(2) = pEccentri_PNP(2) - pfac*pEccentri_arry(2,phi_p_index,it)
+                ! each teram of nn
+                Eccentri_Each_Term_PNP(1) = Eccentri_Each_Term_PNP(1) - fac*Each_2B_Term_arry(1,phi_p_index,it)
+                Eccentri_Each_Term_PNP(2) = Eccentri_Each_Term_PNP(2) - fac*Each_2B_Term_arry(2,phi_p_index,it)
+                Eccentri_Each_Term_PNP(3) = Eccentri_Each_Term_PNP(3) - fac*Each_2B_Term_arry(3,phi_p_index,it)
+                pEccentri_Each_Term_PNP(1) = pEccentri_Each_Term_PNP(1) - pfac*pEach_2B_Term_arry(1,phi_p_index,it)
+                pEccentri_Each_Term_PNP(2) = pEccentri_Each_Term_PNP(2) - pfac*pEach_2B_Term_arry(2,phi_p_index,it)
+                pEccentri_Each_Term_PNP(3) = pEccentri_Each_Term_PNP(3) - pfac*pEach_2B_Term_arry(3,phi_p_index,it)
+
                 do mu = -n,n
                     Eccentri_PNP(2) = Eccentri_PNP(2) + fac*(-1)**mu* &
                             (Qn_mu_arry(mu,phi_n_index,1)*Qn_mu_arry(-mu,phi_p_index,2) + Qn_mu_arry(mu,phi_p_index,2)*Qn_mu_arry(-mu,phi_n_index,1))
                     pEccentri_PNP(2) = pEccentri_PNP(2) + pfac*(-1)**mu* &
-                            (pQn_mu_arry(mu,phi_n_index,1)*pQn_mu_arry(-mu,phi_p_index,2) + pQn_mu_arry(mu,phi_p_index,2)*pQn_mu_arry(-mu,phi_n_index,1))     
+                            (pQn_mu_arry(mu,phi_n_index,1)*pQn_mu_arry(-mu,phi_p_index,2) + pQn_mu_arry(mu,phi_p_index,2)*pQn_mu_arry(-mu,phi_n_index,1))
+                    ! direct term should include `np and pn`
+                    Eccentri_Each_Term_PNP(1) = Eccentri_Each_Term_PNP(1) + fac*(-1)**mu* &
+                            (Qn_mu_arry(mu,phi_n_index,1)*Qn_mu_arry(-mu,phi_p_index,2) + Qn_mu_arry(mu,phi_p_index,2)*Qn_mu_arry(-mu,phi_n_index,1))
+                    pEccentri_Each_Term_PNP(1) = pEccentri_Each_Term_PNP(1) + pfac*(-1)**mu* &
+                            (pQn_mu_arry(mu,phi_n_index,1)*pQn_mu_arry(-mu,phi_p_index,2) + pQn_mu_arry(mu,phi_p_index,2)*pQn_mu_arry(-mu,phi_n_index,1))
                 end do
             end do
         end do
-        deallocate(Eccentri_arry,pEccentri_arry)
+        Eccentri_PNP(3) = Eccentri_Each_Term_PNP(1)
+        Eccentri_PNP(4) = Eccentri_Each_Term_PNP(2)
+        Eccentri_PNP(5) = Eccentri_Each_Term_PNP(3)
+        pEccentri_PNP(3) = pEccentri_Each_Term_PNP(1)
+        pEccentri_PNP(4) = pEccentri_Each_Term_PNP(2)
+        pEccentri_PNP(5) = pEccentri_Each_Term_PNP(3)
+
+        deallocate(Eccentri_arry,pEccentri_arry,Qn_mu_arry,pQn_mu_arry,Each_2B_Term_arry,pEach_2B_Term_arry)
     end subroutine
 END MODULE Kernel
