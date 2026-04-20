@@ -120,6 +120,12 @@ Module Kernel
 
         call calculate_overlaps_arrays
 
+        if(Proj_option%PPtype==0) then 
+            ! no PP
+            call reset_parityOverlap
+        end if
+        
+
         ! Integration over AMP mesh points(alpha beta gamma)
         call calcualate_Norm_Hamiltonian_ParticleNumber_kernels  ! calculate <J K_1 q_1 Pi | O | J K_2 q_2 Pi >
         if( Proj_option%checkN2J2 == 1) then 
@@ -303,6 +309,20 @@ Module Kernel
                 end do
             end do 
         end do
+    end subroutine
+
+    subroutine reset_parityOverlap
+
+        pNorm_PNP_AMParray(:,:,:) = Norm_PNP_AMParray(:,:,:)
+        pEtot_PNP_AMParray(:,:,:) = Etot_PNP_AMParray(:,:,:)
+        pParticle_PNP_AMParray(:,:,:,:) = Particle_PNP_AMParray(:,:,:,:)
+        pN2_PNP_AMParray(:,:,:,:) = N2_PNP_AMParray(:,:,:,:)
+        pJ2_PNP_AMParray(:,:,:) = J2_PNP_AMParray(:,:,:)
+        pQ2m_PNP_AMParray(:,:,:,:,:) = Q2m_PNP_AMParray(:,:,:,:,:)
+        pcQ2m_PNP_AMParray(:,:,:,:,:) = cQ2m_PNP_AMParray(:,:,:,:,:)
+        pr2_PNP_AMParray(:,:,:,:) = r2_PNP_AMParray(:,:,:,:)
+        pEccentri_PNP_AMParray(:,:,:,:) = Eccentri_PNP_AMParray(:,:,:,:)
+        
     end subroutine
 
     subroutine calcualate_Norm_Hamiltonian_ParticleNumber_kernels
@@ -1140,9 +1160,7 @@ Module Kernel
         allocate(r2_arry(max(L_n,L_p),2),pr2_arry(max(L_n,L_p),2))
         do phi_n_index = 1, L_n
             it = 1
-            ! call calculate_r2(phi_n_index,it,r2,pr2)
-            r2 = 0.d0
-            pr2 = 0.d0
+            call calculate_r2(phi_n_index,it,r2,pr2)
             r2_arry(phi_n_index,it) = r2
             pr2_arry(phi_n_index,it) = pr2
         end do 
@@ -1197,7 +1215,7 @@ Module Kernel
         L_p = projection_mesh%nphi(2)
 
         allocate(Eccentri_arry(2,max(L_n,L_p),2),pEccentri_arry(2,max(L_n,L_p),2),Qn_mu_arry(-n:n,max(L_n,L_p),2),pQn_mu_arry(-n:n,max(L_n,L_p),2), &
-                 Each_2B_Term_arry(2,max(L_n,L_p),2), pEach_2B_Term_arry(2,max(L_n,L_p),2))
+                 Each_2B_Term_arry(3,max(L_n,L_p),2), pEach_2B_Term_arry(3,max(L_n,L_p),2))
         do phi_n_index = 1, L_n
             it = 1
             call calculate_Eccentri_n_MM(n,phi_n_index,it,Eccentri,pEccentri,Qn_mu,pQn_mu,Each_2B_Term,pEach_2B_Term)

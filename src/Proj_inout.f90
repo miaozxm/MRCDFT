@@ -37,6 +37,7 @@ subroutine read_Proj_configuration(ifPrint)
     read(u_Proj, format2) input_par%ProjectionType
     read(u_Proj, format2) input_par%AMPType
     read(u_Proj, format2) input_par%PNPType
+    read(u_Proj, format2) input_par%PPType
     read(u_Proj, format2) input_par%Kernel_Symmetry
     read(u_Proj, format3) input_par%q1_start, input_par%q1_end
     read(u_Proj, format3) input_par%q2_start, input_par%q2_end
@@ -71,6 +72,10 @@ subroutine read_Proj_configuration(ifPrint)
         Proj_option%PNPtype = input_par%PNPType
         if(input_par%PNPType.ne.0 .and. input_par%PNPType.ne.1 ) stop 'PNPType wrong!'
         if(input_par%PNPType.ne.0 .and. mod(input_par%nphi, 2) == 0) stop 'nphi must be an odd number!' 
+
+        ! set PP type (0: no PP; 1: PP)
+        Proj_option%PPtype = input_par%PPType
+        if(input_par%PPType.ne.0 .and. input_par%PPType.ne.1 ) stop 'PNPType wrong!'
 
         ! Kernel Symmetry  (0: All ; 1: Triangular Matrix ; 2: Diagonal elements only)
         Proj_option%Kernel_Symmetry = input_par%Kernel_Symmetry
@@ -122,7 +127,7 @@ subroutine read_Proj_configuration(ifPrint)
     subroutine printParameters
         use Globals, only: input_par,Proj_option,gcm_space,TDs
         integer :: Strlength = 40
-        character(len=5) :: AMP_char, PNP_char
+        character(len=5) :: AMP_char, PNP_char,PP_char
         if(Proj_option%AMPtype==0) then 
             AMP_char = 'noAMP'
         else if (Proj_option%AMPtype==1) then
@@ -135,8 +140,13 @@ subroutine read_Proj_configuration(ifPrint)
         else if (Proj_option%PNPtype==1) then
             PNP_char = 'PNP'
         end if 
+        if(Proj_option%PPtype==0) then 
+            PP_char = 'noPP'
+        else if (Proj_option%PNPtype==1) then
+            PP_char = 'PP'
+        end if 
 
-        write(*,'(5x,A)') AMP_char//'  +  '//PNP_char//'+  '//'PP :'
+        write(*,'(5x,A)') AMP_char//'  +  '//PNP_char//'+  '//PNP_char//':'
         if(Proj_option%AMPtype /= 0) then
             write(*,"(5x,a,':   ',3(i2,a))") adjust_left('Number of euler angles',Strlength),input_par%nalpha,' (nalpha),  ',input_par%nbeta,' (nbeta),  ',input_par%ngamma,' (ngamma)'
             if(input_par%Euler_Symmetry==0) then
@@ -402,7 +412,7 @@ subroutine set_Proj_output_filename(q1,q2)
 end subroutine
 
 subroutine write_kernels
-    use Globals, only: gcm_space,kernels
+    use Globals, only: gcm_space,kernels,Proj_option
     integer :: J,K1,K2,parity
     character(1), dimension(2) :: ParityChar = ['+', '-']
     character(len=*), parameter ::  format1 = "(3i5,4x,a,4x,3f9.3)", &
@@ -414,7 +424,7 @@ subroutine write_kernels
                     ! In the axially symmetric case, the kernel is non-zero only when
                     ! the parity satisfies  Pi  = (-1)^J for  N_KK, H_KK, X_KK and E0_KK
                     ! the parity satisfies Pi_i = (-1)^J_i for  Q2_KK_12
-                    if ((-1)**J == 1) then
+                    if ((-1)**J == 1 .or. Proj_option%PPtype==0) then
                         parity = 1 ! +
                     else
                         parity = 2 ! -
@@ -444,7 +454,7 @@ subroutine write_kernels
 end subroutine
 
 subroutine write_eccentricity_operators_kernels(q1,q2)
-    use Globals, only: kernels,constraint
+    use Globals, only: kernels,constraint,Proj_option
     integer :: q1,q2
     integer :: J,K1,K2,parity
     character(1), dimension(2) :: ParityChar = ['+', '-']
@@ -457,7 +467,7 @@ subroutine write_eccentricity_operators_kernels(q1,q2)
                     ! In the axially symmetric case, the kernel is non-zero only when
                     ! the parity satisfies  Pi  = (-1)^J for  N_KK, H_KK, X_KK and E0_KK
                     ! the parity satisfies Pi_i = (-1)^J_i for  Q2_KK_12
-                    if ((-1)**J == 1) then
+                    if ((-1)**J == 1 .or. Proj_option%PPtype==0) then
                         parity = 1 ! +
                     else
                         parity = 2 ! -
@@ -498,7 +508,7 @@ end subroutine
 
 ! write expectation of different (q1,q2)
 subroutine write_Proj_expectation(q1,q2)
-    use Globals,only: gcm_space,Proj_outputfile,kernels,constraint,nucleus_attributes
+    use Globals,only: gcm_space,Proj_outputfile,kernels,constraint,nucleus_attributes,Proj_option
     integer :: q1, q2,J,K1,K2,parity
     character(1), dimension(2) :: ParityChar = ['+', '-']
     character(len=*), parameter ::  format1 = "(4a9,3(a2,2x),a6,(1x,a9,2x),(a10,2x),(6x,a,5x),2(6x,a,3x),2(a9,2x),2(a7,2x))", &
@@ -512,7 +522,7 @@ subroutine write_Proj_expectation(q1,q2)
     do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
         do K1 = -0,0
             do K2 = -0,0
-                if ((-1)**J == 1) then
+                if ((-1)**J == 1 .or. Proj_option%PPtype==0) then
                     parity = 1 ! +
                 else
                     parity = 2 ! -

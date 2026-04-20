@@ -54,6 +54,7 @@ type Input_Parameter
     integer :: ProjectionType ! 0 : no 1: RMF+AMP 2: only AMP
     integer :: AMPType  ! 0:no ; 1: 1DAMP; 2: 3DAMP
     integer :: PNPType ! Particle Number Projection; 0: no; 1: yes
+    integer :: PPType  ! Parity projection; 0: no; 1: yes
     integer :: Kernel_Symmetry ! Symmetry in Kernels. 0: All ; 1: Triangular Matrix ; 2: Diagonal elements only
     integer :: q1_start
     integer :: q1_end
@@ -543,6 +544,7 @@ type Option_Proj
     integer :: ihf ! Norm overlap calculation method; 1: Bertsch & Robledo (2011) formula; 2: Robledo (2009) formula
     integer :: AMPtype ! 0: no; 1: 1DAMP; 2: 3DAMP
     integer :: PNPtype ! Particle Number Projection; 0: no; 1: yes
+    integer :: PPtype
     integer :: Kernel_Symmetry ! Symmetry in Kernels using: 0 no ; 1: yes ; 2: diagonal elements only
     integer :: Euler_Symmetry ! Symmetry of Euler angles (alpha, beta ,gamma ). 0: no, 1: Axially, 2: D2 
     integer :: icm ! cent-of-mass corr. 1: q-dep; 2: aver. q
