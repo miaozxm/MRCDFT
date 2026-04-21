@@ -10,10 +10,10 @@ MODULE Proj
 implicit none
 contains
     subroutine Proj_Main
+        use Tools, only: int2str
         use Globals, only: gcm_space,Proj_option,Proj_outputfile,MPI_Infor
         use Energy, only: calculate_sigma_nabla_Spherical
         use Basis, only: set_spherical_oscillator_wave_function
-        use CDFT_Inout, only: int2str
         use Proj_Inout, only: set_Proj_Expectation_filename,read_wavefuntion_files,write_Proj_output
         use Mixed, only: determine_truncated_dimension
         use Kernel, only: set_projection_mesh_points,calculate_Kernel

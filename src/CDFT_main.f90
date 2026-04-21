@@ -9,8 +9,9 @@
 MODULE CDFT
 contains
     subroutine CDFT_Main
+        use Tools, only: adjust_left,int2str
         use Globals, only: constraint, iteration, outputfile,expectations,option,pairing,MPI_Infor
-        use CDFT_Inout, only: set_CDFT_Expectation_filename,set_CDFT_output_filename,write_result_DIR,adjust_left,int2str
+        use CDFT_Inout, only: set_CDFT_Expectation_filename,set_CDFT_output_filename,write_result_DIR
         use Field, only: set_woodssaxon_parameters,calculate_meson_propagators,initial_potential_fields,calculate_fields
         use Forces, only : calculate_density_dependence_of_coupling_constants
         use Basis, only : set_Cylindrical_HO_basis,set_Spherical_HO_basis,transform_coefficients_form_cylindrical_to_spherical

@@ -9,7 +9,8 @@
 MODULE Proj_Inout
 use Globals, only: Proj_outputfile
 use Constants, only: i16,r64,u_start,pi,ngl,OUTPUT_PATH, Jmax_max
-use CDFT_Inout, only: file_path_para,set_CDFT_output_filename, int2str, adjust_left
+use CDFT_Inout, only: file_path_para,set_CDFT_output_filename
+use Tools, only: int2str, adjust_left
 implicit none
 integer, private :: u_Proj = u_start + 11
 logical :: first_kernel = .True.
