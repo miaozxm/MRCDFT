@@ -16,7 +16,7 @@ contains
 
 subroutine blas_set_num_threads_local(n)
     integer :: n 
-    call mkl_set_num_threads_local(1)
+    call mkl_set_num_threads_local(n)
 end subroutine
 
 subroutine print_blas_num_threads

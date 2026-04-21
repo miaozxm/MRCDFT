@@ -152,7 +152,7 @@ Module Kernel
     subroutine calculate_overlaps_arrays
         use Globals, only: projection_mesh,Proj_option,MPI_Infor
         use Proj_Density, only: store_mix_density_matrix_elements
-        use CDFT_Inout, only: adjust_left
+        use Tools, only: adjust_left
         integer :: nalpha,nbeta,ngamma,ialpha,ibeta,igamma,mu
         real(r64) :: alpha, beta, gamma
         character(len=*),parameter :: format1 = "(5x,'alpha:',i3,'/',a,'beta:',i3,'/',a,'gamma:',i3,'/',a)"

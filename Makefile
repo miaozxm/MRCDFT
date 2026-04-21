@@ -98,7 +98,7 @@ ${EXE_DIR}:
 # Dependencies
 ${OBJ_DIR}/main.o : ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_main.o
 
-${OBJ_DIR}/Globals.o : $(OBJ_DIR)/Constants.o
+${OBJ_DIR}/Globals.o : $(OBJ_DIR)/Constants.o ${OBJ_DIR}/Tools.o 
 ${OBJ_DIR}/Mathmethods.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o
 
 ## CDFT Dependencies
