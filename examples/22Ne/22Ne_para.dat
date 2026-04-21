@@ -30,6 +30,7 @@ c-------------------------------------------------------------------
 ProjType =  1                       ! 0 : only CDFT 1: CDFT+Proj 2: only Proj
 AMP      =  1                       ! Angular Momentum Projection    : (0) no (1) 1DAMP (2) 3DAMP
 PNP      =  1                       ! Particle Number Projection     : (0) no (1) yes
+PP       =  1                       ! Parity Projection     : (0) no (1) yes
 Kernels  =  1                       ! Symmetry in Kernels. 0: All ; 1: Triangular Matrix ; 2: Diagonal elements only
 q1       =  1   -1                  ! Start and end indices for q1 parameters; end = -1 indicates that the end index is set to the total number of deformation parameters.
 q2       =  1   -1                  ! Start and end indices for q2 parameters; end = -1 indicates that the end index is set to the total number of deformation parameters.

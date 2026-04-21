@@ -28,7 +28,6 @@ contains
         integer :: constraint_index,iteration_index
         character(len=150) :: format1,format2,format3,format4,format5
 
-        if (MPI_Infor%rank == 0) write(*,*)'CDFT_Main: Start CDFT calculations' 
         format1 = "(112(1h=),/, 48x,'Iteration: ',i4,48x,/,(112(1h-)))"
         format2 = "(i3,'. It. si =',f15.10,'  E/A =',f15.10,'  R =',f15.10,'  b2 =',f15.10,'  b3 =',f15.10)"
         ! format2 = "(i3,'. It. si =',f30.25,'  E =',f30.25,'  R =',f30.25,'  b2 =',f30.25,'  b3 =',f30.25)"
@@ -130,7 +129,6 @@ contains
 
         close(outputfile%u_rotationalE)
         close(outputfile%u_outExpectation)
-        if (MPI_Infor%rank == 0) write(*,*)'CDFT_Main: CDFT calculations completed'
     end subroutine
 END MODULE CDFT
 

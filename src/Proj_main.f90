@@ -23,7 +23,6 @@ contains
         integer :: q1,q2_start,q2_end,q2
         integer :: task_id
 
-        if (MPI_Infor%rank == 0) write(*,*)'Proj_Main: Start Proj calculations'
         call set_projection_mesh_points
         call set_spherical_oscillator_wave_function
         call calculate_sigma_nabla_Spherical
@@ -62,6 +61,5 @@ contains
         end do
 
         close(Proj_outputfile%u_outExpectation) 
-        if (MPI_Infor%rank == 0) write(*,*)'Proj_Main: Proj calculations completed'
     end subroutine
 END MODULE Proj

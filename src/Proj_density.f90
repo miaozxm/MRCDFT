@@ -14,6 +14,9 @@ contains
         use Globals, only: BS,mix,projection_mesh,Proj_option,Proj_densities
         integer,intent(in) :: ialpha,ibeta,igamma
         integer :: dim_m_max, nphi_max, nalpha, nbeta, ngamma
+
+        if(Proj_option%DsType == 0) return ! no need to store density
+
         dim_m_max = max(BS%HO_sph%idsp(1,1), BS%HO_sph%idsp(1,2))
         nphi_max = max(projection_mesh%nphi(1),projection_mesh%nphi(2))
         nalpha = projection_mesh%nalpha

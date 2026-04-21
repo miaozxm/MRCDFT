@@ -49,14 +49,22 @@ PROGRAM MR_CDFT
     call set_nucleus_attributes(.True.)
     call set_force_parameters(.True.)
 
+    ! CDFT
     if(Proj_option%ProjectionType == 0 .or. Proj_option%ProjectionType==1) then
+        if (MPI_Infor%rank == 0) write(*,*)'CDFT_Main: Start CDFT calculations'
         call CDFT_Main
+        call MPI_BARRIER(MPI_COMM_WORLD, ierr)
+        if (MPI_Infor%rank == 0) write(*,*)'CDFT_Main: CDFT calculations completed'
     endif
 
-    call MPI_BARRIER(MPI_COMM_WORLD, ierr)
+    ! Projection
     if(Proj_option%ProjectionType == 1 .or. Proj_option%ProjectionType==2) then
+        if (MPI_Infor%rank == 0) write(*,*)'Proj_Main: Start Proj calculations'
         call Proj_Main
+        call MPI_BARRIER(MPI_COMM_WORLD, ierr)
+        if (MPI_Infor%rank == 0) write(*,*)'Proj_Main: Proj calculations completed'
     endif
+
     close(outputfile%u_config)
     if (MPI_Infor%rank == 0) write(*,*) " ...PROGRAM END!..."
 

@@ -146,7 +146,7 @@ subroutine read_Proj_configuration(ifPrint)
             PP_char = 'PP'
         end if 
 
-        write(*,'(5x,A)') AMP_char//'  +  '//PNP_char//'+  '//PNP_char//':'
+        write(*,'(5x,A)') AMP_char//'  +  '//PNP_char//'+  '//PP_char//':'
         if(Proj_option%AMPtype /= 0) then
             write(*,"(5x,a,':   ',3(i2,a))") adjust_left('Number of euler angles',Strlength),input_par%nalpha,' (nalpha),  ',input_par%nbeta,' (nbeta),  ',input_par%ngamma,' (ngamma)'
             if(input_par%Euler_Symmetry==0) then
