@@ -68,6 +68,10 @@ subroutine calculate_constraint_potential_coefficients(ifPrint)
         constraint%c1x  = constraint%c1x + dc1x
         constraint%c2x  = constraint%c2x + dc2x
         constraint%c3x  = constraint%c3x + dc3x
+    else if(constraint%icstr.eq.3) then
+        d3   = constraint%calq3 - constraint%bet3c(constraint%index)
+        dc3x = d3/(one/constraint%cspr+abs(d3)/constraint%cmax)
+        constraint%c3x  = constraint%c3x + dc3x
     endif
     
     if(ifPrint) call print_cstrpot

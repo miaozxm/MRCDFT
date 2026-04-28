@@ -213,13 +213,15 @@ subroutine read_CDFT_configuration(ifPrint)
         write(*,"(5x,a,':   ',f7.3,a,2x,f7.3,a)") adjust_left('Pairing strength for delta force',Strlength),input_par%pairing_vpair(1),' (neutrons)',input_par%pairing_vpair(2),' (protons)'
 
         if(input_par%constraint_icstr==0) then 
-            write(*,"(5x,a,':   ',a)") adjust_left('Quadratic constraint',Strlength),'no'
+            write(*,"(5x,a,':   ',a)") adjust_left('Deformation constraint',Strlength),'no'
         else if (input_par%constraint_icstr==1) then
-            write(*,"(5x,a,':   ',a)")adjust_left('Quadratic constraint',Strlength),'beta2'
+            write(*,"(5x,a,':   ',a)")adjust_left('Deformation constraint',Strlength),'beta2'
         else if (input_par%constraint_icstr==2) then
-            write(*,"(5x,a,':   ',a)")adjust_left('Quadratic constraint',Strlength),'beta2 + beta3'
+            write(*,"(5x,a,':   ',a)")adjust_left('Deformation constraint',Strlength),'beta2 + beta3'
+        else if (input_par%constraint_icstr==3) then
+            write(*,"(5x,a,':   ',a)")adjust_left('Deformation constraint',Strlength),'beta3'
         end if 
-        write(*,"(5x,a,':   ',i4)")adjust_left('Quadratic constraint number',Strlength),constraint%length
+        write(*,"(5x,a,':   ',i4)")adjust_left('Deformation constraint number',Strlength),constraint%length
 
         ! Block for odd-Z or odd-N nuclei 
         if(mod(input_par%nucleus_mass_number, 2) == 1) then 

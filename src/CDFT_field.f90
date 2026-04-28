@@ -107,8 +107,10 @@ subroutine calculate_saxonwoods_fields(ifPrint)
                     facb = one + 0.75*(constraint%betac(constraint%index)*Y20 + woodssaxon%beta3*Y30)
                 elseif(constraint%icstr == 2) then
                     facb = one + 0.75*(constraint%betac(constraint%index)*Y20 + constraint%bet3c(constraint%index)*Y30)
+                elseif(constraint%icstr == 3) then
+                    facb = one + 0.75*(woodssaxon%beta2*Y20 + constraint%bet3c(constraint%index)*Y30)
                 else 
-                    stop "[Potential]: constraint%icstr must be 0,1,2"
+                    stop "[Potential]: constraint%icstr must be 0,1,2,3"
                 endif
                 u= vp(it)/(one+exp((r-rrv(it)*facb)/woodssaxon%av(it))) 
                 w= -vls(it)/(one+exp((r-rls(it)*facb)/woodssaxon%aso(it)))
