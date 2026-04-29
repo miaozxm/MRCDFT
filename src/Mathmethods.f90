@@ -39,6 +39,36 @@ end function
 
 
 subroutine zGEMM_Trace(transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc)
+    !----------------------------------------------------------------------
+    ! Subroutine: zGEMM_Trace
+    ! Purpose: Computes ONLY the diagonal elements of the matrix
+    !          product C = alpha * op(A) * op(B) + beta * C
+    !          where op(X) can be X, X^T, or X^H.
+    ! Arguments:
+    !   transa (in) : Operation on A
+    !                 'N'/'n' → op(A) = A
+    !                 'T'/'t' → op(A) = A^T
+    !                 'C'/'c' → op(A) = A^H (conjugate transpose)
+    !   transb (in) : Operation on B (same convention)
+    !   m      (in) : Number of rows of op(A) and rows of C
+    !   n      (in) : Number of columns of op(B) and columns of C
+    !   k      (in) : Number of columns of op(A) and rows of op(B)
+    !                 (inner-product dimension)
+    !   alpha  (in) : Scalar multiplier
+    !   A      (in) : Input matrix A
+    !                 Dimensions: lda × k (transa='N')
+    !                          or  lda × m (transa='T'/'C')
+    !   lda    (in) : Leading dimension of A
+    !   B      (in) : Input matrix B
+    !                 Dimensions: ldb × n (transb='N')
+    !                          or  ldb × k (transb='T'/'C')
+    !   ldb    (in) : Leading dimension of B
+    !   beta   (in) : Scalar multiplier for C
+    !   C   (inout) : Result matrix, dimensions ldc × n
+    !                 Only diagonal elements are updated:
+    !                 C(i,i) = alpha*[op(A)*op(B)]_{ii} + beta*C(i,i)
+    !   ldc    (in) : Leading dimension of C
+    !--------------------------------------------------------------------
     implicit none
     character(len=1), intent(in) :: transa, transb
     integer, intent(in) :: m, n, k, lda, ldb, ldc
@@ -457,13 +487,26 @@ end subroutine math_gfv
 subroutine sdiag(nmax,n,a,d,x,e,is)                                                                      
 !=======================================================================
 !       diagonalization of a symmetric matrix   
-!                                                                  
-!   A   matrix to be diagonalized                                       
-!   D   eigenvalues                                                     
-!   X   eigenvectors                                                    
-!   E   auxiliary field                                                 
-!   IS = 1  eigenvalues are ordered and major component of X is positive
-!        0  eigenvalues are not ordered                                 
+!
+!       PURPOSE:
+!           This subroutine computes all eigenvalues and eigenvectors
+!           of a real symmetric matrix
+!  
+!      INPUT ARGUMENTS:
+!          NMAX   leading dimension of arrays a and x (declared size)                                                                      
+!          N      actual dimension of the matrix (1 <= N <= NMAX)
+!          A   matrix to be diagonalized                                       
+!          D   eigenvalues                                                     
+!          X   eigenvectors                                                    
+!          E   auxiliary field                                                 
+!          IS  output control flag:
+!              = 1 : eigenvalues are sorted in ascending order
+!                     and the major component (largest absolute value)
+!                     of each eigenvector is set positive
+!              = 0 : eigenvalues are not ordered, no sign fix  
+!       OUTPUT ARGUMENTS:
+!           D       eigenvalues in ascending order (if IS=1)
+!           X       eigenvectors (N x N), column j corresponds to D(j)                              
 !-----------------------------------------------------------------------
     implicit double precision (a-h,o-z)
     implicit integer(i-n)                                                                                                      
@@ -4523,4 +4566,230 @@ Subroutine Zexch(SK,LDS,N,I1,I2)
     end if
     return
 end
+
+SUBROUTINE EIGENSOLVER_GEP(NMAX,N,NN,HH,EN,DD,M,E,GG,FF,WW,RR,EPS,IS,IFL)
+    !********************************************************************** 
+    !     SOLVES GENERALIZED EIGENVALUE PROBLEM:                           
+    !                          HH * FF = E * NN * FF                       
+    !     First DIAGONALIZES THE NORM MATRIX: NN * DD = EN * DD            
+    !     solve  H_reduced * GG = E GG                                     
+    !     PURPOSE:                                                       
+    !        This subroutine transforms the generalized eigenvalue      
+    !        problem into a standard eigenvalue problem by using the    
+    !        eigenvectors of the norm matrix NN. Eigenvalues of NN      
+    !        smaller than EPS * EN(1) are discarded to remove linear    
+    !        dependencies.                                               
+    !     ALGORITHM SUMMARY:                                             
+    !        1. Diagonalize NN: 
+    !           NN * DD = EN * DD                         
+    !        2. Discard eigenpairs with EN/EN(1) < EPS                    
+    !        3. Construct reduced Hamiltonian:                            
+    !           H_reduced = (DD*EN^{-1/2})^+ * HH * (DD*EN^{-1/2})
+    !        4. Diagonalize H_reduced to obtain eigenvalues E and GG      
+    !           H_reduced * GG = E GG
+    !        5. Recover FF = (DD * EN^{-1/2}) * GG (if requested)     
+    !        6. Compute WW = NN * FF (if requested)                       
+    !        7. Compute orthogonal wave functions RR (if requested)       
+    !           where RR = NN^{1/2}*FF = DD*EN^{1/2}*DD^+ FF  = DD * GG
+    !           and satisfies RR^T * RR = I (identity)                   
+    !                                                                      
+    !     -----------------------------------------------------
+    !                                                                      
+    !     INPUT ARGUMENTS:                                                 
+    !        NMAX   - leading dimension of matrices HH and NN              
+    !        N      - actual dimension of matrices                        
+    !        HH     - Hamiltonian matrix (N x N)                          
+    !        NN     - Norm/overlap matrix (N x N)                         
+    !        EPS    - tolerance for discarding small eigenvalues of NN   
+    !        IS     - output control flag:                               
+    !                 =0: only eigenvalues E, EN and eigenvectors GG, DD 
+    !                 =1: also eigenvectors FF                           
+    !                 =2: also covariant components WW = NN * FF         
+    !                 =3: also orthogonal wave functions RR              
+    !                                                                    
+    !     OUTPUT ARGUMENTS:                                              
+    !     After discarding, the useful matrices and their dimensions are:
+    !        M           - number of retained eigenvalues (after discarding) 
+    !        E (M)       - eigenvalues of generalized problem       
+    !        EN(M)       - eigenvalues of norm matrix NN 
+    !                      Actual dimension is N         
+    !        DD(NxM)     - eigenvectors of norm matrix 
+    !                      Actual dimension is NxN           
+    !        GG(MxM)     - eigenvectors in reduced subspace      
+    !        FF(NxM)     - contravariant eigenvectors ( if IS>=1)       
+    !        WW(NxM)     - covariant components WW = NN * FF (if IS>=2)       
+    !        RR(NxM)     - orthogonal wave functions (if IS>=3)               
+    !        IFL         - error flag: 0=success, 1=no eigenvalue retained                                                                     
+    !**********************************************************************
+
+    IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+    IMPLICIT INTEGER (I-N)
+    real*8 NN                                                                          
+    dimension HH(NMAX,N),NN(NMAX,N),GG(NMAX,NMAX),DD(NMAX,N),FF(NMAX,N) 
+    dimension WW(NMAX,N),RR(NMAX,N),TT(NMAX,N),H_reduced(NMAX,N)
+    dimension E(N),E1(N),EN(N),Z(N)
+    !------------------------------------                                                      
+    IFL = 0   
+    ! 1) diagonalization of NN :
+    !  NN * DD = EN * DD
+    do K=1,N
+        do I=1,N
+            DD(I,K)=-NN(I,K)    
+        enddo
+    enddo
+    CALL SDIAG(NMAX,N,DD,EN,DD,Z,1)  
+    do I=1,N
+        EN(I)=-EN(I)+1.d-8
+    enddo
+
+    ! 2) Discard eigenpairs with EN/EN(1) < EPS :
+    !   find out all the eigenvalues which are large enough compared with the largest one,
+    !   and drop the small ones
+    do I=1,N
+        IF (EN(I)/EN(1).LT.EPS) exit
+    end do
+    M=I-1
+    if (M.LE.0) then                                              
+        write(*,*) ' SUBR. EIGENSOLVER_GEP: NO EIGENVALUE OF N LARGER THAN EPS'
+        IFL=1
+        return
+    end if 
+    ! After truncation
+    ! DD: N×M
+    ! EN^{-1/2}: M×M
+
+    !  up here, all left eigenvalues are large enough, the number is M
+    !  parepare the new Hamiltonian in the collective subspace
+    ! 3) Construct reduced Hamiltonian:
+    !  H_reduced = (DD*EN^{-1/2})^+ * HH * (DD*EN^{-1/2})
+
+    ! TT = DD*EN^{-1/2} : NxM
+    do K=1,M
+        S=1./SQRT(EN(K))
+        do I=1,N
+            TT(I,K)=DD(I,K)*S
+        enddo !I
+    enddo !K
+    ! Because T is real, its conjugate transpose equals its transpose
+    ! H_reduced = TT^T*HH*T
+    do K=1,M
+        do I=1,N
+            S=0.d0
+            do L=1,N
+                S = S+HH(I,L)*TT(L,K)
+            enddo !L
+            E1(I)=S
+        enddo !I
+        do J=K,M
+            S=0.d0
+            do L=1,N
+                S=S+TT(L,J)*E1(L)
+            enddo ! L
+            H_reduced(J,K)=S
+        enddo !J 
+    enddo !K
+    
+    !  4) Diagonalize H_reduced to obtain eigenvalues E and GG :   
+    !     H_reduced * GG = E GG
+    !     GG: MxM
+    call sdiag(NMAX,M,H_reduced,E,GG,Z,1) ! dim(E) = M 
+    if (IS.EQ.0) return
+    !  5) Recover FF = (DD*EN^{-1/2})*GG = TT*GG (if requested)
+    !     FF: NxM
+    call MAB(NMAX,NMAX,NMAX,N,M,M,TT,GG,FF,1,0)
+    if (IS.LT.2) return 
+    !  6) Compute WW = NN * FF (if requested)
+    !     WW: NxM
+    call MAB(NMAX,NMAX,NMAX,N,N,M,NN,FF,WW,1,0)
+    if (IS.LT.3) return
+    !  7) Compute orthogonal wave functions RR
+    !    RR = NN^{1/2}*FF = DD*EN^{1/2}*DD^+ FF  = DD * GG
+    !    RR:  NxM
+    call MAB(NMAX,NMAX,NMAX,N,M,M,DD,GG,RR,1,0)
+    return
+END
+
+subroutine MAB(ma,mb,mc,n1,n2,n3,a,b,c,iph,is)
+    !***********************************************************************
+    !     MATRIX MULTIPLICATION / UPDATE: C = sign * A * B  (or C += sign * A * B)
+    !***********************************************************************
+    !     PURPOSE:
+    !        Performs matrix multiplication or accumulation for real matrices.
+    !        Computes:  C = s * A * B   or   C = C + s * A * B
+    !        where s = +1 or -1, depending on IPH.
+    !
+    !     INPUT ARGUMENTS:
+    !        MA, MB, MC  : leading dimensions of arrays A, B, C (declared size)
+    !        N1, N2, N3  : actual dimensions for multiplication:
+    !                      A is N1 x N2, B is N2 x N3, C is N1 x N3
+    !        A           : input matrix of size (MA, MA) but used as (N1, N2)
+    !        B           : input matrix of size (MB, MB) but used as (N2, N3)
+    !        C           : input/output matrix of size (MC, MC) but used as (N1, N3)
+    !        IPH         : sign control:
+    !                      IPH >= 0  -> use s = +1
+    !                      IPH <  0  -> use s = -1
+    !        IS          : operation mode:
+    !                      IS = 0    -> C = s * A * B       (overwrite)
+    !                      IS = 1    -> C = C + s * A * B   (accumulate)
+    !
+    !     OUTPUT ARGUMENTS:
+    !        C           : result matrix (N1 x N3)
+    !
+    !     EXAMPLE:
+    !        For IS = 0, IPH >= 0:   C = A * B
+    !        For IS = 0, IPH <  0:   C = - A * B
+    !        For IS = 1, IPH >= 0:   C = C + A * B
+    !        For IS = 1, IPH <  0:   C = C - A * B
+    !***********************************************************************
+    IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+    IMPLICIT INTEGER (I-N)
+    dimension a(ma,ma),b(mb,mb),c(mc,mc)
+    if (is.eq.0) then
+        if (iph.lt.0) then
+            do i = 1,n1
+            do k = 1,n3
+            s = 0.0d0
+            do l = 1,n2
+                s = s+a(i,l)*b(l,k)
+            enddo
+            c(i,k) = - s
+            enddo
+            enddo
+        else
+            do i = 1,n1
+            do k = 1,n3
+            s = 0.0d0
+            do l = 1,n2
+                s = s+a(i,l)*b(l,k)
+            enddo
+            c(i,k) = s
+            enddo
+            enddo
+        endif
+    else
+        if (iph.lt.0) then
+            do i = 1,n1
+            do k = 1,n3
+            s = c(i,k)
+            do l = 1,n2
+                s = s-a(i,l)*b(l,k)
+            enddo
+            c(i,k) = s
+            enddo
+            enddo
+        else
+            do i = 1,n1
+            do k = 1,n3
+            s = c(i,k)
+            do l = 1,n2
+                s = s+a(i,l)*b(l,k)
+            enddo
+            c(i,k)=s
+            enddo
+            enddo
+        endif
+    endif
+    return
+end 
+
 END MODULE MathMethods

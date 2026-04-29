@@ -1,7 +1,7 @@
 !==============================================================================!
 ! MODULE Globals                                                               !
 !                                                                              !
-! This module defines global variables that are shared by subroutines.         !                                                  !
+! This module defines global variables that are shared by subroutines.         !
 !==============================================================================!
 MODULE Globals
 
@@ -19,6 +19,12 @@ type MPI_Information
     integer :: nprocs
 end type
 type(MPI_Information) :: MPI_Infor
+
+type Input_FileName
+    character(len=256) :: file_path_para=""
+    character(len=256) :: file_path_b23=""
+end type 
+type(Input_FileName) :: InputFile
 
 type Input_Parameter
     character(len=10) :: force_name     ! Parameterset name of the Lagrangian
@@ -72,6 +78,10 @@ type Input_Parameter
     integer :: lambda_max ! max lambda of EM 
     integer :: checkN2J2 ! 0: no 1: yes
     integer :: EccentriType ! 0: no 1: by Kernel Module 2: by density matrix element 3: 1+2
+    ! GCM
+    integer :: GCMType
+    integer :: kmax
+    real(r64) :: zeta(5)
 end type
 type(Input_Parameter) :: input_par
 
@@ -700,5 +710,49 @@ type transition_density
     complex(r64), dimension(:,:,:,:,:,:,:,:,:,:,:), allocatable :: reduced_TDME1B_c ! (Jf,Kf,Parity_f,lambda,Ji,Ki,Parity_i,ifg,a,b,it), <Jf Kf Parity_f qi|| M_lambda || Ji Ki Parity_i qf>
 endtype
 type(transition_density) TDs
+
+!!==================================================================================  
+!! GCM global variables 
+type Option_GCM
+    integer :: GCMType
+end type
+type(Option_GCM) :: GCM_option
+
+type GCM_kernels_
+    complex(r64),dimension(:,:,:,:,:,:),allocatable :: N_KK ! N_KK(q1,q2,J,K1,K2,Pi(+/-)), Norm kernel
+    complex(r64),dimension(:,:,:,:,:,:),allocatable :: H_KK ! H_KK(q1,q2,J,K1,K2,Pi(+/-)), Hamiltonian  kernel
+    complex(r64),dimension(:,:,:,:,:,:,:),allocatable :: X_KK ! X_KK(J,K1,K2,it,Pi(+/-)), Particle number kernel
+    complex(r64),dimension(:,:,:,:,:,:,:),allocatable :: Q2_KK ! Q2_KK(J,Kf,Ki,it,Pi_i(+/-)), <Ji+2 Kf q1 Pi_f ||Q2||Ji Ki q2 Pi_i>   
+    complex(r64),dimension(:,:,:,:,:,:,:),allocatable :: E0_KK  ! E0_KK(J,Kf,Ki,it,Pi(+/-)), <J_f K_f q_1 Pi| r2 |J_i K_i q_2 Pi> 
+endtype
+type(GCM_kernels_) :: GCM_kernels
+
+type GCM_basis_
+    integer :: N(0:Jmax_max,2) ! basis dimensions of J^pi, i.e. length of (K,q)
+    integer :: N_max           ! max basis dimension
+    integer,allocatable :: basis(:,:,:,:)
+
+endtype
+type(GCM_basis_) :: GCM_basis
+
+type HWG_
+    integer :: kmax
+    real(r64) :: cutoff(0:Jmax_max)
+    integer,  allocatable :: M(:,:)         ! M(J, parity) represents the number of states for J^{parity}.
+    real(r64),allocatable :: E(:,:,:)       ! E(i, J, parity) represents the energy of the i-th state of J^{parity}.
+    real(r64),allocatable :: fJKq(:,:,:,:)  ! fJKq(j, i, J, parity) represents the expansion coefficient f of the j-th GCM_basis for the i-th state of J^{parity}.
+    real(r64),allocatable :: gJKq(:,:,:,:)  ! gJKq(j, i, J, parity)
+endtype
+type(HWG_) :: HWG
+
+type GCM_Observables
+    ! (:,:,:) -> (i, J, parity) denotes the i-th state of J^{parity}.
+    real(r64),dimension(:,:,:),allocatable :: E_ex                 ! Excitation energy 
+    real(r64),dimension(:,:,:),allocatable :: beta2_aver,beta3_aver ! Average deformation
+    real(r64),dimension(:,:,:),allocatable :: N,Z                   ! particle number
+    real(r64),dimension(:,:,:),allocatable :: rrms_p                ! proton radius
+
+endtype 
+type(GCM_Observables) :: GCM_obser
 
 END MODULE Globals

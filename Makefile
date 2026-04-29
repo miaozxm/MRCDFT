@@ -6,6 +6,7 @@ MOD_DIR = ${ROOT_DIR}/src/mod
 OBJ_DIR = ${ROOT_DIR}/src/obj
 SRC_FILE_PREFIX_1 = CDFT
 SRC_FILE_PREFIX_2 = Proj
+SRC_FILE_PREFIX_3 = GCM
 
 SOURCES = $(wildcard $(SRC_DIR)/*.f90)
 OBJECTS = $(patsubst $(SRC_DIR)/%.f90, ${OBJ_DIR}/%.o, $(SOURCES))
@@ -96,13 +97,13 @@ ${EXE_DIR}:
 	mkdir -p ${EXE_DIR}
 
 # Dependencies
-${OBJ_DIR}/main.o : ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_main.o
+${OBJ_DIR}/main.o : ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_main.o  ${OBJ_DIR}/${SRC_FILE_PREFIX_3}_main.o
 
 ${OBJ_DIR}/Globals.o : $(OBJ_DIR)/Constants.o ${OBJ_DIR}/Tools.o 
 ${OBJ_DIR}/Mathmethods.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o
 
 ## CDFT Dependencies
-${OBJ_DIR}/${SRC_FILE_PREFIX_1}_main.o : $(filter-out ${OBJ_DIR}/main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_main.o,  ${OBJECTS})
+${OBJ_DIR}/${SRC_FILE_PREFIX_1}_main.o : $(filter-out ${OBJ_DIR}/main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_main.o,  ${OBJ_DIR}/${SRC_FILE_PREFIX_3}_main.o ${OBJECTS})
 
 ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_field.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o \
 										  ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_inout.o \
@@ -143,7 +144,7 @@ ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_inout.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Glob
 										  ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_expectation_rotation.o
 
 ## Proj Dependencies
-${OBJ_DIR}/${SRC_FILE_PREFIX_2}_main.o : $(filter-out ${OBJ_DIR}/main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_main.o,  ${OBJECTS})
+${OBJ_DIR}/${SRC_FILE_PREFIX_2}_main.o : $(filter-out ${OBJ_DIR}/main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_main.o,  ${OBJ_DIR}/${SRC_FILE_PREFIX_3}_main.o ${OBJECTS})
 
 ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_kernel.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o ${OBJ_DIR}/Mathmethods.o \
 										   ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_inout.o \
@@ -178,6 +179,18 @@ ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_inout.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Glob
 										  ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_electromagnetic_multipole.o \
 										  ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_eccentricity.o \
 										  ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_transition_density.o 
+
+## GCM Dependencies
+${OBJ_DIR}/${SRC_FILE_PREFIX_3}_main.o : $(filter-out ${OBJ_DIR}/main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_main.o ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_main.o,  ${OBJ_DIR}/${SRC_FILE_PREFIX_3}_main.o ${OBJECTS})
+
+${OBJ_DIR}/${SRC_FILE_PREFIX_3}_HWG.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o ${OBJ_DIR}/Mathmethods.o
+
+${OBJ_DIR}/${SRC_FILE_PREFIX_3}_observables.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o
+
+${OBJ_DIR}/${SRC_FILE_PREFIX_3}_inout.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o \
+										  ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_inout.o 
+
+
 path:
 	@echo "src path: ${SRC_DIR}/"
 	@echo "mod path: ${MOD_DIR}/"

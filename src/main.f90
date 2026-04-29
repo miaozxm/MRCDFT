@@ -12,10 +12,12 @@ PROGRAM MR_CDFT
     use omp_lib
     use CDFT
     use Proj
-    use Globals, only: Proj_option,outputfile,MPI_Infor
+    use GCM
+    use Globals, only: Proj_option,GCM_option,outputfile,MPI_Infor
     use MathMethods, only: math_gfv
     use CDFT_Inout, only: handle_input_config,read_file_b23,read_CDFT_configuration
     use Proj_Inout, only: read_Proj_configuration
+    use GCM_Inout, only: read_GCM_configuration
     use Forces, only : set_force_parameters
     use Nucleus, only: set_nucleus_attributes
     implicit none
@@ -28,8 +30,8 @@ PROGRAM MR_CDFT
     call MPI_INIT(ierr)
     call MPI_COMM_RANK(MPI_COMM_WORLD, MPI_Infor%rank, ierr)
     call MPI_COMM_SIZE(MPI_COMM_WORLD, MPI_Infor%nprocs, ierr)
-    call handle_input_config
     
+    if (MPI_Infor%rank == 0) write(*,*)"... PROGRAM Start!..."
     if (MPI_Infor%rank == 0) then 
         num_threads = omp_get_max_threads()
         write(*,*) "MPI will create ", MPI_Infor%nprocs, " processes."
@@ -39,10 +41,11 @@ PROGRAM MR_CDFT
         start_time =  omp_get_wtime()
     end if 
 
-    if (MPI_Infor%rank == 0) write(*,*)"... PROGRAM Start!..."
+    call handle_input_config
     call read_file_b23
     call read_CDFT_configuration(.True.)
     call read_Proj_configuration(.True.)
+    call read_GCM_configuration(.True.)
     
     open(outputfile%u_config, file=outputfile%config, status='unknown')
     call math_gfv
@@ -65,9 +68,16 @@ PROGRAM MR_CDFT
         if (MPI_Infor%rank == 0) write(*,*)'Proj_Main: Proj calculations completed'
     endif
 
-    close(outputfile%u_config)
-    if (MPI_Infor%rank == 0) write(*,*) " ...PROGRAM END!..."
+    ! GCM
+    if(GCM_option%GCMType > 1 ) then
+        if (MPI_Infor%rank == 0) write(*,*)'GCM_Main: Start Proj calculations'
+        if (MPI_Infor%rank == 0) call GCM_Main
+        if (MPI_Infor%rank == 0) write(*,*)'GCM_Main: Proj calculations completed'
+    endif
 
+    close(outputfile%u_config)
+
+    if (MPI_Infor%rank == 0) write(*,*) " ...PROGRAM END!..."
     if (MPI_Infor%rank == 0) then 
         ! Get the ending CPU time
         call CPU_TIME(end_CPU_time)
