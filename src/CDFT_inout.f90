@@ -7,14 +7,12 @@
 ! - subroutine                                                                 !
 !==============================================================================!
 MODULE CDFT_Inout
-use Globals, only: outputfile
+use Globals, only: outputfile,InputFile
 use Constants, only: i8,i16,i64,r64,u_start,pi,ngh,ngl,nghl,itx,OUTPUT_PATH
 use Tools, only: file_exists,adjust_left,find_file,int2str,make_directory
 implicit none
-integer, private :: u_b23 = u_start + 1  ! the unit of file_path_b23
-character(len=256) :: file_path_para=""
-integer, private :: u_cdft = u_start + 2  ! the unit of file_path_para
-character(len=256) :: file_path_b23=""
+integer, private :: u_b23 = u_start + 1  ! the unit of InputFile%file_path_b23
+integer, private :: u_cdft = u_start + 2  ! the unit of InputFile%file_path_para
 integer, private :: u_wfs = u_start + 3  ! the unit of  xxx.wel
 logical :: first_deformation = .True.
 
@@ -36,7 +34,7 @@ subroutine handle_input_config
         select case (trim(arg))
             case ("-p")
                 if (i + 1 <= n_args) then
-                    call get_command_argument(i + 1, file_path_para)
+                    call get_command_argument(i + 1, InputFile%file_path_para)
                     i = i + 2
                 else
                     write(*,*) "Error: -p requires a file path."
@@ -45,7 +43,7 @@ subroutine handle_input_config
                 
             case ("-d")
                 if (i + 1 <= n_args) then
-                    call get_command_argument(i + 1, file_path_b23)
+                    call get_command_argument(i + 1, InputFile%file_path_b23)
                     i = i + 2
                 else
                     write(*,*) "Error: -d requires a file path."
@@ -66,18 +64,18 @@ subroutine handle_input_config
     end do
 
     ! Validation
-    if (file_path_para == "" .or. file_path_b23 == "") then
+    if (InputFile%file_path_para == "" .or. InputFile%file_path_b23 == "") then
         write(*,*) "Error: Both -p and -d arguments are required."
         stop
     end if
 
-    if (.not. file_exists(file_path_para)) then
-        write(*,*) "Error: File not found: ", trim(file_path_para)
+    if (.not. file_exists(InputFile%file_path_para)) then
+        write(*,*) "Error: File not found: ", trim(InputFile%file_path_para)
         stop
     end if
     
-    if (.not. file_exists(file_path_b23)) then
-        write(*,*) "Error: File not found: ", trim(file_path_b23)
+    if (.not. file_exists(InputFile%file_path_b23)) then
+        write(*,*) "Error: File not found: ", trim(InputFile%file_path_b23)
         stop
     end if
 
@@ -97,7 +95,7 @@ subroutine read_file_b23
     allocate(constraint%bet3c(fileb23_lines_max))
     allocate(constraint%clam2(fileb23_lines_max))
 
-    open(u_b23, file=file_path_b23, status='old')
+    open(u_b23, file=InputFile%file_path_b23, status='old')
     read(u_b23,*,iostat=iostat) ! read the first line (header)
     do index = 1, fileb23_lines_max+1
         if(length_count >= fileb23_lines_max) then
@@ -135,7 +133,7 @@ subroutine read_CDFT_configuration(ifPrint)
                                     format7= "(a2, i5)",&
                                     format8= "(10x, i8)"
 
-    open(u_cdft, file=file_path_para, status='old')
+    open(u_cdft, file=InputFile%file_path_para, status='old')
     read(u_cdft, format2) input_par%basis_n0f, input_par%basis_n0b    
     read(u_cdft, format3) input_par%basis_b0
     read(u_cdft, format6) first_character, tmp

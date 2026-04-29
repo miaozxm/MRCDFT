@@ -9,7 +9,7 @@
 MODULE Proj_Inout
 use Globals, only: Proj_outputfile
 use Constants, only: i16,r64,u_start,pi,ngl,OUTPUT_PATH, Jmax_max
-use CDFT_Inout, only: file_path_para,set_CDFT_output_filename
+use CDFT_Inout, only: set_CDFT_output_filename
 use Tools, only: int2str, adjust_left
 implicit none
 integer, private :: u_Proj = u_start + 11
@@ -18,14 +18,14 @@ logical :: first_kernel = .True.
 contains
 
 subroutine read_Proj_configuration(ifPrint)
-    use Globals, only: input_par,Proj_option,MPI_Infor
+    use Globals, only: InputFile,input_par,Proj_option,MPI_Infor
     integer :: i,is
     logical,intent(in),optional :: ifPrint
     character(len=*), parameter ::  format1 = "(10x,2f10.4)", &
                                     format2 = "(10x,i5)", &
                                     format3 = "(10x,2i5)" 
 
-    open(u_Proj, file=file_path_para, status='old')
+    open(u_Proj, file=InputFile%file_path_para, status='old')
     ! skip CDFT parameters
     do i = 1, 29
         read(u_Proj,'(A)', iostat=is) 
