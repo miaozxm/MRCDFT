@@ -34,34 +34,34 @@ subroutine handle_input_config
         call get_command_argument(i, arg)
         
         select case (trim(arg))
-        case ("-p")
-            if (i + 1 <= n_args) then
-                call get_command_argument(i + 1, file_path_para)
-                i = i + 2
-            else
-                write(*,*) "Error: -p requires a file path."
-                stop
-            end if
-            
-        case ("-d")
-            if (i + 1 <= n_args) then
-                call get_command_argument(i + 1, file_path_b23)
-                i = i + 2
-            else
-                write(*,*) "Error: -d requires a file path."
-                stop
-            end if
-        ! case("-o")
-        !     if (i + 1 <= n_args) then
-        !         call get_command_argument(i + 1, OUTPUT_PATH)
-        !         i = i + 2
-        !     else
-        !         write(*,*) "Error: -o requires a file path."
-        !         stop
-        !     end if
-        case default
-            write(*,*) "Unknown argument: ", trim(arg)
-            i = i + 1
+            case ("-p")
+                if (i + 1 <= n_args) then
+                    call get_command_argument(i + 1, file_path_para)
+                    i = i + 2
+                else
+                    write(*,*) "Error: -p requires a file path."
+                    stop
+                end if
+                
+            case ("-d")
+                if (i + 1 <= n_args) then
+                    call get_command_argument(i + 1, file_path_b23)
+                    i = i + 2
+                else
+                    write(*,*) "Error: -d requires a file path."
+                    stop
+                end if
+            ! case("-o")
+            !     if (i + 1 <= n_args) then
+            !         call get_command_argument(i + 1, OUTPUT_PATH)
+            !         i = i + 2
+            !     else
+            !         write(*,*) "Error: -o requires a file path."
+            !         stop
+            !     end if
+            case default
+                write(*,*) "Unknown argument: ", trim(arg)
+                i = i + 1
         end select
     end do
 

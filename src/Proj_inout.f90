@@ -54,6 +54,7 @@ subroutine read_Proj_configuration(ifPrint)
     read(u_Proj, format2) input_par%lambda_max
     read(u_Proj, format2) input_par%checkN2J2
     read(u_Proj, format2) input_par%EccentriType
+    close(u_Proj)
     call set_Proj_parameters
     if(ifPrint.and. MPI_Infor%rank == 0) call printParameters
     contains
@@ -210,7 +211,7 @@ subroutine read_Proj_configuration(ifPrint)
         ! else if(Proj_option%ihf == 3) then
         !     write(*,"(5x,a,':   ',a)") adjust_left('Norm overlap formula',Strlength),'Bertsch & Robledo (2011) formula'
         ! end if 
-        write(*,"(a)") '=========================================================================================='
+        write(*,*)
     end subroutine
 end subroutine
 
