@@ -74,10 +74,10 @@ MODULE GCM_Observables
             integer :: J,parity,iM
             character(1), dimension(2) :: ParityChar = ['+', '-']
             character(len=*), parameter ::  format1 = "(i2,a1,i2,f12.4,3f10.4,f12.4,3f9.4,2f9.4)"
-            write(*,'(A,f10.4,A)') 'Ground State Energy:', HWG%E(1,0,1), 'MeV'
             write(*,*) '------------------------------------------------------'
-            write(*,*) 'Excitation Spectrum:'
-            write(*,*) ' J^pi_i      E       E_ex    <beta2>   <beta3>     <N>       <Z>    rrms_p'
+            write(*,'(A,f10.4,A)') 'Ground State Energy:', HWG%E(1,0,1), 'MeV'
+            write(*,"(A)") 'Excitation Spectrum:'
+            write(*,*) ' J^pi_i      E       E_ex    <beta2>   <beta3>       <N>       <Z>    rrms_p'
             do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
                 ! parity
                 if ((-1)**J == 1 .or. Proj_option%PPtype==0) then

@@ -27,7 +27,7 @@ subroutine read_Proj_configuration(ifPrint)
 
     open(u_Proj, file=InputFile%file_path_para, status='old')
     ! skip CDFT parameters
-    do i = 1, 29
+    do i = 1, 30
         read(u_Proj,'(A)', iostat=is) 
         if (is /= 0) then
             print *, "Error reading file"
@@ -60,9 +60,9 @@ subroutine read_Proj_configuration(ifPrint)
     contains
     subroutine set_Proj_parameters
         use Globals, only: input_par,Proj_option,gcm_space,constraint,TDs
-        ! set projection type ( 0 : no 1: RMF+AMP 2: only AMP)
+        ! set projection type ( 0 : skip Proj;  1: do Proj)
         Proj_option%ProjectionType = input_par%ProjectionType
-        if(Proj_option%ProjectionType > 2 .or. Proj_option%ProjectionType < 0) stop 'ProjectionType wrong!'
+        if(Proj_option%ProjectionType > 1 .or. Proj_option%ProjectionType < 0) stop 'ProjectionType wrong!'
 
         ! set AMP type ((0) no (1) 1DAMP (2) 3DAMP)
         Proj_option%AMPtype = input_par%AMPType
@@ -147,8 +147,11 @@ subroutine read_Proj_configuration(ifPrint)
         else if (Proj_option%PNPtype==1) then
             PP_char = 'PP'
         end if 
-
-        write(*,'(5x,A)') AMP_char//'  +  '//PNP_char//'+  '//PP_char//':'
+        if(Proj_option%ProjectionType == 0) then
+            write(*,'(5x,A)') 'Projection skipped.'
+        else 
+            write(*,'(5x,A)') AMP_char//'  +  '//PNP_char//'+  '//PP_char//':'
+        end if 
         if(Proj_option%AMPtype /= 0) then
             write(*,"(5x,a,':   ',3(i2,a))") adjust_left('Number of euler angles',Strlength),input_par%nalpha,' (nalpha),  ',input_par%nbeta,' (nbeta),  ',input_par%ngamma,' (ngamma)'
             if(input_par%Euler_Symmetry==0) then
@@ -322,11 +325,17 @@ end subroutine
 
 subroutine set_Proj_output_filename(q1,q2)
     use Globals, only:constraint,BS,projection_mesh,nucleus_attributes,Proj_option
+    use Kernel, only: set_projection_mesh_points
+    use Basis, only: set_Spherical_HO_basis_parameters
     integer :: q1,q2,AMPType,A
     real(r64) :: beta2_1, beta3_1,beta2_2,beta3_2,abs2c1,abs3c1,abs2c2,abs3c2
     character :: signb21,signb31,signb22,signb32
     integer(i16), dimension(6) :: name1,name2
     integer(i16) :: AMP,name_nf1,name_nf2,nphi_1,nphi_2,nbeta_1,nbeta_2
+    if(Proj_option%ProjectionType == 0 ) then 
+        call set_projection_mesh_points ! set projection_mesh%nphi, projection_mesh%nbeta
+        call set_Spherical_HO_basis_parameters(.False.) ! set BS%HO_sph%n0f
+    end if 
     A = nucleus_attributes%mass_number_int
     beta2_1 = constraint%betac(q1)
     beta3_1 = constraint%bet3c(q1)
@@ -417,7 +426,7 @@ subroutine write_kernels
     use Globals, only: gcm_space,kernels,Proj_option
     integer :: J,K1,K2,parity
     character(1), dimension(2) :: ParityChar = ['+', '-']
-    character(len=*), parameter ::  format1 = "(3i5,4x,a,4x,3f9.3)", &
+    character(len=*), parameter ::  format1 = "(3i5,4x,a,4x,3f12.3)", &
                                     format2 = "(4e15.8)"
     open(Proj_outputfile%u_outputelem ,form='formatted',file=Proj_outputfile%outputelem)
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
@@ -432,9 +441,9 @@ subroutine write_kernels
                         parity = 2 ! -
                     end if
                     write(Proj_outputfile%u_outputelem,format1) J,K1,K2,ParityChar(parity),&
-                                                                Real(kernels%N2_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! N^2
-                                                                Real(kernels%N2_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! Z^2
-                                                                Real(kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))      ! J^2
+                                                                Real(kernels%N2_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-6)), & ! N^2
+                                                                Real(kernels%N2_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-6)), & ! Z^2
+                                                                Real(kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-6))      ! J^2
                     write(Proj_outputfile%u_outputelem,format2) kernels%N_KK(J,K1,K2,parity), &
                                                                 kernels%H_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)
                     write(Proj_outputfile%u_outputelem,format2) kernels%X_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30),&

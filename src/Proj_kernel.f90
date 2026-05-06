@@ -48,12 +48,12 @@ Module Kernel
         projection_mesh%nalpha = input_par%nalpha
         projection_mesh%nbeta = input_par%nbeta
         projection_mesh%ngamma = input_par%ngamma
-        allocate(projection_mesh%alpha(projection_mesh%nalpha))
-        allocate(projection_mesh%walpha(projection_mesh%nalpha))
-        allocate(projection_mesh%beta(projection_mesh%nbeta))
-        allocate(projection_mesh%wbeta(projection_mesh%nbeta))
-        allocate(projection_mesh%gamma(projection_mesh%ngamma))
-        allocate(projection_mesh%wgamma(projection_mesh%ngamma))
+        if(.not. allocated(projection_mesh%alpha)) allocate(projection_mesh%alpha(projection_mesh%nalpha))
+        if(.not. allocated(projection_mesh%walpha)) allocate(projection_mesh%walpha(projection_mesh%nalpha))
+        if(.not. allocated(projection_mesh%beta)) allocate(projection_mesh%beta(projection_mesh%nbeta))
+        if(.not. allocated(projection_mesh%wbeta)) allocate(projection_mesh%wbeta(projection_mesh%nbeta))
+        if(.not. allocated(projection_mesh%gamma)) allocate(projection_mesh%gamma(projection_mesh%ngamma))
+        if(.not. allocated(projection_mesh%wgamma)) allocate(projection_mesh%wgamma(projection_mesh%ngamma))
         call GaussLegendre_X1toX2(0.d0,pi,projection_mesh%alpha,projection_mesh%walpha,projection_mesh%nalpha) ! reduce [0, 2pi] to [0,pi] ! D2 symmetry is required.
         call GaussLegendre_X1toX2(0.d0,pi,projection_mesh%beta,projection_mesh%wbeta,projection_mesh%nbeta) ! [0,pi]
         call GaussLegendre_X1toX2(0.d0,pi,projection_mesh%gamma,projection_mesh%wgamma,projection_mesh%ngamma)  ! reduce [0, 2pi] to [0,pi] ! D2 symmetry is required.

@@ -17,10 +17,10 @@ MODULE GCM_Inout
         integer :: i,is
         logical,intent(in),optional :: ifPrint
         character(len=*), parameter ::  format1 = "(10x,i5)", &
-                                        format2 = "(10x,5e9.2)"
+                                        format2 = "(10x,5e10.2)"
         open(u_GCM, file=InputFile%file_path_para, status='old')
         ! skip GCM parameters
-        do i = 1, 49
+        do i = 1, 50
             read(u_GCM,'(A)', iostat=is) 
             if (is /= 0) then
                 print *, "Error reading GCM file"
@@ -48,7 +48,7 @@ MODULE GCM_Inout
 
             ! set kmax
             HWG%kmax = input_par%kmax
-            if(input_par%kmax < 1) stop 'kmax cannot be less than 1.' 
+            if(input_par%kmax < 0) stop 'kmax cannot be less than 1.' 
 
             ! set cutoff
             do J = 0, Jmax_max
@@ -66,12 +66,12 @@ MODULE GCM_Inout
             integer :: Strlength = 40
 
             if(GCM_option%GCMType==0) then 
-                write(*,"(5x,a,':   ',a)") adjust_left('GCM',Strlength),'only print the kernel'
+                write(*,"(5x,a,':   ',a)") adjust_left('GCM',Strlength),'GCM skipped.'
             else if(GCM_option%GCMType==1) then
-                write(*,"(5x,a,':   ',a)") adjust_left('GCM',Strlength),'perform GCM'
+                write(*,"(5x,A)") 'GCM:'
             end if 
 
-            write(*,"(5x,a,':   ', 5(a,e9.2))") adjust_left('Zeta',Strlength),input_par%zeta
+            write(*,"(5x,a,': ', 5(e9.2))") adjust_left('Zeta',Strlength),input_par%zeta
             write(*,"(a)") '=========================================================================================='
         end subroutine
     end subroutine
@@ -119,7 +119,7 @@ MODULE GCM_Inout
             end if
             do q2 = q2_start, q2_end
                 call set_Proj_output_filename(q1,q2)
-                open(Proj_outputfile%u_outputelem,file=Proj_outputfile%outputelem,form='unformatted',status='unknown')
+                open(Proj_outputfile%u_outputelem,file=Proj_outputfile%outputelem,form='formatted',status='old')
                 do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
                     if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
                         K1_start = 0
@@ -179,8 +179,7 @@ MODULE GCM_Inout
             integer :: J,parity,K1_start,K1_end,K2_start,K2_end,K1,q1,length_K,qK1,K2,q2,qK2,log_abs_norm
             real(r64) :: abs_norm
             character(1), dimension(2) :: ParityChar = ['+', '-']
-            character(len=*), parameter ::  format11 = "(i3,a4,2(i3,2x),2f10.3,4f12.4)"
-            write(*,*) 'Diagonal kernels:'
+            character(len=*), parameter ::  format11 = "(i3,a6,2x,(i3,1x),(i3,2x),2(f5.3,2x),(f7.4,2x),3(f12.4,2x))"
             do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
                 if ((-1)**J == 1 .or. Proj_option%PPtype==0) then
                     parity = 1 ! +
@@ -198,23 +197,24 @@ MODULE GCM_Inout
                     K2_start = -J
                     K2_end = J
                 end if
-                write(*,*) 'J  Parity  K   q  beta2   beta3       E        n^J(q,q)   <N>     <Z>'
+                
+                write(*,*) 'Diagonal kernels:'
+                write(*,*) ' J  Parity  K   q  beta2  beta3   n^J(q,q)        E            <N>           <Z>'
                 do K1 = K1_start,K1_end
                     do q1 = gcm_space%q1_start, gcm_space%q1_end
-                        write(*,format11) J, ParityChar(parity),K1,q1,constraint%betac(q1), constraint%bet3c(q2),&
-                                    dreal(GCM_kernels%H_KK(J,parity,q1,K1,q1,K1)/GCM_kernels%N_KK(J,parity,q1,K1,q1,K1)),&
-                                    dreal(GCM_kernels%N_KK(J,parity,q1,K1,q1,K1)), &
-                                    dreal(GCM_kernels%X_KK(J,parity,q1,K1,q1,K1,1)), &
-                                    dreal(GCM_kernels%X_KK(J,parity,q1,K1,q1,K1,2))
+                        write(*,format11) J, ParityChar(parity),K1,q1,constraint%betac(q1), constraint%bet3c(q1),dreal(GCM_kernels%N_KK(J,parity,q1,K1,q1,K1)), &
+                                        dreal(GCM_kernels%H_KK(J,parity,q1,K1,q1,K1)/(GCM_kernels%N_KK(J,parity,q1,K1,q1,K1)+1.0d-30)),&
+                                        dreal(GCM_kernels%X_KK(J,parity,q1,K1,q1,K1,1)/(GCM_kernels%N_KK(J,parity,q1,K1,q1,K1)+1.0d-30)), &
+                                        dreal(GCM_kernels%X_KK(J,parity,q1,K1,q1,K1,2)/(GCM_kernels%N_KK(J,parity,q1,K1,q1,K1)+1.0d-30))
                     end do
-                end do
-                write(*,*) '--------------------------------------------------------------------'
-                write(*,*) 'existing of norm matrix elements -- value 99 means missing, otherwise ln(overlap)'
+                end do  
+                write(*,*) 'Triangular norm kernels:  ln(overlap), value 99 means missing:'
+                write(*,*) ' K','  q'
                 length_K = K1_end - K1_start + 1
                 do K1 = K1_start,K1_end
                     do q1 = gcm_space%q1_start, gcm_space%q1_end
                         qK1 = q1+(K1-K1_start)*length_K 
-                        write(*,'(2i3)',ADVANCE='NO') K1,q1
+                        write(*,'(2i3,2x)',ADVANCE='NO') K1,q1
                         do K2 = K2_start,K2_end
                             do q2 = gcm_space%q2_start, gcm_space%q2_end
                                 qK2 = q2+(K2-K2_start)*length_K 
@@ -222,17 +222,18 @@ MODULE GCM_Inout
                                     abs_norm = abs(dreal(GCM_kernels%N_KK(J,parity,q1,K1,q2,K2)))
                                     if(abs_norm .gt. 0.d0) then 
                                         log_abs_norm = int(log(abs_norm))
-                                        write(*,'(i3)',ADVANCE='NO') log_abs_norm
+                                        write(*,'(i4)',ADVANCE='NO') log_abs_norm
                                     else
-                                        write(*,'(i3)',ADVANCE='NO') 99
+                                        write(*,'(i4)',ADVANCE='NO') 99
                                     end if 
                                 end if 
                             end do 
                         end do 
-                        write(*,*) ''
+                        write(*,*)
                     end do
                 end do
-                write(*,*) '--------------------------------------------------------------------'
+                write(*,*) '------------------------------------------------------------------------------------------'
+                write(*,*)
             end do
         end subroutine
     end subroutine

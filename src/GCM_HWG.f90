@@ -130,81 +130,106 @@ MODULE HWG
             HWG%E   (    1:M,J,parity) = E(1:M)      ! E^{J parity}
             HWG%fJKq(1:N,1:M,J,parity) = FF(1:N,1:M) ! f^{J parity}(K,q)
             HWG%gJKq(1:N,1:M,J,parity) = RR(1:N,1:M) ! g^{J parity}(K,q), collective wave function
-            deallocate(NN,HH,EN,E,DD,GG,FF,WW,RR)
             call print_HWG_Results
+            deallocate(NN,HH,EN,E,DD,GG,FF,WW,RR)
         end do 
         
         contains
 
         subroutine print_NN_HH
-            use Tools, only: int2str
             integer :: max_N,N,qK2,q2,K2,K1,q1,qK1
-            character(len=*), parameter ::  format1 = "(a8,50f12.5)"
+            character(len=*), parameter ::  format0 = "(3x,'[',I3,',',I3,']')", &
+                                            format1 = "(a,i3,a)", &
+                                            format2 = "('[',i3,',',i3,']',50f12.5)"
             character(1), dimension(2) :: ParityChar = ['+', '-']
-            character(len=10000) :: line
+            character(len=10000) :: header
             max_N = 50
             N = GCM_basis%N(J,parity)
 
-            line = ''
-            do qK2 = 1, N
+            ! Create table headers
+            header = ''
+            do qK2 = 1, min(N,max_N)
                 q2 = GCM_basis%basis(1,qK2,J,parity)
                 K2 = GCM_basis%basis(2,qK2,J,parity)
-                line = trim(line)//'('//int2str(q2)//int2str(K2)//')'//repeat(' ', 8)
+                write(header(len_trim(header)+1:),format0) q2, K2
             end do
-
-            write(66,*) '----- matrix NN((q1,K1),(q2,K2)) ---- for J=', J, 'Parity=', ParityChar(parity)
-            write(66,*) trim(line)
-            do qK1 = 1, N
+            if(N>max_N) then
+                write(header(len_trim(header)+1:),*) '...'
+            end if
+            ! NN 
+            write(66,format1) '-----  NN( [q1,K1], [q2,K2] ) ---- ', J, ParityChar(parity)
+            write(66,"(10x,A)") trim(header)
+            do qK1 = 1, min(N,max_N)
                 q1 = GCM_basis%basis(1,qK1,J,parity)
                 K1 = GCM_basis%basis(2,qK1,J,parity)
-                write(66,format1) '('//int2str(q1)//int2str(K1)//')',(NN(qK1,qK2), qK2=1,min(N,max_N)) 
+                write(66,format2) q1,K1,(NN(qK1,qK2), qK2=1,min(N,max_N)) 
             end do
-
-            write(66,*) '----- matrix HH((q1,K1),(q2,K2)) ---- for J=', J, 'Parity=', ParityChar(parity)
-            write(66,*) trim(line)
-            do qK1 = 1, N
+            if(N>max_N) then
+                write(66,*) '...'
+            end if
+            ! HH
+            write(66,format1) '-----  HH( [q1,K1], [q2,K2] ) ---- ', J, ParityChar(parity)
+            write(66,"(10x,A)") trim(header)
+            do qK1 = 1, min(N,max_N)
                 q1 = GCM_basis%basis(1,qK1,J,parity)
                 K1 = GCM_basis%basis(2,qK1,J,parity)
-                write(66,format1) '('//int2str(q1)//int2str(K1)//')',(HH(qK1,qK2), qK2=1,min(N,max_N)) 
+                write(66,format2) q1,K1,(HH(qK1,qK2), qK2=1,min(N,max_N)) 
             end do
+            if(N>max_N) then
+                write(66,*) '...'
+            end if
         end subroutine
 
         subroutine print_HWG_Results
             use Globals, only: GCM_basis,constraint
             use Tools, only: int2str
             integer :: max_M,i,K,q,qK
-            character(len=500) :: buffer
+            character(len=500) :: header
             character(1), dimension(2) :: ParityChar = ['+', '-']
             character(len=*), parameter ::  format1 = "(50e11.3)", &
-                                            format2 = '(2i3,1x,2f8.3,50f10.5)'
+                                            format2 = '(2i3,1x,2f8.3,50f10.4)'
 
             max_M = 50
  
-            write(*, '(A,e10.2)') ' cutoff value of the norm eigenvalues: ', EPS
             write(*, '(A)') '=================================================='
+            write(*, '(A,e10.2)') ' Cutoff value of norm eigenvalues: ', EPS
             write(*,*)   'J^pi_i   eigenvalues_norm    eigenvalues_Hamiltonian'
-            write(*, '(A)') '--------------------------------------------------' 
+            ! write(*, '(A)') '--------------------------------------------------' 
             do i = 1, M
-                write(*, '(A, 5X, ES15.6, 5X, ES15.6)')int2str(J)//ParityChar(parity)//'_'//int2str(i), EN(i), E(i)
+                write(*, '(2x,A, 5X, E15.6, 5X, E15.6)')int2str(J)//ParityChar(parity)//'_'//int2str(i), EN(i), E(i)
             end do
-            write(*,*) 'Eigenvectors f^{J parity}(K,q)'
-
-            write(buffer, '(A, *(1X, A))') 'K   q  beta2   beta3', (trim(int2str(J)//ParityChar(parity)//'_'//int2str(i)), i=1, min(M, max_M))
-            write(*, '(A)') trim(buffer)
+            write(*,*) 
+            ! f
+            write(*,*) 'Eigenvectors f^{J pi}(K,q)'
+            write(header, '(A, *(A10))') '  K  q    beta2   beta3', (trim(int2str(J)//ParityChar(parity)//'_'//int2str(i)), i=1, min(M, max_M))
+            if(M>max_M) then
+                write(header(len_trim(header)+1:),*) '...'
+            end if
+            write(*, '(A)') trim(header)
             do qK = 1, GCM_basis%N(J,parity)
                 q = GCM_basis%basis(1,qK,J,parity)
                 K = GCM_basis%basis(2,qK,J,parity)
                 write(*,format2) K,q,constraint%betac(q), constraint%bet3c(q),(FF(qK,i), i=1,min(M,max_M))
             end do
-
-            write(*,*) 'Eigenvectors(collective wave function) g^{J parity}(K,q)'
-            write(buffer, '(A, *(1X, A))') 'K   q  beta2   beta3', (trim(int2str(J)//ParityChar(parity)//'_'//int2str(i)), i=1, min(M, max_M))
-            write(*, '(A)') trim(buffer)
+            if(M>max_M) then
+                write(66,*) '...'
+            end if
+            write(*,*) 
+            ! g
+            write(*,*) 'Eigenvectors  g^{J parity}(K,q) (collective wave function)'
+            write(header, '(A, *(A10))') '  K  q    beta2   beta3', (trim(int2str(J)//ParityChar(parity)//'_'//int2str(i)), i=1, min(M, max_M))
+            if(M>max_M) then
+                write(header(len_trim(header)+1:),*) '...'
+            end if
+            write(*, '(A)') trim(header)
             do qK = 1, GCM_basis%N(J,parity)
                 q = GCM_basis%basis(1,qK,J,parity)
                 K = GCM_basis%basis(2,qK,J,parity)
                 write(*,format2) K,q,constraint%betac(q), constraint%bet3c(q),(RR(qK,i), i=1,min(M,max_M))
             end do
+            if(M>max_M) then
+                write(66,*) '...'
+            end if
         end subroutine
     end subroutine
 
