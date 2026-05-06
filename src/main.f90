@@ -13,7 +13,7 @@ PROGRAM MR_CDFT
     use CDFT
     use Proj
     use GCM
-    use Globals, only: Proj_option,GCM_option,outputfile,MPI_Infor
+    use Globals, only: option,Proj_option,GCM_option,outputfile,MPI_Infor
     use MathMethods, only: math_gfv
     use CDFT_Inout, only: handle_input_config,read_file_b23,read_CDFT_configuration
     use Proj_Inout, only: read_Proj_configuration
@@ -53,7 +53,7 @@ PROGRAM MR_CDFT
     call set_force_parameters(.True.)
 
     ! CDFT
-    if(Proj_option%ProjectionType == 0 .or. Proj_option%ProjectionType==1) then
+    if(option%CDFTType > 0) then
         if (MPI_Infor%rank == 0) write(*,*)'CDFT_Main: Start CDFT calculations'
         call CDFT_Main
         call MPI_BARRIER(MPI_COMM_WORLD, ierr)
@@ -61,7 +61,7 @@ PROGRAM MR_CDFT
     endif
 
     ! Projection
-    if(Proj_option%ProjectionType == 1 .or. Proj_option%ProjectionType==2) then
+    if(Proj_option%ProjectionType > 0) then
         if (MPI_Infor%rank == 0) write(*,*)'Proj_Main: Start Proj calculations'
         call Proj_Main
         call MPI_BARRIER(MPI_COMM_WORLD, ierr)
@@ -69,7 +69,7 @@ PROGRAM MR_CDFT
     endif
 
     ! GCM
-    if(GCM_option%GCMType > 1 ) then
+    if(GCM_option%GCMType > 0 ) then
         if (MPI_Infor%rank == 0) write(*,*)'GCM_Main: Start Proj calculations'
         if (MPI_Infor%rank == 0) call GCM_Main
         if (MPI_Infor%rank == 0) write(*,*)'GCM_Main: Proj calculations completed'

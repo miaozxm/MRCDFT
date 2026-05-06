@@ -1303,13 +1303,13 @@ subroutine set_spherical_oscillator_wave_function
     ! 2) The measure  dsqrt(x**2*dsin(theta)) is mutiplied to the wave function.
     !-----------------------------------------------------------------------------------------------------
     use Constants, only: one,two,r64,nt3x,ngr,ntheta,nphi
-    use Globals, only: BS,spatial_grid,Proj_option
+    use Globals, only: BS,spatial_grid,option
     integer :: ifg,ib,begin_pos,basis_dim,m,nr,nl,nj,nm,ix,itheta,iphi,i
     real(r64) :: b0,cg0,cg1,x,theta,measure,temp1,temp2
     
     ! set R_{nl}(x),  Y_{lm}(\theta,\phi) and their first-order derivation
-    if(Proj_option%ProjectionType==2) then
-        call set_Spherical_HO_basis
+    if(option%CDFTType==0) then
+        call set_Spherical_HO_basis(.False.)
     endif
     allocate(BS%HO_sph%Am(1:nt3x,1:ngr*ntheta*nphi,0:1,1:2))
     allocate(BS%HO_sph%Dm(1:nt3x,1:ngr*ntheta*nphi,0:1,1:2))

@@ -27,6 +27,8 @@ end type
 type(Input_FileName) :: InputFile
 
 type Input_Parameter
+    ! CDFT
+    integer(i16) :: CDFTType            ! 0 : skip CDFT 1: do CDFT
     character(len=10) :: force_name     ! Parameterset name of the Lagrangian
     character(len=3) :: nucleus_name    ! nucleus name
     integer(i16) :: nucleus_mass_number ! mass number
@@ -57,7 +59,7 @@ type Input_Parameter
     integer(i16) :: option_blockMethod          ! 1: Block at the beginning of the iteration; 2:Block after non-blocking iteration converges; 3: Convergence blocking after convergence of non-blocking iterations
     integer(i16) :: option_Erot ! Rotation correction energy formula: 0: no; 1:Belyaev formula; 2: Nilsson formula; 3: Odd A formula
     ! Proj
-    integer :: ProjectionType ! 0 : no 1: RMF+AMP 2: only AMP
+    integer :: ProjectionType ! 0 : skip Proj;  1: do Proj
     integer :: AMPType  ! 0:no ; 1: 1DAMP; 2: 3DAMP
     integer :: PNPType ! Particle Number Projection; 0: no; 1: yes
     integer :: PPType  ! Parity projection; 0: no; 1: yes
@@ -87,6 +89,7 @@ type(Input_Parameter) :: input_par
 
 
 type Option_
+    integer :: CDFTType ! 0 : skip CDFT 1: do CDFT
     integer :: eqType ! 0: solve dirac equation, 1: solve RHB equation
     integer :: block_type !  0: Non-blocking; 1: Block the given energy level; 2: Block according to K^\pi
     integer :: block_method ! 1: blocking -> convergence;   2:convergence -> block; 3: convergence -> block -> convergence
@@ -550,7 +553,7 @@ type(OddA_) OddA
 !! Proj global variables 
 
 type Option_Proj
-    integer :: ProjectionType ! 0 : no 1: RMF+AMP 2: only AMP
+    integer :: ProjectionType ! 0 : skip Proj;  1: do Proj
     integer :: ihf ! Norm overlap calculation method; 1: Bertsch & Robledo (2011) formula; 2: Robledo (2009) formula
     integer :: AMPtype ! 0: no; 1: 1DAMP; 2: 3DAMP
     integer :: PNPtype ! Particle Number Projection; 0: no; 1: yes

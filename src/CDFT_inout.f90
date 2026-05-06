@@ -134,6 +134,7 @@ subroutine read_CDFT_configuration(ifPrint)
                                     format8= "(10x, i8)"
 
     open(u_cdft, file=InputFile%file_path_para, status='old')
+    read(u_cdft, format1) input_par%CDFTType
     read(u_cdft, format2) input_par%basis_n0f, input_par%basis_n0b    
     read(u_cdft, format3) input_par%basis_b0
     read(u_cdft, format6) first_character, tmp
@@ -181,6 +182,8 @@ subroutine read_CDFT_configuration(ifPrint)
     iteration%iteration_max = input_par%iteration_max
     iteration%xmix = input_par%potential_mix
     !Option set here
+    option%CDFTType = input_par%CDFTType
+    if(option%CDFTType > 1 .or. option%CDFTType < 0) stop 'CDFTType wrong!'
     option%eqType = input_par%option_iRHB
     option%block_type =  input_par%option_iBlock
     option%block_method = input_par%option_blockMethod
@@ -195,8 +198,13 @@ subroutine read_CDFT_configuration(ifPrint)
         parity_char = ['+','-']
         
         write(*,"(a)") '============================================================================================'
-        if(option%eqType==0) write(*,'(5x,A)') 'Solve Dirac (BCS) Equation :'
-        if(option%eqType==1) write(*,'(5x,A)') 'Solve RHB Equation :'
+        if(option%CDFTType == 0) then
+            write(*,"(5x,A)")  'CDFT skipped.'
+        else 
+            if(option%eqType==0) write(*,'(5x,A)') 'Solve Dirac (BCS) Equation :'
+            if(option%eqType==1) write(*,'(5x,A)') 'Solve RHB Equation :'
+        end if
+
         write(*,"(5x,a,':   ',a3,i4)") adjust_left('Nucleus',Strlength), input_par%nucleus_name, input_par%nucleus_mass_number
 
         write(*,"(5x,a,':   ',i2)") adjust_left('Number of oscillator shells (N0F)',Strlength), input_par%basis_n0f
