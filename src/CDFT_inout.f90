@@ -320,21 +320,21 @@ subroutine set_CDFT_output_filename(constraint_beta2,constraint_beta3)
                         //sign_beta2//char(name(1))//char(name(2))//char(name(3)) &
                         //sign_beta3//char(name(4))//char(name(5))//char(name(6))//'.out'
     outputfile%outputw = OUTPUT_PATH//'CDFT_'//int2str(A)//nucleus_attributes%name &
-                        //'_eMax'//char(name_nf1)//char(name_nf2) &
+                        //'_wel'//'_eMax'//char(name_nf1)//char(name_nf2) &
                         //sign_beta2//char(name(1))//char(name(2))//char(name(3)) &
-                        //sign_beta3//char(name(4))//char(name(5))//char(name(6))//'.wel'
+                        //sign_beta3//char(name(4))//char(name(5))//char(name(6))//'.tmp'
      outputfile%outdel = OUTPUT_PATH//'CDFT_'//int2str(A)//nucleus_attributes%name &
-                        //'_eMax'//char(name_nf1)//char(name_nf2) &
+                        //'_del'//'_eMax'//char(name_nf1)//char(name_nf2) &
                         //sign_beta2//char(name(1))//char(name(2))//char(name(3)) &
-                        //sign_beta3//char(name(4))//char(name(5))//char(name(6))//'.del'
+                        //sign_beta3//char(name(4))//char(name(5))//char(name(6))//'.tmp'
      outputfile%outputwf=OUTPUT_PATH//'CDFT_'//int2str(A)//nucleus_attributes%name &
-                        //'_eMax'//char(name_nf1)//char(name_nf2) &
+                        //'_wf'//'_eMax'//char(name_nf1)//char(name_nf2) &
                         //sign_beta2//char(name(1))//char(name(2))//char(name(3)) &
-                        //sign_beta3//char(name(4))//char(name(5))//char(name(6))//'.wf'
+                        //sign_beta3//char(name(4))//char(name(5))//char(name(6))//'.tmp'
      outputfile%outputd= OUTPUT_PATH//'CDFT_'//int2str(A)//nucleus_attributes%name &
-                        //'_eMax'//char(name_nf1)//char(name_nf2) &
+                        //'_cyl.dens'//'_eMax'//char(name_nf1)//char(name_nf2) &
                         //sign_beta2//char(name(1))//char(name(2))//char(name(3)) &
-                        //sign_beta3//char(name(4))//char(name(5))//char(name(6))//'.dens'
+                        //sign_beta3//char(name(4))//char(name(5))//char(name(6))//'.dat'
 end subroutine set_CDFT_output_filename
 
 subroutine read_fields
