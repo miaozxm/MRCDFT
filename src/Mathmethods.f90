@@ -4567,7 +4567,7 @@ Subroutine Zexch(SK,LDS,N,I1,I2)
     return
 end
 
-SUBROUTINE EIGENSOLVER_GEP(NMAX,N,NN,HH,EN,DD,M,E,GG,FF,WW,RR,EPS,IS,IFL)
+SUBROUTINE EIGENSOLVER_GEP(NMAX,N,NN,HH,EN,DD,M,E,GG,FF,WW,RR,EPS,Mmax,IS,IFL)
     !********************************************************************** 
     !     SOLVES GENERALIZED EIGENVALUE PROBLEM:                           
     !                          HH * FF = E * NN * FF                       
@@ -4600,7 +4600,8 @@ SUBROUTINE EIGENSOLVER_GEP(NMAX,N,NN,HH,EN,DD,M,E,GG,FF,WW,RR,EPS,IS,IFL)
     !        N      - actual dimension of matrices                        
     !        HH     - Hamiltonian matrix (N x N)                          
     !        NN     - Norm/overlap matrix (N x N)                         
-    !        EPS    - tolerance for discarding small eigenvalues of NN   
+    !        EPS    - tolerance for discarding small eigenvalues of NN 
+    !        Mmax   - maximum number of eigenvalues to retain 
     !        IS     - output control flag:                               
     !                 =0: only eigenvalues E, EN and eigenvectors GG, DD 
     !                 =1: also eigenvectors FF                           
@@ -4628,6 +4629,7 @@ SUBROUTINE EIGENSOLVER_GEP(NMAX,N,NN,HH,EN,DD,M,E,GG,FF,WW,RR,EPS,IS,IFL)
     dimension HH(NMAX,N),NN(NMAX,N),GG(NMAX,NMAX),DD(NMAX,N),FF(NMAX,N) 
     dimension WW(NMAX,N),RR(NMAX,N),TT(NMAX,N),H_reduced(NMAX,N)
     dimension E(N),E1(N),EN(N),Z(N)
+    integer :: Mmax
     !------------------------------------                                                      
     IFL = 0   
     ! 1) diagonalization of NN :
@@ -4643,12 +4645,16 @@ SUBROUTINE EIGENSOLVER_GEP(NMAX,N,NN,HH,EN,DD,M,E,GG,FF,WW,RR,EPS,IS,IFL)
     enddo
 
     ! 2) Discard eigenpairs with EN/EN(1) < EPS :
-    !   find out all the eigenvalues which are large enough compared with the largest one,
-    !   and drop the small ones
-    do I=1,N
-        IF (EN(I)/EN(1).LT.EPS) exit
-    end do
-    M=I-1
+    !   find out all the eigenvalues which are large enough compared with the largest one, and drop the small ones.
+    !   or   if Mmax is given, just keep the largest Mmax eigenvalues.
+    if(Mmax <= 0) then ! use cutoff
+        do I=1,N
+            IF (EN(I)/EN(1).LT.EPS) exit
+        end do
+        M=I-1
+    else ! use fixed number of eigenvalues
+        M = min(Mmax,N)
+    end if   
     if (M.LE.0) then                                              
         write(*,*) ' SUBR. EIGENSOLVER_GEP: NO EIGENVALUE OF N LARGER THAN EPS'
         IFL=1

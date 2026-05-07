@@ -29,7 +29,7 @@ MODULE GCM_Inout
         end do
         ! read
         read(u_GCM, format1) input_par%GCMType
-        read(u_GCM, format1) input_par%kmax
+        read(u_GCM, format1) input_par%Mmax
         read(u_GCM, format2) input_par%zeta
         close(u_GCM)
 
@@ -46,9 +46,9 @@ MODULE GCM_Inout
             GCM_option%GCMType = input_par%GCMType
             if(GCM_option%GCMType > 1 .or. GCM_option%GCMType < 0) stop 'GCMType wrong!'
 
-            ! set kmax
-            GCM_HWG%kmax = input_par%kmax
-            if(input_par%kmax < 0) stop 'kmax cannot be less than 1.' 
+            ! set Mmax
+            GCM_HWG%Mmax = input_par%Mmax
+            if(input_par%Mmax < 0) stop 'Mmax cannot be less than 1.' 
 
             ! set cutoff
             do J = 0, Jmax_max
@@ -61,7 +61,7 @@ MODULE GCM_Inout
 
         end subroutine
         subroutine printParameters
-            use Globals, only: input_par,GCM_option
+            use Globals, only: input_par,GCM_option,GCM_HWG
             use Tools, only: adjust_left
             integer :: Strlength = 40
 
@@ -71,6 +71,7 @@ MODULE GCM_Inout
                 write(*,"(5x,A)") 'GCM:'
             end if 
 
+            write(*,"(5x,a,': ', i3)") adjust_left('Mmax',Strlength),GCM_HWG%Mmax
             write(*,"(5x,a,': ', 5(e9.2))") adjust_left('Zeta',Strlength),input_par%zeta
             write(*,"(a)") '=========================================================================================='
         end subroutine

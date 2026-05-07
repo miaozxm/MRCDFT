@@ -82,7 +82,7 @@ type Input_Parameter
     integer :: EccentriType ! 0: no 1: by Kernel Module 2: by density matrix element 3: 1+2
     ! GCM
     integer :: GCMType
-    integer :: kmax
+    integer :: Mmax
     real(r64) :: zeta(5)
 end type
 type(Input_Parameter) :: input_par
@@ -739,7 +739,7 @@ endtype
 type(GCM_basis_) :: GCM_basis
 
 type HWG_
-    integer :: kmax
+    integer :: Mmax
     real(r64) :: cutoff(0:Jmax_max)
     integer,  allocatable :: M(:,:)         ! M(J, parity) represents the number of states for J^{parity}.
     real(r64),allocatable :: E(:,:,:)       ! E(i, J, parity) represents the energy of the i-th state of J^{parity}.

@@ -66,7 +66,7 @@ MODULE HWG
         real(r64), dimension(:,:), allocatable :: NN,HH,DD,GG,FF,WW,RR
         real(r64), dimension(:), allocatable :: E, EN
         real(r64) :: EPS
-        integer :: J,parity,N,qK1,qK2,q1,K1,q2,K2,M,IS,IFL
+        integer :: J,parity,N,qK1,qK2,q1,K1,q2,K2,M,Mmax,IS,IFL
         
         allocate(GCM_HWG%M(0:gcm_space%Jmax,2),GCM_HWG%E(1:GCM_basis%N_max,0:gcm_space%Jmax,2),&
                  GCM_HWG%fJKq(1:GCM_basis%N_max,1:GCM_basis%N_max,0:gcm_space%Jmax,2),&
@@ -114,15 +114,17 @@ MODULE HWG
             !    and satisfies RR^T * RR = I (identity)
             allocate(EN(N),E(N),DD(N,N),GG(N,N),FF(N,N),WW(N,N),RR(N,N),source=0.d0)
             ! Call the generalized eigenvalue solver
-            ! Input:  NN (norm matrix), HH (Hamiltonian matrix), N (matrix size), EPS (cutoff)
+            ! Input:  NN (norm matrix), HH (Hamiltonian matrix), N (matrix size), EPS (cutoff), 
+            !         Mmax (maximum number of eigenvalues to retain), IS (output control flag)
             ! Output: EN (norm eigenvalues), DD (norm eigenvectors), 
             !         M (number of retained states after cutoff), E (energy eigenvalues),
             !         GG (reduced eigenvectors), FF (physical eigenvectors in original basis),
             !         WW (NN * FF), RR (collective wave function = NN^(1/2) * FF),
             !         IFL (error flag: 0 = success, 1=no eigenvalue retained )
             EPS = GCM_HWG%cutoff(J)
+            Mmax = GCM_HWG%Mmax
             IS = 3
-            call EIGENSOLVER_GEP(N,N,NN,HH,EN,DD,M,E,GG,FF,WW,RR,EPS,IS,IFL)
+            call EIGENSOLVER_GEP(N,N,NN,HH,EN,DD,M,E,GG,FF,WW,RR,EPS,Mmax,IS,IFL)
             if(IFL/=0) stop 'No eigenvalue retained.'
             ! After discarding, the useful matrices and their dimensions are:
             ! EN(M), E(M)  
