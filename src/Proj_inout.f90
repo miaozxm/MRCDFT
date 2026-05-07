@@ -325,17 +325,12 @@ end subroutine
 
 subroutine set_Proj_output_filename(q1,q2)
     use Globals, only:constraint,BS,projection_mesh,nucleus_attributes,Proj_option
-    use Kernel, only: set_projection_mesh_points
-    use Basis, only: set_Spherical_HO_basis_parameters
     integer :: q1,q2,AMPType,A
     real(r64) :: beta2_1, beta3_1,beta2_2,beta3_2,abs2c1,abs3c1,abs2c2,abs3c2
     character :: signb21,signb31,signb22,signb32
     integer(i16), dimension(6) :: name1,name2
     integer(i16) :: AMP,name_nf1,name_nf2,nphi_1,nphi_2,nbeta_1,nbeta_2
-    if(Proj_option%ProjectionType == 0 ) then 
-        call set_projection_mesh_points ! set projection_mesh%nphi, projection_mesh%nbeta
-        call set_Spherical_HO_basis_parameters(.False.) ! set BS%HO_sph%n0f
-    end if 
+
     A = nucleus_attributes%mass_number_int
     beta2_1 = constraint%betac(q1)
     beta3_1 = constraint%bet3c(q1)

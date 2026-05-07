@@ -40,22 +40,22 @@ MODULE GCM_Inout
 
         subroutine set_GCM_parameters
             use Constants, only: Jmax_max
-            use Globals, only: input_par,GCM_option,HWG
+            use Globals, only: input_par,GCM_option,GCM_HWG
             integer :: J
             ! set GCM type
             GCM_option%GCMType = input_par%GCMType
             if(GCM_option%GCMType > 1 .or. GCM_option%GCMType < 0) stop 'GCMType wrong!'
 
             ! set kmax
-            HWG%kmax = input_par%kmax
+            GCM_HWG%kmax = input_par%kmax
             if(input_par%kmax < 0) stop 'kmax cannot be less than 1.' 
 
             ! set cutoff
             do J = 0, Jmax_max
                 if(J<=4) then
-                    HWG%cutoff(J) = input_par%zeta(J+1)
+                    GCM_HWG%cutoff(J) = input_par%zeta(J+1)
                 else 
-                    HWG%cutoff(J) = input_par%zeta(5)
+                    GCM_HWG%cutoff(J) = input_par%zeta(5)
                 end if 
             end do
 
@@ -79,7 +79,7 @@ MODULE GCM_Inout
     subroutine read_kernels
         use Constants, only: r64
         use Proj_Inout, only: set_Proj_output_filename
-        use Globals, only: gcm_space,Proj_outputfile,GCM_kernels,Proj_option
+        use Globals, only: gcm_space,Proj_outputfile,GCM_kernels,Proj_option,GCM_outputfile
         integer :: q1, q2,J,K1_start,K1_end,K2_start,K2_end,K1,K2,q2_start,q2_end,parity
         integer :: read_J, read_K1, read_K2
         character(1) :: read_parity_char
@@ -104,7 +104,7 @@ MODULE GCM_Inout
         allocate(GCM_kernels%E0_KK(0:gcm_space%Jmax,2,gcm_space%q1_start:gcm_space%q1_end,-gcm_space%Jmax:gcm_space%Jmax, &
                                     gcm_space%q2_start:gcm_space%q2_end,-gcm_space%Jmax:gcm_space%Jmax,2),source=(0.d0,0.d0))
 
-
+        write(*,"(5x,A)") 'Reading kernels for GCM calculations...'
         do q1 = gcm_space%q1_start, gcm_space%q1_end
             if(Proj_option%Kernel_Symmetry==0) then      ! All Kernels 
                 q2_start = gcm_space%q2_start
@@ -119,6 +119,7 @@ MODULE GCM_Inout
             end if
             do q2 = q2_start, q2_end
                 call set_Proj_output_filename(q1,q2)
+                write(GCM_outputfile%u_outGCM_standard,"(A,i3,A,i3,A,A)") 'Reading kernels for q1=',q1,' and q2=',q2,' from file: ', Proj_outputfile%outputelem
                 open(Proj_outputfile%u_outputelem,file=Proj_outputfile%outputelem,form='formatted',status='old')
                 do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
                     if(Proj_option%AMPtype==0 .or. Proj_option%AMPtype==1) then
@@ -198,23 +199,23 @@ MODULE GCM_Inout
                     K2_end = J
                 end if
                 
-                write(*,*) 'Diagonal kernels:'
-                write(*,*) ' J  Parity  K   q  beta2  beta3   n^J(q,q)        E            <N>           <Z>'
+                write(GCM_outputfile%u_outGCM_standard,*) 'Diagonal kernels:'
+                write(GCM_outputfile%u_outGCM_standard,*) ' J  Parity  K   q  beta2  beta3   n^J(q,q)        E            <N>           <Z>'
                 do K1 = K1_start,K1_end
                     do q1 = gcm_space%q1_start, gcm_space%q1_end
-                        write(*,format11) J, ParityChar(parity),K1,q1,constraint%betac(q1), constraint%bet3c(q1),dreal(GCM_kernels%N_KK(J,parity,q1,K1,q1,K1)), &
+                        write(GCM_outputfile%u_outGCM_standard,format11) J, ParityChar(parity),K1,q1,constraint%betac(q1), constraint%bet3c(q1),dreal(GCM_kernels%N_KK(J,parity,q1,K1,q1,K1)), &
                                         dreal(GCM_kernels%H_KK(J,parity,q1,K1,q1,K1)/(GCM_kernels%N_KK(J,parity,q1,K1,q1,K1)+1.0d-30)),&
                                         dreal(GCM_kernels%X_KK(J,parity,q1,K1,q1,K1,1)/(GCM_kernels%N_KK(J,parity,q1,K1,q1,K1)+1.0d-30)), &
                                         dreal(GCM_kernels%X_KK(J,parity,q1,K1,q1,K1,2)/(GCM_kernels%N_KK(J,parity,q1,K1,q1,K1)+1.0d-30))
                     end do
                 end do  
-                write(*,*) 'Triangular norm kernels:  ln(overlap), value 99 means missing:'
-                write(*,*) ' K','  q'
+                write(GCM_outputfile%u_outGCM_standard,*) 'Triangular norm kernels:  ln(overlap), value 99 means missing:'
+                write(GCM_outputfile%u_outGCM_standard,*) ' K','  q'
                 length_K = K1_end - K1_start + 1
                 do K1 = K1_start,K1_end
                     do q1 = gcm_space%q1_start, gcm_space%q1_end
                         qK1 = q1+(K1-K1_start)*length_K 
-                        write(*,'(2i3,2x)',ADVANCE='NO') K1,q1
+                        write(GCM_outputfile%u_outGCM_standard,'(2i3,2x)',ADVANCE='NO') K1,q1
                         do K2 = K2_start,K2_end
                             do q2 = gcm_space%q2_start, gcm_space%q2_end
                                 qK2 = q2+(K2-K2_start)*length_K 
@@ -222,19 +223,93 @@ MODULE GCM_Inout
                                     abs_norm = abs(dreal(GCM_kernels%N_KK(J,parity,q1,K1,q2,K2)))
                                     if(abs_norm .gt. 0.d0) then 
                                         log_abs_norm = int(log(abs_norm))
-                                        write(*,'(i4)',ADVANCE='NO') log_abs_norm
+                                        write(GCM_outputfile%u_outGCM_standard,'(i4)',ADVANCE='NO') log_abs_norm
                                     else
-                                        write(*,'(i4)',ADVANCE='NO') 99
+                                        write(GCM_outputfile%u_outGCM_standard,'(i4)',ADVANCE='NO') 99
                                     end if 
                                 end if 
                             end do 
                         end do 
-                        write(*,*)
+                        write(GCM_outputfile%u_outGCM_standard,*)
                     end do
                 end do
-                write(*,*) '------------------------------------------------------------------------------------------'
-                write(*,*)
+                write(GCM_outputfile%u_outGCM_standard,*) '------------------------------------------------------------------------------------------'
+                write(GCM_outputfile%u_outGCM_standard,*)
             end do
+        end subroutine
+    end subroutine
+
+    subroutine set_GCM_output_filename
+        use Globals, only: OUTPUT_PATH,r64,i16
+        use Globals, only: BS,projection_mesh,nucleus_attributes,Proj_option,GCM_outputfile
+        use Kernel, only: set_projection_mesh_points
+        use Basis, only: set_Spherical_HO_basis_parameters
+        use Tools, only: int2str
+        integer :: q1,q2,AMPType,A
+        integer(i16) :: AMP,name_nf1,name_nf2,nphi_1,nphi_2,nbeta_1,nbeta_2
+        if(Proj_option%ProjectionType == 0 ) then 
+            call set_projection_mesh_points ! set projection_mesh%nphi, projection_mesh%nbeta
+            call set_Spherical_HO_basis_parameters(.False.) ! set BS%HO_sph%n0f
+        end if 
+        A = nucleus_attributes%mass_number_int
+        !------
+        AMPType = Proj_option%AMPType
+        if(AMPType==0) AMP = 0 + 48
+        if(AMPType==1) AMP = 1 + 48
+        if(AMPType==3) AMP = 3 + 48
+        !-----
+        name_nf1 = mod(BS%HO_sph%n0f/10,10) + 48
+        name_nf2 = mod(BS%HO_sph%n0f,10) + 48
+        !-----
+        nphi_1 = mod(projection_mesh%nphi(1)/10,10) + 48
+        nphi_2 = mod(projection_mesh%nphi(1),10) + 48
+        nbeta_1 = mod(projection_mesh%nbeta/10,10) + 48
+        nbeta_2 = mod(projection_mesh%nbeta,10) + 48
+
+
+        GCM_outputfile%outGCM_standard = OUTPUT_PATH//'GCM_'//int2str(A)//nucleus_attributes%name &
+                            //'.'//char(AMP)//'D'//'_eMax'//char(name_nf1)//char(name_nf2) &
+                            //'.'//char(nphi_1)//char(nphi_2)//'.'//char(nbeta_1)//char(nbeta_2)//'.out'
+        GCM_outputfile%outGCM_HWG  = OUTPUT_PATH//'GCM_'//int2str(A)//nucleus_attributes%name &
+                            //'_hwg'//'.'//char(AMP)//'D'//'_eMax'//char(name_nf1)//char(name_nf2) &
+                            //'.'//char(nphi_1)//char(nphi_2)//'.'//char(nbeta_1)//char(nbeta_2)//'.dat'
+        GCM_outputfile%outGCM_observables = OUTPUT_PATH//'GCM_'//int2str(A)//nucleus_attributes%name &
+                            //'_obs'//'.'//char(AMP)//'D'//'_eMax'//char(name_nf1)//char(name_nf2) &
+                            //'.'//char(nphi_1)//char(nphi_2)//'.'//char(nbeta_1)//char(nbeta_2)//'.dat'                     
+        
+    end subroutine
+
+    subroutine write_GCM_observables
+        use Globals, only: GCM_outputfile
+        open(GCM_outputfile%u_outGCM_observables ,form='formatted',file=GCM_outputfile%outGCM_observables)
+        write(*,"(5x,A)") 'Writing GCM observables to file: '//GCM_outputfile%outGCM_observables
+        call print_spectrum
+        close(GCM_outputfile%u_outGCM_observables)
+
+        contains
+        subroutine print_spectrum
+            use Globals, only: gcm_space,Proj_option,GCM_HWG,GCM_obser
+            integer :: J,parity,iM
+            character(1), dimension(2) :: ParityChar = ['+', '-']
+            character(len=*), parameter ::  format1 = "(i2,a1,i2,f12.4,3f10.4,f12.4,3f9.4,2f9.4)"
+            write(GCM_outputfile%u_outGCM_observables,'(A,f10.4,A)') 'Ground State Energy:', GCM_HWG%E(1,0,1), 'MeV'
+            write(GCM_outputfile%u_outGCM_observables,*) '------------------------------------------------------'
+            write(GCM_outputfile%u_outGCM_observables,"(A)") 'Excitation Spectrum:'
+            write(GCM_outputfile%u_outGCM_observables,"(A)") 'J^pi_i        E       E_ex    <beta2>   <beta3>       <N>       <Z>    rrms_p'
+            do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
+                ! parity
+                if ((-1)**J == 1 .or. Proj_option%PPtype==0) then
+                    parity = 1 ! +
+                else
+                    parity = 2 ! -
+                end if
+                do iM = 1, GCM_HWG%M(J,parity)
+                    write(GCM_outputfile%u_outGCM_observables,format1) J,ParityChar(parity),iM,GCM_HWG%E(iM,J,parity),GCM_obser%E_ex(iM,J,parity),&
+                                     GCM_obser%beta2_aver(iM,J,parity),GCM_obser%beta3_aver(iM,J,parity),&
+                                     GCM_obser%N(iM,J,parity),GCM_obser%Z(iM,J,parity),GCM_obser%rrms_p(iM,J,parity)
+                end do 
+            end do
+            write(GCM_outputfile%u_outGCM_observables,*) '------------------------------------------------------'
         end subroutine
     end subroutine
 END MODULE

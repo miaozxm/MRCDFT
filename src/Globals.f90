@@ -746,7 +746,7 @@ type HWG_
     real(r64),allocatable :: fJKq(:,:,:,:)  ! fJKq(j, i, J, parity) represents the expansion coefficient f of the j-th GCM_basis for the i-th state of J^{parity}.
     real(r64),allocatable :: gJKq(:,:,:,:)  ! gJKq(j, i, J, parity)
 endtype
-type(HWG_) :: HWG
+type(HWG_) :: GCM_HWG
 
 type GCM_Observables
     ! (:,:,:) -> (i, J, parity) denotes the i-th state of J^{parity}.
@@ -757,5 +757,20 @@ type GCM_Observables
 
 endtype 
 type(GCM_Observables) :: GCM_obser
+
+
+type GCM_Output_FileName
+    ! --------------- Projection ---------------------
+    !
+    character(len=60) :: outGCM_standard
+    integer :: u_outGCM_standard = u_config + 20
+    character(len=60) :: outGCM_HWG
+    integer :: u_outGCM_HWG = u_config + 21
+    character(len=60) :: outGCM_observables
+    integer :: u_outGCM_observables = u_config + 22
+
+end type
+type(GCM_Output_FileName) :: GCM_outputfile
+
 
 END MODULE Globals

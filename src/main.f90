@@ -40,7 +40,8 @@ PROGRAM MR_CDFT
         call CPU_TIME(start_CPU_time)
         start_time =  omp_get_wtime()
     end if 
-
+    
+    call MPI_BARRIER(MPI_COMM_WORLD, ierr)
     call handle_input_config
     call read_file_b23
     call read_CDFT_configuration(.True.)

@@ -61,16 +61,19 @@ MODULE HWG
         ! where N is the norm (overlap) kernel and H is the Hamiltonian kernel
         !--------------------------------------------------------------------
         use Constants, only: r64
-        use Globals, only: gcm_space,GCM_basis,Proj_option,Proj_outputfile,GCM_kernels,HWG
+        use Globals, only: gcm_space,GCM_basis,Proj_option,GCM_kernels,GCM_HWG,GCM_outputfile
         use MathMethods, only: EIGENSOLVER_GEP
         real(r64), dimension(:,:), allocatable :: NN,HH,DD,GG,FF,WW,RR
         real(r64), dimension(:), allocatable :: E, EN
         real(r64) :: EPS
         integer :: J,parity,N,qK1,qK2,q1,K1,q2,K2,M,IS,IFL
         
-        allocate(HWG%M(0:gcm_space%Jmax,2),HWG%E(1:GCM_basis%N_max,0:gcm_space%Jmax,2),&
-                 HWG%fJKq(1:GCM_basis%N_max,1:GCM_basis%N_max,0:gcm_space%Jmax,2),&
-                 HWG%gJKq(1:GCM_basis%N_max,1:GCM_basis%N_max,0:gcm_space%Jmax,2))
+        allocate(GCM_HWG%M(0:gcm_space%Jmax,2),GCM_HWG%E(1:GCM_basis%N_max,0:gcm_space%Jmax,2),&
+                 GCM_HWG%fJKq(1:GCM_basis%N_max,1:GCM_basis%N_max,0:gcm_space%Jmax,2),&
+                 GCM_HWG%gJKq(1:GCM_basis%N_max,1:GCM_basis%N_max,0:gcm_space%Jmax,2))
+        
+        write(*,"(5x,A)") 'Solving the HWG equation for each J^pi...'
+        open(GCM_outputfile%u_outGCM_HWG ,form='formatted',file=GCM_outputfile%outGCM_HWG)
 
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
             ! parity
@@ -117,7 +120,7 @@ MODULE HWG
             !         GG (reduced eigenvectors), FF (physical eigenvectors in original basis),
             !         WW (NN * FF), RR (collective wave function = NN^(1/2) * FF),
             !         IFL (error flag: 0 = success, 1=no eigenvalue retained )
-            EPS = HWG%cutoff(J)
+            EPS = GCM_HWG%cutoff(J)
             IS = 3
             call EIGENSOLVER_GEP(N,N,NN,HH,EN,DD,M,E,GG,FF,WW,RR,EPS,IS,IFL)
             if(IFL/=0) stop 'No eigenvalue retained.'
@@ -126,20 +129,21 @@ MODULE HWG
             ! DD: NxM , GG: MxM, FF: NxM, WW: NxM, RR: NxM
 
             ! store
-            HWG%M   (        J,parity) = M
-            HWG%E   (    1:M,J,parity) = E(1:M)      ! E^{J parity}
-            HWG%fJKq(1:N,1:M,J,parity) = FF(1:N,1:M) ! f^{J parity}(K,q)
-            HWG%gJKq(1:N,1:M,J,parity) = RR(1:N,1:M) ! g^{J parity}(K,q), collective wave function
+            GCM_HWG%M   (        J,parity) = M
+            GCM_HWG%E   (    1:M,J,parity) = E(1:M)      ! E^{J parity}
+            GCM_HWG%fJKq(1:N,1:M,J,parity) = FF(1:N,1:M) ! f^{J parity}(K,q)
+            GCM_HWG%gJKq(1:N,1:M,J,parity) = RR(1:N,1:M) ! g^{J parity}(K,q), collective wave function
             call print_HWG_Results
             deallocate(NN,HH,EN,E,DD,GG,FF,WW,RR)
         end do 
-        
+        close(GCM_outputfile%u_outGCM_HWG)
         contains
 
         subroutine print_NN_HH
+            use Tools, only: int2str
             integer :: max_N,N,qK2,q2,K2,K1,q1,qK1
             character(len=*), parameter ::  format0 = "(3x,'[',I3,',',I3,']')", &
-                                            format1 = "(a,i3,a)", &
+                                            format1 = "(a,i3,a,a)", &
                                             format2 = "('[',i3,',',i3,']',50f12.5)"
             character(1), dimension(2) :: ParityChar = ['+', '-']
             character(len=10000) :: header
@@ -151,33 +155,36 @@ MODULE HWG
             do qK2 = 1, min(N,max_N)
                 q2 = GCM_basis%basis(1,qK2,J,parity)
                 K2 = GCM_basis%basis(2,qK2,J,parity)
-                write(header(len_trim(header)+1:),format0) q2, K2
+                write(header(len_trim(header)+1:),format0) K2,q2
             end do
             if(N>max_N) then
                 write(header(len_trim(header)+1:),*) '...'
             end if
+            write(GCM_outputfile%u_outGCM_HWG,format1) '=================  J^pi:',J,ParityChar(parity),' ================='
             ! NN 
-            write(66,format1) '-----  NN( [q1,K1], [q2,K2] ) ---- ', J, ParityChar(parity)
-            write(66,"(10x,A)") trim(header)
+            write(GCM_outputfile%u_outGCM_HWG,"(A,3x,A)") 'NN( [K1,q1], [K2,q2] )', int2str(N)//'x'//int2str(N)
+            write(GCM_outputfile%u_outGCM_HWG,"(10x,A)") trim(header)
             do qK1 = 1, min(N,max_N)
                 q1 = GCM_basis%basis(1,qK1,J,parity)
                 K1 = GCM_basis%basis(2,qK1,J,parity)
-                write(66,format2) q1,K1,(NN(qK1,qK2), qK2=1,min(N,max_N)) 
+                write(GCM_outputfile%u_outGCM_HWG,format2) K1,q1,(NN(qK1,qK2), qK2=1,min(N,max_N)) 
             end do
             if(N>max_N) then
-                write(66,*) '...'
+                write(GCM_outputfile%u_outGCM_HWG,*) '...'
             end if
+            write(GCM_outputfile%u_outGCM_HWG,*) 
             ! HH
-            write(66,format1) '-----  HH( [q1,K1], [q2,K2] ) ---- ', J, ParityChar(parity)
-            write(66,"(10x,A)") trim(header)
+            write(GCM_outputfile%u_outGCM_HWG,"(A,3x,A)") 'HH( [K1,q1], [K2,q2] )',int2str(N)//'x'//int2str(N)
+            write(GCM_outputfile%u_outGCM_HWG,"(10x,A)") trim(header)
             do qK1 = 1, min(N,max_N)
                 q1 = GCM_basis%basis(1,qK1,J,parity)
                 K1 = GCM_basis%basis(2,qK1,J,parity)
-                write(66,format2) q1,K1,(HH(qK1,qK2), qK2=1,min(N,max_N)) 
+                write(GCM_outputfile%u_outGCM_HWG,format2) K1,q1,(HH(qK1,qK2), qK2=1,min(N,max_N)) 
             end do
             if(N>max_N) then
-                write(66,*) '...'
+                write(GCM_outputfile%u_outGCM_HWG,*) '...'
             end if
+            write(GCM_outputfile%u_outGCM_HWG,*) 
         end subroutine
 
         subroutine print_HWG_Results
@@ -187,49 +194,53 @@ MODULE HWG
             character(len=500) :: header
             character(1), dimension(2) :: ParityChar = ['+', '-']
             character(len=*), parameter ::  format1 = "(50e11.3)", &
-                                            format2 = '(2i3,1x,2f8.3,50f10.4)'
+                                            format2 = '(2i3,1x,2f8.3,50(1x,f10.4))'
 
             max_M = 50
  
-            write(*, '(A)') '=================================================='
-            write(*, '(A,e10.2)') ' Cutoff value of norm eigenvalues: ', EPS
-            write(*,*)   'J^pi_i   eigenvalues_norm    eigenvalues_Hamiltonian'
+            write(GCM_outputfile%u_outGCM_HWG, '(A,e10.2)') ' Cutoff value of norm eigenvalues: ', EPS
+            write(GCM_outputfile%u_outGCM_HWG,*) 'Number of retained states: ', M
+            write(GCM_outputfile%u_outGCM_HWG,*)   'J^pi_i   eigenvalues_norm    eigenvalues_Hamiltonian'
             ! write(*, '(A)') '--------------------------------------------------' 
             do i = 1, M
-                write(*, '(2x,A, 5X, E15.6, 5X, E15.6)')int2str(J)//ParityChar(parity)//'_'//int2str(i), EN(i), E(i)
+                write(GCM_outputfile%u_outGCM_HWG, '(2x,A, 5X, E15.6, 5X, E15.6)')int2str(J)//ParityChar(parity)//'_'//int2str(i), EN(i), E(i)
             end do
-            write(*,*) 
+            write(GCM_outputfile%u_outGCM_HWG,*) 
             ! f
-            write(*,*) 'Eigenvectors f^{J pi}(K,q)'
-            write(header, '(A, *(A10))') '  K  q    beta2   beta3', (trim(int2str(J)//ParityChar(parity)//'_'//int2str(i)), i=1, min(M, max_M))
+            write(GCM_outputfile%u_outGCM_HWG,*) 'Eigenvectors f^{J pi}(K,q)'
+            write(header, '(A, *(A11))') '  K  q    beta2   beta3', (trim(int2str(J)//ParityChar(parity)//'_'//int2str(i)), i=1, min(M, max_M))
             if(M>max_M) then
                 write(header(len_trim(header)+1:),*) '...'
             end if
-            write(*, '(A)') trim(header)
+            write(GCM_outputfile%u_outGCM_HWG, '(A)') trim(header)
             do qK = 1, GCM_basis%N(J,parity)
                 q = GCM_basis%basis(1,qK,J,parity)
                 K = GCM_basis%basis(2,qK,J,parity)
-                write(*,format2) K,q,constraint%betac(q), constraint%bet3c(q),(FF(qK,i), i=1,min(M,max_M))
+                write(GCM_outputfile%u_outGCM_HWG,format2) K,q,constraint%betac(q), constraint%bet3c(q),(FF(qK,i), i=1,min(M,max_M))
             end do
             if(M>max_M) then
-                write(66,*) '...'
+                write(GCM_outputfile%u_outGCM_HWG,*) '...'
             end if
-            write(*,*) 
+            write(GCM_outputfile%u_outGCM_HWG,*) 
             ! g
-            write(*,*) 'Eigenvectors  g^{J parity}(K,q) (collective wave function)'
-            write(header, '(A, *(A10))') '  K  q    beta2   beta3', (trim(int2str(J)//ParityChar(parity)//'_'//int2str(i)), i=1, min(M, max_M))
+            write(GCM_outputfile%u_outGCM_HWG,*) 'collective wave function:'
+            write(GCM_outputfile%u_outGCM_HWG,*) 'Eigenvectors  g^{J pi}(K,q)'
+            write(header, '(A, *(A11))') '  K  q    beta2   beta3', (trim(int2str(J)//ParityChar(parity)//'_'//int2str(i)), i=1, min(M, max_M))
             if(M>max_M) then
                 write(header(len_trim(header)+1:),*) '...'
             end if
-            write(*, '(A)') trim(header)
+            write(GCM_outputfile%u_outGCM_HWG, '(A)') trim(header)
             do qK = 1, GCM_basis%N(J,parity)
                 q = GCM_basis%basis(1,qK,J,parity)
                 K = GCM_basis%basis(2,qK,J,parity)
-                write(*,format2) K,q,constraint%betac(q), constraint%bet3c(q),(RR(qK,i), i=1,min(M,max_M))
+                write(GCM_outputfile%u_outGCM_HWG,format2) K,q,constraint%betac(q), constraint%bet3c(q),(RR(qK,i), i=1,min(M,max_M))
             end do
             if(M>max_M) then
-                write(66,*) '...'
+                write(GCM_outputfile%u_outGCM_HWG,*) '...'
             end if
+            write(GCM_outputfile%u_outGCM_HWG,*) '---------------------------------------------'
+            write(GCM_outputfile%u_outGCM_HWG,*) 
+            write(GCM_outputfile%u_outGCM_HWG,*) 
         end subroutine
     end subroutine
 
