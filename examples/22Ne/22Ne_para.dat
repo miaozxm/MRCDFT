@@ -1,4 +1,4 @@
-CDFTType = 0                        ! 0 : skip CDFT 1: do CDFT
+CDFTType = 1                        ! 0 : skip CDFT 1: do CDFT
 n0f,n0b  = 6  8                     ! number of oscillator shells
 b0       = -1.6099                  ! oscillator parameter (fm) of basis (If it is less than zero, use the empirical formula.)
 beta0    =  0.00                    ! deformation parameter of basis
@@ -28,7 +28,7 @@ Pip      =  1                       ! Pi of block proton, 1: + , -1: -        (v
 bMethod  =  2                       ! block method, 1: blocking -> convergence;   2:convergence -> block; 3: convergence -> block -> convergence
 Erot     =  1                       ! 1:Belyaev formula; 2: Nilsson formula; 3: Odd A formula
 c-------------------------------------------------------------------
-ProjType =  0                       ! 0 : skip Proj 1: do Proj
+ProjType =  1                       ! 0 : skip Proj 1: do Proj
 AMP      =  1                       ! Angular Momentum Projection    : (0) no (1) 1DAMP (2) 3DAMP
 PNP      =  1                       ! Particle Number Projection     : (0) no (1) yes
 PP       =  1                       ! Parity Projection     : (0) no (1) yes
@@ -49,5 +49,5 @@ checkNJ2 =  1                       ! calculate N^2 and J^2: (0) no (1) yes
 Eccentri =  0                       ! calculate eccentricity kernel: (0) no (1) by Kernel Module (2) by density matrix element (3) (1)+(2)
 c-------------------------------------------------------------------
 GCMType  =  1                       ! 0: skip GCM;   1: do GCM 
-kmax     =  0                       ! number of states for each spin to show: (kmax=0) show all ; (kmax>0) show specified number
-Zeta     =  5.00E-03  5.00E-03  5.00E-03  5.00E-03  5.00E-03  ! cutoff in norm
+Mmax     =  0                       ! (Mmax=0) use cutoff ; (Mmax>0) number of natural states  retained
+Cutoff   =  5.00E-03  5.00E-03  5.00E-03  5.00E-03  5.00E-03  ! cutoff values for the norm kernel corresponding to J=0,1,2,3,4;for J>4, the last value is used

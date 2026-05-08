@@ -8,7 +8,7 @@ export MKL_THREADING_LAYER=GNU
 start_time=$(date +%s)
 echo -e "\033[32m run ...\033[0m"
 
-mpirun -np 8 ../../bin/MRCDFT -p 20Ne_para.dat -d 20Ne_b23.dat
+mpirun -np 3 ../../bin/MRCDFT -p 22Ne_para.dat -d 22Ne_b23.dat
 
 echo calculation is finished !
 end_time=$(date +%s)
