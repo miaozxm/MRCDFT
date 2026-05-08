@@ -291,7 +291,7 @@ subroutine set_CDFT_output_filename(constraint_beta2,constraint_beta3)
     real(r64) :: abs2c, abs3c
     integer :: A
     integer(i16), dimension(6) :: name
-    integer(i16) :: name_nf1,name_nf2
+    integer(i16) :: name_nf1,name_nf2,name_nf1_sph,name_nf2_sph
     A = nucleus_attributes%mass_number_int
     if (constraint_beta2 >= 0.d0) then
         sign_beta2 = '+'
@@ -313,6 +313,8 @@ subroutine set_CDFT_output_filename(constraint_beta2,constraint_beta3)
     name(6) = mod(abs3c*100,10.d0)+48
     name_nf1 = mod(BS%HO_cyl%n0f/10,10) + 48
     name_nf2 = mod(BS%HO_cyl%n0f,10) + 48
+    name_nf1_sph = mod(BS%HO_sph%n0f/10,10) + 48
+    name_nf2_sph = mod(BS%HO_sph%n0f,10) + 48
     ! the structure of ouput filenames are `CDFT_ANuclear_eMax`//HO%n0f//constraint_beta2*100//constraint_beta3*100//type
     ! like 'CDFT_eMax08+140+080.out' means HO%n0f=08, constraint_beta2= +1.40, constraint_beta3= +0.80, type is '.out'
     outputfile%outputf = OUTPUT_PATH//'CDFT_'//int2str(A)//nucleus_attributes%name &
@@ -328,7 +330,7 @@ subroutine set_CDFT_output_filename(constraint_beta2,constraint_beta3)
                         //sign_beta2//char(name(1))//char(name(2))//char(name(3)) &
                         //sign_beta3//char(name(4))//char(name(5))//char(name(6))//'.tmp'
      outputfile%outputwf=OUTPUT_PATH//'CDFT_'//int2str(A)//nucleus_attributes%name &
-                        //'_wf'//'_eMax'//char(name_nf1)//char(name_nf2) &
+                        //'_wf'//'_eMax'//char(name_nf1_sph)//char(name_nf2_sph) &
                         //sign_beta2//char(name(1))//char(name(2))//char(name(3)) &
                         //sign_beta3//char(name(4))//char(name(5))//char(name(6))//'.tmp'
      outputfile%outputd= OUTPUT_PATH//'CDFT_'//int2str(A)//nucleus_attributes%name &
