@@ -290,11 +290,13 @@ Module Energy
         !         \tau = n is neutron and \tau = p is proton
         !  E_pair = E_pair^n + E_pair^p
         !-----------------------------------------------------------------------------------------------------------
-        use Globals, only: pairing,spatial_grid,mix
+        use Globals, only: pairing,spatial_grid,mix,option
+        use BCS, only: initial_pairing_field
         integer,intent(in) :: iphi_n,iphi_p
         complex(r64),intent(out) :: E_pair,pE_pair
         integer :: i
         complex(r64) :: E_pair_n,E_pair_p,pE_pair_n,pE_pair_p
+        if(option%CDFTType ==0) call initial_pairing_field(.False.)
         E_pair_n = (0.0d0,0.0d0)
         E_pair_p = (0.0d0,0.0d0)
         pE_pair_n = (0.0d0,0.0d0)

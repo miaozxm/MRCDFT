@@ -71,12 +71,12 @@ subroutine initial_pairing_field(ifPrint)
         use Globals, only: outputfile,BS
         character(len=*), parameter :: format1 = "(a20,5x,2f10.6)", &
                                        format2 = "(a,2(f8.4,2h/A),2f10.6,/)"
-        write(outputfile%u_outputf,*) '*************************BEGIN set_pairing_parameters ********************'
+        write(outputfile%u_outputf,*) '*************************BEGIN initial_pairing_field ********************'
         write(outputfile%u_outputf,format1) 'Gap parameter(dec) :', pairing%dec
         write(outputfile%u_outputf,format1) 'Gap parameter(del) :', pairing%del
         write(outputfile%u_outputf,format1) 'Pairing Window     :', (pairing%pwi+7.d0)/BS%HO_cyl%hom,pairing%pwi
         write(outputfile%u_outputf,format2) 'Pairing const.     :', pairing%ga,pairing%gg
-        write(outputfile%u_outputf,"(a,/)") '*************************END set_pairing_parameters ********************'
+        write(outputfile%u_outputf,"(a,/)") '*************************END initial_pairing_field ********************'
     end subroutine printPairingProperties
 end subroutine initial_pairing_field
 
