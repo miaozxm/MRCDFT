@@ -1010,7 +1010,7 @@ Module Kernel
         ! pJ2_PNP: <q_1| J^2 R(alpha,beta,gamma) P^{N} P^{Z} P|q_2 >
         !---------------------------------------------------------------
         use Globals, only: projection_mesh,nucleus_attributes,mix
-        use JNsquare, only: calculate_Jsquare_and_J
+        use JNsquare, only: calculate_Jsquare_and_J_MM
         complex(r64),intent(out) :: J2_PNP, pJ2_PNP
         integer :: L_n,L_p,phi_n_index,phi_p_index,it
         real(r64) :: phi_n,phi_p
@@ -1027,7 +1027,7 @@ Module Kernel
         allocate(Jsquare_arry(max(L_n,L_p),2),pJsquare_arry(max(L_n,L_p),2),J_array(max(L_n,L_p),2,3),pJ_array(max(L_n,L_p),2,3))
         do phi_n_index = 1, L_n
             it = 1
-            call calculate_Jsquare_and_J(phi_n_index,it,J2,pJ2,J_i,pJ_i)
+            call calculate_Jsquare_and_J_MM(phi_n_index,it,J2,pJ2,J_i,pJ_i)
             Jsquare_arry(phi_n_index,it) = J2
             pJsquare_arry(phi_n_index,it) = pJ2
             J_array(phi_n_index,it,:) = J_i(:)
@@ -1035,7 +1035,7 @@ Module Kernel
         end do 
         do phi_p_index = 1, L_p
             it = 2
-            call calculate_Jsquare_and_J(phi_p_index,it,J2,pJ2,J_i,pJ_i)
+            call calculate_Jsquare_and_J_MM(phi_p_index,it,J2,pJ2,J_i,pJ_i)
             Jsquare_arry(phi_p_index,it) = J2
             pJsquare_arry(phi_p_index,it) = pJ2
             J_array(phi_p_index,it,:) = J_i(:)
