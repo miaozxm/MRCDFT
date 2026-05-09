@@ -14,7 +14,6 @@ contains
         !  calculate <q1| E_n R|q2>/<q1|R|q2>
         !  where R = R(alpha,beta,gamma, phi_n,phi_p) = e^{i alpha J_z} e^{i beta J_y} e^{i gamma J_z} e^{i phi_n N} e^{i phi_p N}
         !--------------------------------------------------
-        use Constants,only: itx
         use Globals, only: BS, mix
         integer :: n,iphi,it
         integer :: ifg1,ifg2,ifg3,ifg4,m1,m2,mu,m3,m4,iter,total_iter
@@ -107,7 +106,6 @@ contains
         !  calculate <q1| E_n R|q2>/<q1|R|q2>
         !  where R = R(alpha,beta,gamma, phi_n,phi_p) = e^{i alpha J_z} e^{i beta J_y} e^{i gamma J_z} e^{i phi_n N} e^{i phi_p N}
         !--------------------------------------------------
-        use Constants,only: itx
         use Globals, only: BS, mix
         use MathMethods, only: zGEMM,zTrace,zGEMM_Trace
         integer :: n,iphi,it
