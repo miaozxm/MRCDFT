@@ -13,7 +13,7 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.f90, ${OBJ_DIR}/%.o, $(SOURCES))
 
 # export MKL_THREADING_LAYER = GNU
 
-default:  gfortran #ifort
+default:  mpif90 #ifort
 
 # compiled by gfortran
 gfortran: FC = gfortran
@@ -25,21 +25,21 @@ gfortran: FFLAGS += -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthrea
 gfortran: printConfiguration ${EXE_NAME} printEndInformation
 
 # compiled by gfortran with bounds checking and debug info
-debug: FC = gfortran
+debug: FC = mpif90
 # debug: FFLAGS = -std=legacy -g -fcheck=all -Wall -ffree-line-length-none -fopenmp -J ${MOD_DIR} 
 # debug: FFLAGS = -std=legacy -g -fcheck=bounds -Wall -ffree-line-length-none -fopenmp -J ${MOD_DIR} 
 debug: FFLAGS = -std=legacy -g -fcheck=all -fbacktrace -ffpe-trap=invalid,zero,overflow -Wall -ffree-line-length-none -fopenmp -J ${MOD_DIR} 
-debug: FFLAGS += -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
+debug: FFLAGS += -lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
 debug: printConfiguration ${EXE_NAME} printEndInformation
 
 perf : FC = gfortran
 perf : FFLAGS = -g -pthread -O3 -J ${MOD_DIR}  -fopenmp -ffree-line-length-none # -O3 -march=native -flto
-perf : FFLAGS += -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
+perf : FFLAGS += -lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
 perf : printConfiguration ${EXE_NAME} printEndInformation
 
 mpif90: FC = mpif90
 mpif90: FFLAGS = -O3 -J ${MOD_DIR} -fopenmp -ffree-line-length-none
-mpif90: FFLAGS += -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
+mpif90: FFLAGS += -lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
 mpif90: printConfiguration ${EXE_NAME} printEndInformation
 
 # compiled by ifort
@@ -159,7 +159,8 @@ ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_kernel.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Glo
 ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_mixed.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o ${OBJ_DIR}/Mathmethods.o \
 						                  ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_basis.o
 
-${OBJ_DIR}/${SRC_FILE_PREFIX_2}_Energy.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o
+${OBJ_DIR}/${SRC_FILE_PREFIX_2}_Energy.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o \
+										   ${OBJ_DIR}/${SRC_FILE_PREFIX_1}_dirac_BCS.o
 
 ${OBJ_DIR}/${SRC_FILE_PREFIX_2}_Jsquare_Nsquare.o : ${OBJ_DIR}/Constants.o ${OBJ_DIR}/Globals.o
 
