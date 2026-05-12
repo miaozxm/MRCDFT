@@ -26,10 +26,10 @@
         }
       },
       {
-        "name": "gfortran-mpi-debug",
+        "name": "debug",
         "displayName": "GNU Fortran 12 Debug",
         "generator": "Unix Makefiles",
-        "binaryDir": "${sourceDir}/build/gfortran-debug",
+        "binaryDir": "${sourceDir}/build/debug",
         "cacheVariables": {
           "CMAKE_BUILD_TYPE": "Debug",
           "CMAKE_Fortran_COMPILER": "gfortran",
@@ -48,8 +48,8 @@
         "configurePreset": "mpi-ifort"
       },
       {
-        "name": "gfortran-mpi-debug",
-        "configurePreset": "gfortran-mpi-debug"
+        "name": "debug",
+        "configurePreset": "debug"
       }
     ]
   }

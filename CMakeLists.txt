@@ -54,7 +54,7 @@ endif()
 
 
 
-# Find OpenMP and MKL libraries
+# Find MPI, OpenMP and MKL libraries
 find_package(MPI REQUIRED COMPONENTS Fortran)
 
 find_package(OpenMP REQUIRED COMPONENTS Fortran)
