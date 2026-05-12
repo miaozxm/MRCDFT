@@ -116,7 +116,7 @@ MODULE GCM_Inout
             else if(Proj_option%Kernel_Symmetry==2) then ! Diagonal elements
                 q2_start = q1
                 q2_end = q1
-                write(*,*) 'Warning: Only diagonal kernels cannot be used for GCM calculations.'
+                if(q1==gcm_space%q1_start) write(*,*) '!!! Warning: Only diagonal kernels cannot be used for GCM calculations!'
             else
                 stop 'Kernel_Symmetry should be 0, 1, 2'
             end if
