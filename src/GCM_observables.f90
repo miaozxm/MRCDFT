@@ -66,7 +66,7 @@ MODULE GCM_Observables
                 GCM_obser%beta3_aver(iM,J,parity) = beta3_aver
                 GCM_obser%N(iM,J,parity) = n_neu
                 GCM_obser%Z(iM,J,parity) = n_pro
-                GCM_obser%rrms_p(iM,J,parity) = dsqrt(be0/n_pro)
+                GCM_obser%rrms_p(iM,J,parity) = dsqrt(be0/(n_pro+1.E-10))
             end do
         end do 
     end subroutine
