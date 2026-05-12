@@ -3,7 +3,7 @@
 export OMP_NUM_THREADS=5
 export MKL_NUM_THREADS=5
 export MKL_DYNAMIC=FALSE
-export MKL_THREADING_LAYER=GNU
+# export MKL_THREADING_LAYER=GNU
 
 start_time=$(date +%s)
 echo -e "\033[32m run ...\033[0m"

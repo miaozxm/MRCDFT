@@ -16,13 +16,16 @@ MR-CDFT is a computational code for nuclear structure calculations for quadrupol
     - Parity projection (PP)
 
 - Parallelization
+    - MPI
     - OpenMP support for Projection calculations
 - Cross-platform: Linux, macOS, Windows
 - GUI
     Provide a graphical user interface (GUI) for personal PC. 
 
 ## Requirements
-- Fortran 90/95 compiler (tested with gfortran (4.8.5) and ifort(2021.3.0)
+- Fortran 90/95 compiler (tested with gfortran (10.2.1) and ifort(2021.3.0))
+- MPI 
+- Intel MKL Library
 - Optional: OpenMP for shared-memory parallelization
 - Optional: Python 3 (for Graphical User Interface)
 
@@ -37,6 +40,11 @@ MR-CDFT is a computational code for nuclear structure calculations for quadrupol
 2. Compile the code:
 
     You can compile the code using either gfortran or Intel Fortran (ifort), depending on the compiler available on your system.
+    * Using CMake 
+        ```bash
+            cmake --preset mpi-gfortran
+            cmake --build --preset mpi-gfortran
+        ```
     * Using gfortran
         ```bash
         make gfortran
