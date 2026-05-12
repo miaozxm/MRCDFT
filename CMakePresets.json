@@ -1,0 +1,56 @@
+{
+    "version": 3,
+    "configurePresets": [
+      {
+        "name": "mpi-gfortran",
+        "displayName": "MPI with GNU Fortran",
+        "generator": "Unix Makefiles",
+        "binaryDir": "${sourceDir}/build/mpi-gfortran",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "CMAKE_Fortran_COMPILER": "gfortran",
+          "MPI_Fortran_COMPILER": "mpif90",
+          "CMAKE_VERBOSE_MAKEFILE": "ON"
+        }
+      },
+      {
+        "name": "mpi-ifort",
+        "displayName": "MPI with Inter Fortran",
+        "generator": "Unix Makefiles",
+        "binaryDir": "${sourceDir}/build/mpi-ifort",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "CMAKE_Fortran_COMPILER": "ifort",
+          "MPI_Fortran_COMPILER": "mpiifort",
+          "CMAKE_VERBOSE_MAKEFILE": "ON"
+        }
+      },
+      {
+        "name": "gfortran-mpi-debug",
+        "displayName": "GNU Fortran 12 Debug",
+        "generator": "Unix Makefiles",
+        "binaryDir": "${sourceDir}/build/gfortran-debug",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "CMAKE_Fortran_COMPILER": "gfortran",
+          "MPI_Fortran_COMPILER": "mpif90",
+          "CMAKE_VERBOSE_MAKEFILE": "ON"
+        }
+      }
+    ],
+    "buildPresets": [
+      {
+          "name": "mpi-gfortran",
+          "configurePreset": "mpi-gfortran"
+        },
+      {
+        "name": "mpi-ifort",
+        "configurePreset": "mpi-ifort"
+      },
+      {
+        "name": "gfortran-mpi-debug",
+        "configurePreset": "gfortran-mpi-debug"
+      }
+    ]
+  }
+  
