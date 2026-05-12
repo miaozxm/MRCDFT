@@ -114,7 +114,9 @@ MODULE GCM_Inout
                 q2_start = q1
                 q2_end = gcm_space%q2_end
             else if(Proj_option%Kernel_Symmetry==2) then ! Diagonal elements
-                stop 'Only diagonal kernels cannot be used for GCM calculations.'
+                q2_start = q1
+                q2_end = q1
+                write(*,*) 'Warning: Only diagonal kernels cannot be used for GCM calculations.'
             else
                 stop 'Kernel_Symmetry should be 0, 1, 2'
             end if
@@ -201,7 +203,7 @@ MODULE GCM_Inout
                 end if
                 
                 write(GCM_outputfile%u_outGCM_standard,*) 'Diagonal kernels:'
-                write(GCM_outputfile%u_outGCM_standard,*) ' J  Parity  K   q  beta2  beta3   n^J(q,q)        E            <N>           <Z>'
+                write(GCM_outputfile%u_outGCM_standard,*) ' J  Parity  K   q  beta2  beta3   n^J(q,q)       E            <N>           <Z>'
                 do K1 = K1_start,K1_end
                     do q1 = gcm_space%q1_start, gcm_space%q1_end
                         write(GCM_outputfile%u_outGCM_standard,format11) J, ParityChar(parity),K1,q1,constraint%betac(q1), constraint%bet3c(q1),dreal(GCM_kernels%N_KK(J,parity,q1,K1,q1,K1)), &
@@ -234,7 +236,7 @@ MODULE GCM_Inout
                         write(GCM_outputfile%u_outGCM_standard,*)
                     end do
                 end do
-                write(GCM_outputfile%u_outGCM_standard,*) '------------------------------------------------------------------------------------------'
+                write(GCM_outputfile%u_outGCM_standard,*) '-------------------------------------------------------------------------------'
                 write(GCM_outputfile%u_outGCM_standard,*)
             end do
         end subroutine
