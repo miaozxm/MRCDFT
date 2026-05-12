@@ -365,15 +365,21 @@ subroutine calculate_cutoff_weights
     !   Output:
     !        sk:  cutoff weights 
     !----------------------------------------------------------------------
-    use Constants, only: one
-    real(r64) :: efermi,ecutoff,swx
+    real(r64) :: efermi,ecutoff,swx,x
     integer :: k
 
     efermi = alx ! fermi energy
     ecutoff = ecut ! cut-off energy
-    swx = ecutoff/10.d0
+    swx = ecutoff/10.d0 + 1.0d-10
     do k = 1, nx1
-        sk(k) = 1.0d0/(1.0d0 + dexp((ek(k) - efermi -ecutoff)*(one/swx)))
+        x = (ek(k) - efermi - ecutoff) / swx
+        if (x > 100.d0) then
+            sk(k) = 0.d0
+        else if (x < -100.d0) then
+            sk(k) = 1.d0
+        else
+            sk(k) = 1.d0 / (1.d0 + dexp(x))
+        endif
     enddo
 end subroutine calculate_cutoff_weights
 
@@ -467,7 +473,7 @@ function sfk(pw)
     real(r64) :: swx,wd,pw1,s,tmp
     integer :: k
 
-    swx = 0.1d0 * abs(pw)
+    swx = 0.1d0 * abs(pw) + 1.0d-10
     wd = 1.0d0 / swx
     pw1 = pw + alx
     s = - tzx - 1.65d0*tzx**(two * third)

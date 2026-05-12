@@ -10,6 +10,7 @@
 MODULE MathMethods
     ! BLAS external
     implicit none
+    complex*16 :: zdotu, zdotc
     external :: zgemv,zdotu,zdotc,zGEMM
 
 contains
@@ -86,12 +87,12 @@ subroutine zGEMM_Trace(transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, 
         if ((transa=='T' .or. transa=='t') .and. &
             (transb=='N' .or. transb=='n')) then
             ! C_ii = sum_l A(l,i) * B(l,i)
-            call zdotu(temp, k, A(1,i), 1, B(1,i), 1)
+            temp = zdotu(k, A(1,i), 1, B(1,i), 1)
 
         else if ((transa=='C' .or. transa=='c') .and. &
                  (transb=='N' .or. transb=='n')) then
             ! C_ii = sum_l conj(A(l,i)) * B(l,i)
-            call zdotc(temp, k, A(1,i), 1, B(1,i), 1)
+            temp = zdotc(k, A(1,i), 1, B(1,i), 1)
 
         else
             temp = (0.0d0,0.0d0)

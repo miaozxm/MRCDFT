@@ -1430,57 +1430,57 @@ subroutine calculate_mixed_density_current_tensor_in_coordinate_space(iphi,it)
     
                     ! ========== rho1 = A^T (ρ * conjg(A)) ==========
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%rho_mm(:,:,ifg,iphi,it), dim_m_max, Amc, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res,basis_dim, Am, 1, tmp, 1)
+                    res = zdotu(basis_dim, Am, 1, tmp, 1)
                     rho1(ifg) = rho1(ifg) + res
     
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%prho_mm(:,:,ifg,iphi,it), dim_m_max, Amc, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res,basis_dim, Am, 1, tmp, 1)
+                    res = zdotu(basis_dim, Am, 1, tmp, 1)
                     prho1(ifg) = prho1(ifg) + res 
     
                     ! ========== rho2 各项 ==========
                     ! 1) D^T (ρ * conjg(A))
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%rho_mm(:,:,ifg,iphi,it), dim_m_max, Amc, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res,basis_dim, Dm, 1, tmp, 1)
+                    res = zdotu(basis_dim, Dm, 1, tmp, 1)
                     rho2(ifg) = rho2(ifg) + res
     
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%prho_mm(:,:,ifg,iphi,it), dim_m_max, Amc, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res,basis_dim, Dm, 1, tmp, 1)
+                    res = zdotu(basis_dim, Dm, 1, tmp, 1)
                     prho2(ifg) = prho2(ifg) + res
     
                     ! 2) A^T (ρ * conjg(D))
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%rho_mm(:,:,ifg,iphi,it), dim_m_max, Dmc, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim, Am, 1, tmp, 1)
+                    res = zdotu(basis_dim, Am, 1, tmp, 1)
                     rho2(ifg) = rho2(ifg) + res
     
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%prho_mm(:,:,ifg,iphi,it), dim_m_max, Dmc, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim, Am, 1, tmp, 1)        
+                    res = zdotu(basis_dim, Am, 1, tmp, 1)        
                     prho2(ifg) = prho2(ifg) + res
     
                     ! 3) 2 * Y1^T (ρ * conjg(Y1))
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%rho_mm(:,:,ifg,iphi,it), dim_m_max, Y1c, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim, Y1, 1, tmp, 1)
+                    res = zdotu(basis_dim, Y1, 1, tmp, 1)
                     rho2(ifg) = rho2(ifg) + 2.d0 * res
     
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%prho_mm(:,:,ifg,iphi,it), dim_m_max, Y1c, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim, Y1, 1, tmp, 1)
+                    res = zdotu(basis_dim, Y1, 1, tmp, 1)
                     prho2(ifg) = prho2(ifg) + 2.d0 * res
     
                     ! 4) 2 * Y2^T (ρ * conjg(Y2))
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%rho_mm(:,:,ifg,iphi,it), dim_m_max, Y2c, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res,basis_dim, Y2, 1, tmp, 1)
+                    res = zdotu(basis_dim, Y2, 1, tmp, 1)
                     rho2(ifg) = rho2(ifg) + 2.d0 * res
     
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%prho_mm(:,:,ifg,iphi,it), dim_m_max, Y2c, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim, Y2, 1, tmp, 1)
+                    res = zdotu(basis_dim, Y2, 1, tmp, 1)
                     prho2(ifg) = prho2(ifg) + 2.d0 * res
     
                     ! 5) 2 * Y3^T (ρ * conjg(Y3))
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%rho_mm(:,:,ifg,iphi,it), dim_m_max, Y3c, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim, Y3, 1, tmp, 1)
+                    res = zdotu(basis_dim, Y3, 1, tmp, 1)
                     rho2(ifg) = rho2(ifg) + 2.d0 * res
     
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%prho_mm(:,:,ifg,iphi,it), dim_m_max, Y3c, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res,basis_dim, Y3, 1, tmp, 1)
+                    res = zdotu(basis_dim, Y3, 1, tmp, 1)
                     prho2(ifg) = prho2(ifg) + 2.d0 * res
                 end do
             end do
@@ -1546,18 +1546,18 @@ subroutine calculate_mixed_density_current_tensor_in_coordinate_space(iphi,it)
                     Bm(1:basis_dim_2) = conjg(BS%HO_sph%Am(1:basis_dim_2,i,1-ms,3-ifg))
                     Cm(1:basis_dim_2) = conjg(BS%HO_sph%Am(1:basis_dim_2,i,ms,3-ifg))
                     call zgemv('N', basis_dim_1, basis_dim_2, (1.d0,0.d0), mix%rho_mm(:,:,2+ifg,iphi,it), dim_m_max,Bm, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim_1, Am, 1, tmp, 1) 
+                    res = zdotu(basis_dim_1, Am, 1, tmp, 1) 
                     j1(ifg) = j1(ifg) + res
                     j2(ifg) = j2(ifg) + res*(-1)**ms
                     call zgemv('N', basis_dim_1, basis_dim_2, (1.d0,0.d0), mix%rho_mm(:,:,2+ifg,iphi,it), dim_m_max,Cm, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim_1, Am, 1, tmp, 1)
+                    res = zdotu(basis_dim_1, Am, 1, tmp, 1)
                     j3(ifg) = j3(ifg) + res*(-1)**(ms-1)
                     call zgemv('N', basis_dim_1, basis_dim_2, (1.d0,0.d0), mix%prho_mm(:,:,2+ifg,iphi,it), dim_m_max,Bm, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim_1, Am, 1, tmp, 1) 
+                    res = zdotu(basis_dim_1, Am, 1, tmp, 1) 
                     pj1(ifg) = pj1(ifg) + res
                     pj2(ifg) = pj2(ifg) + res*(-1)**ms
                     call zgemv('N', basis_dim_1, basis_dim_2, (1.d0,0.d0), mix%prho_mm(:,:,2+ifg,iphi,it), dim_m_max,Cm, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim_1, Am, 1, tmp, 1)
+                    res = zdotu(basis_dim_1, Am, 1, tmp, 1)
                     pj3(ifg) = pj3(ifg) + res*(-1)**(ms-1)
                 end do 
             end do
@@ -1612,16 +1612,16 @@ subroutine calculate_mixed_density_current_tensor_in_coordinate_space(iphi,it)
                     Am(1:basis_dim) = BS%HO_sph%Am(1:basis_dim,i,ms,ifg)
                     Bm(1:basis_dim) = conjg(BS%HO_sph%Am(1:basis_dim,i,ms,ifg))
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%kappa_mm(:,:,ifg,iphi,it), dim_m_max,Bm, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim, Am, 1, tmp, 1)
+                    res = zdotu(basis_dim, Am, 1, tmp, 1)
                     kappa(ifg) = kappa(ifg) + res
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%kappac_mm(:,:,ifg,iphi,it), dim_m_max,Bm, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim, Am, 1, tmp, 1)
+                    res = zdotu(basis_dim, Am, 1, tmp, 1)
                     kappac(ifg) = kappac(ifg) + res         
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%pkappa_mm(:,:,ifg,iphi,it), dim_m_max,Bm, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim, Am, 1, tmp, 1)
+                    res = zdotu(basis_dim, Am, 1, tmp, 1)
                     pkappa(ifg) = pkappa(ifg) + res
                     call zgemv('N', basis_dim, basis_dim, (1.d0,0.d0), mix%pkappac_mm(:,:,ifg,iphi,it), dim_m_max,Bm, 1, (0.d0,0.d0), tmp, 1)
-                    call zdotu(res, basis_dim, Am, 1, tmp, 1)
+                    res = zdotu(basis_dim, Am, 1, tmp, 1)
                     pkappac(ifg) = pkappac(ifg) + res    
                 end do
             end do

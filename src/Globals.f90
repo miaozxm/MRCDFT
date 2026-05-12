@@ -109,8 +109,8 @@ type(Iteration_Parameters) :: iteration
 
 
 type Constraint_Parameter
-    integer(i32) :: length ! length of data store in betac,bet3c,clam2
-    integer(i32) :: index ! index of betac,bet3c,clam2
+    integer :: length ! length of data store in betac,bet3c,clam2
+    integer :: index ! index of betac,bet3c,clam2
     real(r64), dimension(:), allocatable :: betac ! Constraint beta2-values 
     real(r64), dimension(:), allocatable :: bet3c ! Constraint beta3-values
     real(r64), dimension(:), allocatable :: clam2
