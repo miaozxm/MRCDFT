@@ -87,7 +87,7 @@ MODULE GCM_Inout
         real(r64) :: read_N2, read_Z2, read_J2
         complex(r64) :: Q2_KK_21(2), E0_KK_21(2)
         character(1), dimension(2) :: ParityChar = ['+', '-']
-        character(len=*), parameter ::  format1 = "(3i5,4x,a,4x,3f9.3)", &
+        character(len=*), parameter ::  format1 = "(3i5,4x,a,4x,3f12.3)", &
                                         format2 = "(4e15.8)"
         ! N_KK(J,Pi(+/-),q1,K1,q2,K2), Norm kernel
         allocate(GCM_kernels%N_KK(0:gcm_space%Jmax,2,gcm_space%q1_start:gcm_space%q1_end,-gcm_space%Jmax:gcm_space%Jmax, &

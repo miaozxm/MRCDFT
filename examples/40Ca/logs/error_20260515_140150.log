@@ -1,0 +1,174 @@
+At line 33 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 32, file = '22Ne_para.dat')
+Fortran runtime error: Bad value during floating point readAt line 33 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 32, file = '22Ne_para.dat')
+Fortran runtime error: Bad value during floating point read
+
+Error termination. Backtrace:
+At line 33 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 32, file = '22Ne_para.dat')
+Fortran runtime error: Bad value during floating point read
+
+Error termination. Backtrace:
+At line 33 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 32, file = '22Ne_para.dat')
+Fortran runtime error: Bad value during floating point read
+
+Error termination. Backtrace:
+
+
+Error termination. Backtrace:
+At line 33 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 32, file = '22Ne_para.dat')
+Fortran runtime error: Bad value during floating point read
+
+Error termination. Backtrace:
+At line 33 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 32, file = '22Ne_para.dat')
+Fortran runtime error: Bad value during floating point readAt line 33 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 32, file = '22Ne_para.dat')
+Fortran runtime error: Bad value during floating point read
+
+Error termination. Backtrace:
+At line 33 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 32, file = '22Ne_para.dat')
+Fortran runtime error: Bad value during floating point read
+
+Error termination. Backtrace:
+At line 33 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 32, file = '22Ne_para.dat')
+Fortran runtime error: Bad value during floating point read
+
+Error termination. Backtrace:
+
+
+Error termination. Backtrace:
+At line 33 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 32, file = '22Ne_para.dat')
+Fortran runtime error: Bad value during floating point read
+
+Error termination. Backtrace:
+At line 33 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 32, file = '22Ne_para.dat')
+Fortran runtime error: Bad value during floating point read
+
+Error termination. Backtrace:
+#0  0x2af5db85bdfd in ???
+#1  0x2af5db85c995 in ???
+#2  0x2af5db85d17d in ???
+#3  0x2af5dba5ea1f in ???
+#4  0x2af5dba62080 in ???
+#5  0x2af5dba6368c in ???
+#6  0x2af5dba60721 in ???
+#7  0x446ec9 in ???
+#8  0x4bfea4 in ???
+#9  0x40296c in ???
+#10  0x2af5dc42d554 in ???
+#11  0x40299c in ???
+#12  0xffffffffffffffff in ???
+#0  0x2b45038b3dfd in ???
+#1  0x2b45038b4995 in ???
+#2  0x2b45038b517d in ???
+#3  0x2b4503ab6a1f in ???
+#4  0x2b4503aba080 in ???
+#5  0x2b4503abb68c in ???
+#6  0x2b4503ab8721 in ???
+#7  0x446ec9 in ???
+#8  0x4bfea4 in ???
+#9  0x40296c in ???
+#0  0x2b0f4ee00dfd in ???
+#1  0x2b0f4ee01995 in ???
+#2  0x2b0f4ee0217d in ???
+#3  0x2b0f4f003a1f in ???
+#4  0x2b0f4f007080 in ???
+#5  0x2b0f4f00868c in ???
+#6  0x2b0f4f005721 in ???
+#7  0x446ec9 in ???
+#8  0x4bfea4 in ???
+#9  0x40296c in ???
+#10  0x2b0f4f9d2554 in ???
+#11  0x40299c in ???
+#12  0xffffffffffffffff in ???
+#0  0x2af2acc27dfd in ???
+#1  0x2af2acc28995 in ???
+#2  0x2af2acc2917d in ???
+#3  0x2af2ace2aa1f in ???
+#4  0x2af2ace2e080 in ???
+#5  0x2af2ace2f68c in ???
+#6  0x2af2ace2c721 in ???
+#7  0x446ec9 in ???
+#8  0x4bfea4 in ???
+#9  0x40296c in ???
+#10  0x2af2ad7f9554 in ???
+#11  0x40299c in ???
+#12  0xffffffffffffffff in ???
+#0  0x2b6081736dfd in ???
+#1  0x2b6081737995 in ???
+#2  0x2b608173817d in ???
+#3  0x2b6081939a1f in ???
+#4  0x2b608193d080 in ???
+#5  0x2b608193e68c in ???
+#6  0x2b608193b721 in ???
+#7  0x446ec9 in ???
+#8  0x4bfea4 in ???
+#9  0x40296c in ???
+#10  0x2b6082308554 in ???
+#11  0x40299c in ???
+#12  0xffffffffffffffff in ???
+#10  0x2b4504485554 in ???
+#11  0x40299c in ???
+#12  0xffffffffffffffff in ???
+#0  0x2b7905fd5dfd in ???
+#1  0x2b7905fd6995 in ???
+#2  0x2b7905fd717d in ???
+#3  0x2b79061d8a1f in ???
+#4  0x2b79061dc080 in ???
+#5  0x2b79061dd68c in ???
+#6  0x2b79061da721 in ???
+#7  0x446ec9 in ???
+#8  0x4bfea4 in ???
+#9  0x40296c in ???
+#10  0x2b7906ba7554 in ???
+#0  0x2b4cf9643dfd in ???
+#1  0x2b4cf9644995 in ???
+#2  0x2b4cf964517d in ???
+#3  0x2b4cf9846a1f in ???
+#4  0x2b4cf984a080 in ???
+#5  0x2b4cf984b68c in ???
+#6  0x2b4cf9848721 in ???
+#7  0x446ec9 in ???
+#8  0x4bfea4 in ???
+#9  0x40296c in ???
+#10  0x2b4cfa215554 in ???
+#11  0x40299c in ???
+#12  0xffffffffffffffff in ???
+#0  0x2b6bad207dfd in ???
+#1  0x2b6bad208995 in ???
+#2  0x2b6bad20917d in ???
+#3  0x2b6bad40aa1f in ???
+#4  0x2b6bad40e080 in ???
+#5  0x2b6bad40f68c in ???
+#6  0x2b6bad40c721 in ???
+#7  0x446ec9 in ???
+#8  0x4bfea4 in ???
+#9  0x40296c in ???
+#10  0x2b6baddd9554 in ???
+#11  0x40299c in ???
+#12  0xffffffffffffffff in ???
+#0  0x2b4569776dfd in ???
+#1  0x2b4569777995 in ???
+#2  0x2b456977817d in ???
+#3  0x2b4569979a1f in ???
+#4  0x2b456997d080 in ???
+#5  0x2b456997e68c in ???
+#6  0x2b456997b721 in ???
+#7  0x446ec9 in ???
+#0  0x2b56bf87ddfd in ???
+#1  0x2b56bf87e995 in ???
+#2  0x2b56bf87f17d in ???
+#3  0x2b56bfa80a1f in ???
+#4  0x2b56bfa84080 in ???
+#5  0x2b56bfa8568c in ???
+#6  0x2b56bfa82721 in ???
+#7  0x446ec9 in ???
+#8  0x4bfea4 in ???
+#9  0x40296c in ???
+#10  0x2b56c044f554 in ???
+#11  0x40299c in ???
+#11  0x40299c in ???
+#12  0xffffffffffffffff in ???
+#8  0x4bfea4 in ???
+#9  0x40296c in ???
+#10  0x2b456a348554 in ???
+#11  0x40299c in ???
+#12  0xffffffffffffffff in ???
+#12  0xffffffffffffffff in ???
