@@ -1,6 +1,6 @@
 #!/bin/bash                 		
 #PBS -N MRCDFT_Ca_8
-#PBS -l select=1:ncpus=11:host=cn1 
+#PBS -l select=1:ncpus=11:host=cn3 
 #PBS -j oe
                 
 export OMP_NUM_THREADS=5
@@ -8,9 +8,17 @@ export MKL_NUM_THREADS=5
 export MKL_DYNAMIC=FALSE
 # export MKL_THREADING_LAYER=GNU
 
-# cd /home/xizhang/MRCDFT/examples/40Casamepara
+# 优先使用PBS环境变量，否则使用脚本真实路径
+if [ -n "$PBS_O_WORKDIR" ]; then
+    cd "$PBS_O_WORKDIR" || exit 1
+else
+    SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+    cd "$SCRIPT_DIR" || exit 1
+fi
+pwd
+
 # 创建日志目录
-LOG_DIR="${RUN_PATH:-.}/logs"
+LOG_DIR="$(pwd)/logs"
 mkdir -p "$LOG_DIR"
 
 # 获取当前时间戳用于日志文件名
@@ -32,7 +40,9 @@ echo "开始时间: $(date)"
 start_time=$(date +%s)
 echo -e "\033[32m run ...\033[0m"
 
-# mpirun -np 11 ../../bin/MRCDFT -p 22Ne_para.dat -d 22Ne_b23.dat
+# 使用MRCDFT的绝对路径
+MRCDFT_BIN="/home/xizhang/MRCDFT/bin/MRCDFT"
+mpirun -np 11 "$MRCDFT_BIN" -p para.dat -d b23.dat
 
 echo calculation is finished !
 end_time=$(date +%s)

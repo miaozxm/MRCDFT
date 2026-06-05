@@ -17,7 +17,7 @@ default:  mpif90 #ifort
 
 # compiled by gfortran
 gfortran: FC = gfortran
-gfortran: FFLAGS = -O3 -J ${MOD_DIR} -fopenmp -ffree-line-length-none
+gfortran: FFLAGS = -O2 -J ${MOD_DIR} -fopenmp -ffree-line-length-none
 # gfortran: FFLAGS = -O3 -g -J ${MOD_DIR} -fopenmp -ffree-line-length-none
 # gfortran: FFLAGS += -lmkl_rt
 gfortran: FFLAGS += -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
