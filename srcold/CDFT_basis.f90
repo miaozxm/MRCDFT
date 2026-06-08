@@ -390,12 +390,12 @@ subroutine calculate_Cylindrical_HO_basis_In_Gauss_points(ifPrint)
     real(r64) :: w4pii,z,psiH_0,qh_0,cb,zb,psiHB_0, &
                  x,psiL_00,ql_l0,tmp0,tmp1,tmp2,tmp3,tmp4, xb,psiLB_00
     integer :: ih,n,il,l
-    allocate(BS%HO_cyl%qh (0:nz_max, 1:gauss%nh),source=0.d0)
-    allocate(BS%HO_cyl%qh1(0:nz_max, 1:gauss%nh),source=0.d0)
-    allocate(BS%HO_cyl%ql (0:nr_max, 0:ml_max, 1:gauss%nl),source=0.d0)
-    allocate(BS%HO_cyl%ql1(0:nr_max, 0:ml_max, 1:gauss%nl),source=0.d0)
-    allocate(BS%HO_cyl%qhb (0:nz_max_boson, 1:gauss%nh),source=0.d0)
-    allocate(BS%HO_cyl%qlb (0:nr_max_boson, 1:gauss%nl),source=0.d0)
+    allocate(BS%HO_cyl%qh (0:nz_max, 1:gauss%nh))
+    allocate(BS%HO_cyl%qh1(0:nz_max, 1:gauss%nh))
+    allocate(BS%HO_cyl%ql (0:nr_max, 0:ml_max, 1:gauss%nl))
+    allocate(BS%HO_cyl%ql1(0:nr_max, 0:ml_max, 1:gauss%nl))
+    allocate(BS%HO_cyl%qhb (0:nz_max_boson, 1:gauss%nh))
+    allocate(BS%HO_cyl%qlb (0:nr_max_boson, 1:gauss%nl))
 
     !----------------------------------------------------------------------
     ! z-dependence
@@ -438,7 +438,7 @@ subroutine calculate_Cylindrical_HO_basis_In_Gauss_points(ifPrint)
               BS%HO_cyl%ql(1,l,il) = ql_l0 * (l+1-x) * gfv%wfi(l+1)
               BS%HO_cyl%ql1(0,l,il) = ql_l0 * (l-x) * gfv%wfi(l) ! why not ql_10 * (l-x)/(sqrt(x)) ?
               BS%HO_cyl%ql1(1,l,il) = ql_l0 * (l*l+l-x*(l+l+3)+x*x) * gfv%wfi(l+1)
-            do n = 2,BS%HO_cyl%nrm+1
+            do n = 2,BS%HO_cyl%nrm
                 tmp0 = gfv%sqi(n) * gfv%sqi(n+l)
                 tmp1 = n+n+l-1-x
                 tmp2 = gfv%sq(n-1) * gfv%sq(n-1+l)

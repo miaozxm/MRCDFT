@@ -51,23 +51,12 @@ end subroutine set_constraint_parameters
 subroutine calculate_constraint_potential_coefficients(ifPrint)
     !----------------------------------------------------------------
     !    calculation of the constrainting potential for axial case
-    ! 
-    !   Note: 
-    !   1) Constrain the dipole deformation to zero to keep the 
-    !       center of mass at the origin.
     !----------------------------------------------------------------
     logical,intent(in),optional :: ifPrint
     real(r64) :: d1,dc1x,d2,dc2x,d3,dc3x
     if (constraint%icstr.eq.1) then
-        d1   = constraint%calq1-zero
-        dc1x = d1/(one/constraint%cspr+abs(d1)/constraint%cmax)
-        constraint%c1x  = constraint%c1x + dc1x
-    else if (constraint%icstr.eq.1) then
-        d1   = constraint%calq1-zero
         d2   = constraint%calq2 - constraint%betac(constraint%index)
-        dc1x = d1/(one/constraint%cspr+abs(d1)/constraint%cmax)
         dc2x = d2/(one/constraint%cspr+abs(d2)/constraint%cmax)
-        constraint%c1x  = constraint%c1x + dc1x
         constraint%c2x  = constraint%c2x + dc2x
     elseif(constraint%icstr.eq.2) then
         d1   = constraint%calq1-zero
@@ -80,11 +69,8 @@ subroutine calculate_constraint_potential_coefficients(ifPrint)
         constraint%c2x  = constraint%c2x + dc2x
         constraint%c3x  = constraint%c3x + dc3x
     else if(constraint%icstr.eq.3) then
-        d1   = constraint%calq1-zero
         d3   = constraint%calq3 - constraint%bet3c(constraint%index)
-        dc1x = d1/(one/constraint%cspr+abs(d1)/constraint%cmax)
         dc3x = d3/(one/constraint%cspr+abs(d3)/constraint%cmax)
-        constraint%c1x  = constraint%c1x + dc1x
         constraint%c3x  = constraint%c3x + dc3x
     endif
     
