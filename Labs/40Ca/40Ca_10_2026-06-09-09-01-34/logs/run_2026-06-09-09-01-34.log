@@ -1,0 +1,122 @@
+日志文件: ./logs/run_2026-06-09-09-01-34.log
+开始时间: Tue Jun  9 09:01:35 CST 2026
+[32m run ...[0m
+ ... PROGRAM Start!...
+ MPI will create           15  processes.
+ OpenMP will create            2  threads.
+============================================================================================
+     Solve Dirac (BCS) Equation :
+     Nucleus                                 :   Ca   40
+     Number of oscillator shells (N0F)       :   10
+     Oscillator parameter b0 (fm)            :   use the empirical formula
+     Oscillator parameter beta0              :     0.000
+     Force Parameter                         :   PC-PK1    
+     Pairing strength for delta force        :   314.550 (neutrons)  346.500 (protons)
+     Deformation constraint                  :   beta2 + beta3
+     Deformation constraint number           :      5
+
+     Projection skipped.
+     Number of euler angles                  :    1 (nalpha),  12 (nbeta),   1 (ngamma)
+     Symmetry of euler angles                :   Axially
+     Number gauge angles                     :    5 (nphi)
+     Kernels                                 :   Upper triangular kernels
+     Quadratic constraint q1 range           :   [  1,  5 ]
+     Quadratic constraint q2 range           :   [  1,  5 ]
+     Maximal J value                         :     0
+     Check N2 and J2                         :   Yes
+     Calculate density ME                    :   No
+     Calculate reduced transition density ME :   No
+     Calculate eccentricity kernel           :   No
+
+     GCM                                     :   GCM skipped.
+     Mmax                                    :   0
+     Zeta                                    :  0.10E-03 0.10E-03 0.10E-03 0.10E-03 0.10E-03
+==========================================================================================
+ CDFT_Main: Start CDFT calculations
+     Constraint:    4/5   beta2=  0.20   beat3=  0.01
+     Constraint:    1/5   beta2= -0.20   beat3=  0.01
+     Constraint:    3/5   beta2=  0.00   beat3=  0.01
+     Constraint:    5/5   beta2=  0.10   beat3=  0.01
+     Constraint:    2/5   beta2= -0.10   beat3=  0.01
+     Iteration converged after  34 steps, si =   0.00005062,  beta2 =-0.000,  beta3 = 0.010,   3/5   
+     Iteration converged after  48 steps, si =   0.00005739,  beta2 = 0.200,  beta3 = 0.010,   4/5   
+     Iteration converged after  54 steps, si =   0.00009261,  beta2 =-0.100,  beta3 = 0.010,   2/5   
+     Iteration converged after  55 steps, si =   0.00006550,  beta2 =-0.200,  beta3 = 0.010,   1/5   
+     Iteration converged after  52 steps, si =   0.00008138,  beta2 = 0.100,  beta3 = 0.010,   5/5   
+ CDFT_Main: CDFT calculations completed
+  ...PROGRAM END!...
+ CPU Time used (minutes):   0.572273374    
+ CPU Time used (hours):    9.53788962E-03
+ Real time (minutes)  0.581250012    
+ ... PROGRAM Start!...
+ MPI will create           15  processes.
+ OpenMP will create            2  threads.
+============================================================================================
+     CDFT skipped.
+     Nucleus                                 :   Ca   40
+     Number of oscillator shells (N0F)       :   10
+     Oscillator parameter b0 (fm)            :   use the empirical formula
+     Oscillator parameter beta0              :     0.000
+     Force Parameter                         :   PC-PK1    
+     Pairing strength for delta force        :   314.550 (neutrons)  346.500 (protons)
+     Deformation constraint                  :   beta2 + beta3
+     Deformation constraint number           :      5
+
+     1DAMP  +  PNP  +  PP   :
+     Number of euler angles                  :    1 (nalpha),  12 (nbeta),   1 (ngamma)
+     Symmetry of euler angles                :   Axially
+     Number gauge angles                     :    5 (nphi)
+     Kernels                                 :   Upper triangular kernels
+     Quadratic constraint q1 range           :   [  1,  5 ]
+     Quadratic constraint q2 range           :   [  1,  5 ]
+     Maximal J value                         :     0
+     Check N2 and J2                         :   Yes
+     Calculate density ME                    :   No
+     Calculate reduced transition density ME :   No
+     Calculate eccentricity kernel           :   No
+
+     GCM:
+     Mmax                                    :   0
+     Zeta                                    :  0.10E-03 0.10E-03 0.10E-03 0.10E-03 0.10E-03
+==========================================================================================
+ Proj_Main: Start Proj calculations
+     (q1,q2)=(  5,  5) >>>>>>>>>>
+     (q1,q2)=(  4,  4) >>>>>>>>>>
+     (q1,q2)=(  3,  5) >>>>>>>>>>
+     (q1,q2)=(  3,  4) >>>>>>>>>>
+     (q1,q2)=(  4,  5) >>>>>>>>>>
+     (q1,q2)=(  1,  5) >>>>>>>>>>
+     (q1,q2)=(  1,  4) >>>>>>>>>>
+     (q1,q2)=(  2,  3) >>>>>>>>>>
+     (q1,q2)=(  2,  5) >>>>>>>>>>
+     (q1,q2)=(  1,  2) >>>>>>>>>>
+     (q1,q2)=(  1,  1) >>>>>>>>>>
+     (q1,q2)=(  3,  3) >>>>>>>>>>
+     (q1,q2)=(  2,  2) >>>>>>>>>>
+     alpha:  1/1  beta:  1/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  1,  3) >>>>>>>>>>
+     (q1,q2)=(  2,  4) >>>>>>>>>>
+     alpha:  1/1  beta:  2/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  3/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  4/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  5/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  6/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  7/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  8/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  9/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 10/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 11/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 12/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+ Proj_Main: Proj calculations completed
+ GCM_Main: Start Proj calculations
+     Reading kernels for GCM calculations...
+     Solving the HWG equation for each J^pi...
+     Writing GCM observables to file: ./output/GCM_40Ca_obs.1D_eMax10.05.12.dat                   
+ GCM_Main: Proj calculations completed
+  ...PROGRAM END!...
+ CPU Time used (minutes):    38.5368576    
+ CPU Time used (hours):   0.642280936    
+ Real time (minutes)   26.6124992    
+calculation is finished !
+Time cost : 27min13s
+Done!

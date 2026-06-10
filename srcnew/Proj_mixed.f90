@@ -1692,7 +1692,7 @@ subroutine calculate_mixed_density_current_tensor_in_coordinate_space(iphi,it)
                 !========== rho1 = A^T (ρ * conjg(A)) ==========
                 call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,rho,dim_m_max,conj_Am,dim_m_max,zero,Matrix1,dim_m_max)
                 call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Am,dim_m_max,Matrix1,dim_m_max,one,Rho1(:,:,ifg),dim_mesh)
-                ! ========== rho2 各项 ==========
+                ! ========== rho2  ==========
                 ! 1) D^T (ρ * conjg(A))
                 call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Dm,dim_m_max,Matrix1,dim_m_max,one,Rho2(:,:,ifg),dim_mesh)
                 ! 2) A^T (ρ * conjg(D))
@@ -1711,7 +1711,7 @@ subroutine calculate_mixed_density_current_tensor_in_coordinate_space(iphi,it)
                 ! ========== rho1 = A^T (ρ * conjg(A)) ==========
                 call zGEMM('N' ,'N' ,basis_dim,dim_mesh,basis_dim,one,prho,dim_m_max,conj_Am,dim_m_max,zero,Matrix1,dim_m_max)
                 call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Am,dim_m_max,Matrix1,dim_m_max,one,pRho1(:,:,ifg),dim_mesh)
-                ! ========== rho2 各项 ==========
+                ! ========== rho2  ==========
                 ! 1) D^T (ρ * conjg(A))
                 call zGEMM_Trace('T' ,'N' ,dim_mesh,dim_mesh,basis_dim,one,Dm,dim_m_max,Matrix1,dim_m_max,one,pRho2(:,:,ifg),dim_mesh)
                 ! 2) A^T (ρ * conjg(D))

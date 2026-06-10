@@ -24,6 +24,9 @@ subroutine calculate_rotational_correction_energy_DIR
     complex(16) :: Jy
     real(r64) :: Erot
     integer :: case
+    Jx = 0.d0
+    Jy = (0.d0,0.d0)
+    Jz = 0.d0
     case = option%Erot_type
     if (case==0) then
         return

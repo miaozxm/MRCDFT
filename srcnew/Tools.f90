@@ -110,29 +110,52 @@ MODULE Tools
     subroutine make_directory(dir_path)
         character(len=*), intent(in) :: dir_path
         integer :: status
-        logical :: dir_exists
-
-        ! Check if directory exists (Modern Fortran 2003+)
-        ! inquire(directory=trim(dir_path), exist=dir_exists)
-        inquire(file=trim(dir_path)//'/.', exist=dir_exists)
-        if (.not. dir_exists) then
-            write(*,*) "Info: Creating directory: ", trim(dir_path)
-            ! #ifdef _WIN32
-            !     ! Windows implementation: Use 'cmd /c mkdir'
-            !     ! cmd /c ensures the command is executed within the shell environment
-            !     call execute_command_line("cmd /c mkdir " // trim(dir_path), exitstat=status)
-            ! #else
-                ! Unix/Linux/macOS implementation: Use 'mkdir -p'
-                ! The -p flag creates parent directories and ignores existing ones
-                call execute_command_line("mkdir -p " // trim(dir_path), exitstat=status)
-            ! #endif
-            if (status /= 0) then
-                write(*,*) "Error: Failed to create directory. Exit Status:", status
-            end if
-        else
-            ! Directory already exists, no action needed
-            ! write(*,*) "Info: Directory exists:", trim(dir_path)
-        end if
+    
+        ! #ifdef _WIN32
+        !     call execute_command_line( &
+        !         'cmd /c if not exist "' // trim(dir_path) // &
+        !         '" mkdir "' // trim(dir_path) // '"', &
+        !         exitstat=status)
+        ! #else
+        !     call execute_command_line( &
+        !         'mkdir -p "' // trim(dir_path) // '"', &
+        !         exitstat=status)
+        ! #endif
+    
+        ! if (status /= 0) then
+        !     write(*,*) "Warning: Failed to create directory:", trim(dir_path)
+        !     write(*,*) "Exit Status:", status
+        ! end if
+    
     end subroutine make_directory
+
+
+    ! subroutine make_directory_old(dir_path)
+    !     character(len=*), intent(in) :: dir_path
+    !     integer :: status
+    !     logical :: dir_exists
+
+    !     ! Check if directory exists (Modern Fortran 2003+)
+    !     ! inquire(directory=trim(dir_path), exist=dir_exists)
+    !     inquire(file=trim(dir_path)//'/.', exist=dir_exists)
+    !     if (.not. dir_exists) then
+    !         write(*,*) "Info: Creating directory: ", trim(dir_path)
+    !         ! #ifdef _WIN32
+    !         !     ! Windows implementation: Use 'cmd /c mkdir'
+    !         !     ! cmd /c ensures the command is executed within the shell environment
+    !         !     call execute_command_line("cmd /c mkdir " // trim(dir_path), exitstat=status)
+    !         ! #else
+    !             ! Unix/Linux/macOS implementation: Use 'mkdir -p'
+    !             ! The -p flag creates parent directories and ignores existing ones
+    !             call execute_command_line("mkdir -p " // trim(dir_path), exitstat=status)
+    !         ! #endif
+    !         if (status /= 0) then
+    !             write(*,*) "Error: Failed to create directory. Exit Status:", status
+    !         end if
+    !     else
+    !         ! Directory already exists, no action needed
+    !         ! write(*,*) "Info: Directory exists:", trim(dir_path)
+    !     end if
+    ! end subroutine make_directory_old
 
 END MODULE

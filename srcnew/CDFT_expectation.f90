@@ -239,10 +239,7 @@ subroutine energy_DIR(ifPrint)
        
     ! center–of–mass correction
     ecm = -0.75d0*BS%HO_cyl%hom   ! the estimate formulation from the simple harmonic oscillator shell model
-    if(ifPrint .and. .True.) write (*,*) '1E-cm=',ecm
     if(ifPrint .and. .True.) call centmas(ecm) ! microscopic c.m. correction (calculated only at the final step)
-    
-    if(ifPrint .and. .True.) write (*,*) '2E-cm=',ecm
                                                                                                                               
     expectations%etot = ekt(3) + esig + eome + erho + ecou + enl + ept(3) + ecm ! E                 
     expectations%ea   = expectations%etot/nucleus_attributes%mass_number  ! E/A 

@@ -13,6 +13,7 @@ PROGRAM MR_CDFT
     use CDFT
     use Proj
     use GCM
+    use Tools, only: adjust_left,int2str
     use Globals, only: option,Proj_option,GCM_option,outputfile,MPI_Infor
     use MathMethods, only: math_gfv
     use CDFT_Inout, only: handle_input_config,read_file_b23,read_CDFT_configuration
@@ -47,8 +48,7 @@ PROGRAM MR_CDFT
     call read_CDFT_configuration(.True.)
     call read_Proj_configuration(.True.)
     call read_GCM_configuration(.True.)
-    
-    open(outputfile%u_config, file=outputfile%config, status='unknown')
+    open(outputfile%u_config, file=trim(outputfile%config)//'_'//int2str(MPI_Infor%rank), status='unknown')
     call math_gfv
     call set_nucleus_attributes(.True.)
     call set_force_parameters(.True.)

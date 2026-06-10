@@ -1,0 +1,46 @@
+日志文件: /home/xizhang/MRCDFT/Labs/40Ca/40Ca_10_2026-06-09-10-27-05/logs/run_20260609_150848.log
+开始时间: Tue Jun  9 15:08:48 CST 2026
+[32m run ...[0m
+ ... PROGRAM Start!...
+ MPI will create            1  processes.
+ OpenMP will create            5  threads.
+============================================================================================
+     CDFT skipped.
+     Nucleus                                 :   Ca   40
+     Number of oscillator shells (N0F)       :   10
+     Oscillator parameter b0 (fm)            :   use the empirical formula
+     Oscillator parameter beta0              :     0.000
+     Force Parameter                         :   PC-PK1    
+     Pairing strength for delta force        :   314.550 (neutrons)  346.500 (protons)
+     Deformation constraint                  :   beta2 + beta3
+     Deformation constraint number           :      5
+
+     Projection skipped.
+     Number of euler angles                  :    1 (nalpha),  12 (nbeta),   1 (ngamma)
+     Symmetry of euler angles                :   Axially
+     Number gauge angles                     :    5 (nphi)
+     Kernels                                 :   Upper triangular kernels
+     Quadratic constraint q1 range           :   [  1,  5 ]
+     Quadratic constraint q2 range           :   [  1,  5 ]
+     Maximal J value                         :     0
+     Check N2 and J2                         :   Yes
+     Calculate density ME                    :   No
+     Calculate reduced transition density ME :   No
+     Calculate eccentricity kernel           :   No
+
+     GCM:
+     Mmax                                    :   0
+     Zeta                                    :  0.10E-03 0.10E-03 0.10E-03 0.10E-03 0.10E-03
+==========================================================================================
+ GCM_Main: Start Proj calculations
+     Reading kernels for GCM calculations...
+     Solving the HWG equation for each J^pi...
+     Writing GCM observables to file: ./output/GCM_40Ca_obs.1D_eMax10.05.12.dat                   
+ GCM_Main: Proj calculations completed
+  ...PROGRAM END!...
+ CPU Time used (minutes):    8.46164912E-05
+ CPU Time used (hours):    1.41027488E-06
+ Real time (minutes)   2.08333344E-03
+calculation is finished !
+Time cost : 0min1s
+Done!
