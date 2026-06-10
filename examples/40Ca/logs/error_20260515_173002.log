@@ -1,0 +1,16 @@
+At line 126 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 1021)
+Fortran runtime error: Cannot open file './output/Proj_40Ca_kern.1D_eMax08.05.12-050+001_-050+001.elem': No such file or directory
+
+Error termination. Backtrace:
+#0  0x2b127fc73dfd in ???
+#1  0x2b127fc74995 in ???
+#2  0x2b127fc7517d in ???
+#3  0x2b127fe74e28 in ???
+#4  0x2b127fe75124 in ???
+#5  0x444cf4 in ???
+#6  0x4473c9 in ???
+#7  0x4c0432 in ???
+#8  0x40296c in ???
+#9  0x2b1280845554 in ???
+#10  0x40299c in ???
+#11  0xffffffffffffffff in ???

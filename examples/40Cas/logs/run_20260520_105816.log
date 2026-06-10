@@ -1,0 +1,20 @@
+日志文件: ./logs/run_20260520_105816.log
+开始时间: Wed May 20 10:58:16 CST 2026
+[32m run ...[0m
+ ... PROGRAM Start!...
+ MPI will create           11  processes.
+ OpenMP will create            5  threads.
+ Error: File not found: para.dat
+ Error: File not found: para.dat
+ Error: File not found: para.dat
+ Error: File not found: para.dat
+ Error: File not found: para.dat
+ Error: File not found: para.dat
+ Error: File not found: para.dat
+ Error: File not found: para.dat
+ Error: File not found: para.dat
+ Error: File not found: para.dat
+ Error: File not found: para.dat
+calculation is finished !
+Time cost : 0min1s
+Done!

@@ -1,0 +1,139 @@
+日志文件: /home/xizhang/MRCDFT/examples/40Casacopy-1.1/logs/run_20260609_203850.log
+开始时间: Tue Jun  9 20:38:50 CST 2026
+[32m run ...[0m
+ ... PROGRAM Start!...
+ MPI will create           15  processes.
+ OpenMP will create            5  threads.
+============================================================================================
+     CDFT skipped.
+     Nucleus                                 :   Ca   40
+     Number of oscillator shells (N0F)       :   10
+     Oscillator parameter b0 (fm)            :   use the empirical formula
+     Oscillator parameter beta0              :     0.000
+     Force Parameter                         :   PC-PK1    
+     Pairing strength for delta force        :   314.550 (neutrons)  346.500 (protons)
+     Deformation constraint                  :   beta2 + beta3
+     Deformation constraint number           :      5
+
+     Projection skipped.
+     Number of euler angles                  :    1 (nalpha),  12 (nbeta),   1 (ngamma)
+     Symmetry of euler angles                :   Axially
+     Number gauge angles                     :    5 (nphi)
+     Kernels                                 :   Upper triangular kernels
+     Quadratic constraint q1 range           :   [  1,  5 ]
+     Quadratic constraint q2 range           :   [  1,  5 ]
+     Maximal J value                         :     0
+     Check N2 and J2                         :   Yes
+     Calculate density ME                    :   No
+     Calculate reduced transition density ME :   No
+     Calculate eccentricity kernel           :   No
+
+     GCM:
+     Mmax                                    :   0
+     Zeta                                    :  0.10E-03 0.10E-03 0.10E-03 0.10E-03 0.10E-03
+==========================================================================================
+ GCM_Main: Start Proj calculations
+     Reading kernels for GCM calculations...
+At line 126 of file /home/xizhang/MRCDFT/src/GCM_inout.f90 (unit = 1021)
+Fortran runtime error: Cannot open file './output/Proj_40Ca_kern.1D_eMax10.05.12-040+001_-050+001.elem': No such file or directory
+
+Error termination. Backtrace:
+#0  0x2b3aa670fdfd in ???
+#1  0x2b3aa6710995 in ???
+#2  0x2b3aa671117d in ???
+#3  0x2b3aa6910e28 in ???
+#4  0x2b3aa6911124 in ???
+#5  0x444f64 in ???
+#6  0x447639 in ???
+#7  0x4c06a2 in ???
+#8  0x40296c in ???
+#9  0x2b3aa72e1554 in ???
+#10  0x40299c in ???
+#11  0xffffffffffffffff in ???
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 1 PID 30028 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 2 PID 30029 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 3 PID 30030 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 4 PID 30031 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 5 PID 30032 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 6 PID 30033 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 7 PID 30034 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 8 PID 30035 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 9 PID 30036 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 10 PID 30037 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 11 PID 30038 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 12 PID 30039 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 13 PID 30041 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 14 PID 30042 RUNNING AT mgt
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+calculation is finished !
+Time cost : 0min1s
+Done!

@@ -1,0 +1,48 @@
+日志文件: /home/xizhang/MRCDFT/examples/40Casacopy2/logs/run_20260605_105505.log
+开始时间: Fri Jun  5 10:55:05 CST 2026
+[32m run ...[0m
+ ... PROGRAM Start!...
+ MPI will create           11  processes.
+ OpenMP will create            5  threads.
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+============================================================================================
+     Solve Dirac (BCS) Equation :
+     Nucleus                                 :   Ca   40
+     Number of oscillator shells (N0F)       :   10
+     Oscillator parameter b0 (fm)            :   use the empirical formula
+     Oscillator parameter beta0              :     0.000
+     Force Parameter                         :   PC-PK1    
+     Pairing strength for delta force        :   314.550 (neutrons)  346.500 (protons)
+     Deformation constraint                  :   beta2 + beta3
+     Deformation constraint number           :      1
+
+     Projection skipped.
+     Number of euler angles                  :    1 (nalpha),  12 (nbeta),   1 (ngamma)
+     Symmetry of euler angles                :   Axially
+     Number gauge angles                     :    5 (nphi)
+     Kernels                                 :   Upper triangular kernels
+     Quadratic constraint q1 range           :   [  1,  1 ]
+     Quadratic constraint q2 range           :   [  1,  1 ]
+     Maximal J value                         :     0
+     Check N2 and J2                         :   Yes
+     Calculate density ME                    :   No
+     Calculate reduced transition density ME :   No
+     Calculate eccentricity kernel           :   No
+
+     GCM                                     :   GCM skipped.
+     Mmax                                    :   0
+     Zeta                                    :  0.10E-03 0.10E-03 0.10E-03 0.10E-03 0.10E-03
+==========================================================================================
+ CDFT_Main: Start CDFT calculations
+     Constraint:    1/1   beta2= -0.10   beat3=  0.01
+     Iteration converged after  54 steps, si =   0.00009261,  beta2 =-0.100,  beta3 = 0.010,   1/1   

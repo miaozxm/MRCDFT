@@ -1,0 +1,114 @@
+At line 228 of file /home/xizhang/MRCDFT/src/Proj_inout.f90 (unit = 1014, file = './output/CDFT_40Ca_wf_eMax10-030+001.tmp')
+Fortran runtime error: End of file
+
+Error termination. Backtrace:
+At line 228 of file /home/xizhang/MRCDFT/src/Proj_inout.f90 (unit = 1014, file = './output/CDFT_40Ca_wf_eMax10-040+001.tmp')
+Fortran runtime error: End of file
+
+Error termination. Backtrace:
+At line 228 of file /home/xizhang/MRCDFT/src/Proj_inout.f90 (unit = 1014, file = './output/CDFT_40Ca_wf_eMax10-040+001.tmp')
+Fortran runtime error: End of file
+
+Error termination. Backtrace:
+At line 228 of file /home/xizhang/MRCDFT/src/Proj_inout.f90 (unit = 1014, file = './output/CDFT_40Ca_wf_eMax10-040+001.tmp')
+Fortran runtime error: End of file
+
+Error termination. Backtrace:
+At line 228 of file /home/xizhang/MRCDFT/src/Proj_inout.f90 (unit = 1014, file = './output/CDFT_40Ca_wf_eMax10-030+001.tmp')
+Fortran runtime error: End of file
+
+Error termination. Backtrace:
+At line 228 of file /home/xizhang/MRCDFT/src/Proj_inout.f90 (unit = 1014, file = './output/CDFT_40Ca_wf_eMax10-040+001.tmp')
+Fortran runtime error: End of file
+
+Error termination. Backtrace:
+At line 228 of file /home/xizhang/MRCDFT/src/Proj_inout.f90 (unit = 1014, file = './output/CDFT_40Ca_wf_eMax10-050+001.tmp')
+Fortran runtime error: End of file
+
+Error termination. Backtrace:
+At line 228 of file /home/xizhang/MRCDFT/src/Proj_inout.f90 (unit = 1014, file = './output/CDFT_40Ca_wf_eMax10-050+001.tmp')
+Fortran runtime error: End of file
+
+Error termination. Backtrace:
+At line 228 of file /home/xizhang/MRCDFT/src/Proj_inout.f90 (unit = 1014, file = './output/CDFT_40Ca_wf_eMax10-050+001.tmp')
+Fortran runtime error: End of file
+
+Error termination. Backtrace:
+At line 228 of file /home/xizhang/MRCDFT/src/Proj_inout.f90 (unit = 1014, file = './output/CDFT_40Ca_wf_eMax10-050+001.tmp')
+Fortran runtime error: End of file
+
+Error termination. Backtrace:
+At line 228 of file /home/xizhang/MRCDFT/src/Proj_inout.f90 (unit = 1014, file = './output/CDFT_40Ca_wf_eMax10-050+001.tmp')
+Fortran runtime error: End of file
+
+Error termination. Backtrace:
+#0  0x2b4458500dfd in ???
+#1  0x2b4458501995 in ???
+#2  0x2b445850217d in ???
+#3  0x2b4458705b7b in ???
+#4  0x2b44587065cf in ???
+#5  0x2b44587066bc in ???
+#6  0x2b4458708e08 in ???
+#7  0x486a93 in ???
+#8  0x49fbe5 in ???
+#9  0x4c01d8 in ???
+#10  0x40296c in ???
+#11  0x2b44590d2554 in ???
+#12  0x40299c in ???
+#13  0xffffffffffffffff in ???
+#0  0x2ba0c94c9dfd in ???
+#1  0x2ba0c94ca995 in ???
+#2  0x2ba0c94cb17d in ???
+#3  0x2ba0c96ceb7b in ???
+#4  0x2ba0c96cf5cf in ???
+#5  0x2ba0c96cf6bc in ???
+#6  0x2ba0c96d1e08 in ???
+#7  0x486a93 in ???
+#8  0x49fbe5 in ???
+#9  0x4c01d8 in ???
+#10  0x40296c in ???
+#11  0x2ba0ca09b554 in ???
+#12  0x40299c in ???
+#13  0xffffffffffffffff in ???
+#0  0x2b04f19c7dfd in ???
+#1  0x2b04f19c8995 in ???
+#2  0x2b04f19c917d in ???
+#3  0x2b04f1bccb7b in ???
+#4  0x2b04f1bcd5cf in ???
+#5  0x2b04f1bcd6bc in ???
+#6  0x2b04f1bcfe08 in ???
+#7  0x486a93 in ???
+#8  0x49fbe5 in ???
+#9  0x4c01d8 in ???
+#10  0x40296c in ???
+#11  0x2b04f2599554 in ???
+#12  0x40299c in ???
+#13  0xffffffffffffffff in ???
+#0  0x2ad1dd3e6dfd in ???
+#1  0x2ad1dd3e7995 in ???
+#2  0x2ad1dd3e817d in ???
+#3  0x2ad1dd5ebb7b in ???
+#4  0x2ad1dd5ec5cf in ???
+#5  0x2ad1dd5ec6bc in ???
+#6  0x2ad1dd5eee08 in ???
+#7  0x486a93 in ???
+#8  0x49fbe5 in ???
+#9  0x4c01d8 in ???
+#10  0x40296c in ???
+#11  0x2ad1ddfb8554 in ???
+#12  0x40299c in ???
+#13  0xffffffffffffffff in ???
+#0  0x2b5e6031cdfd in ???
+#1  0x2b5e6031d995 in ???
+#2  0x2b5e6031e17d in ???
+#3  0x2b5e60521b7b in ???
+#4  0x2b5e605225cf in ???
+#5  0x2b5e605226bc in ???
+#6  0x2b5e60524e08 in ???
+#7  0x486a93 in ???
+#8  0x49fbe5 in ???
+#9  0x4c01d8 in ???
+#10  0x40296c in ???
+#11  0x2b5e60eee554 in ???
+#12  0x40299c in ???
+#13  0xffffffffffffffff in ???

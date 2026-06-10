@@ -1,0 +1,221 @@
+日志文件: ./logs/run_20260515_154537.log
+开始时间: Fri May 15 15:45:37 CST 2026
+[32m run ...[0m
+ ... PROGRAM Start!...
+ MPI will create           11  processes.
+ OpenMP will create            5  threads.
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+============================================================================================
+     Solve Dirac (BCS) Equation :
+     Nucleus                                 :   Ca   40
+     Number of oscillator shells (N0F)       :    8
+     Oscillator parameter b0 (fm)            :   use the empirical formula
+     Oscillator parameter beta0              :     0.000
+     Force Parameter                         :   PC-PK1    
+     Pairing strength for delta force        :   314.550 (neutrons)  346.500 (protons)
+     Deformation constraint                  :   beta2 + beta3
+     Deformation constraint number           :     11
+
+     1DAMP  +  PNP  +  PP   :
+     Number of euler angles                  :    1 (nalpha),  12 (nbeta),   1 (ngamma)
+     Symmetry of euler angles                :   Axially
+     Number gauge angles                     :    5 (nphi)
+     Kernels                                 :   Upper triangular kernels
+     Quadratic constraint q1 range           :   [  1, 11 ]
+     Quadratic constraint q2 range           :   [  1, 11 ]
+     Maximal J value                         :     2
+     Check N2 and J2                         :   Yes
+     Calculate density ME                    :   No
+     Calculate reduced transition density ME :   No
+     Calculate eccentricity kernel           :   No
+
+     GCM:
+     Mmax                                    :   0
+     Zeta                                    :  0.10E-03 0.10E-03 0.10E-03 0.10E-03 0.10E-03
+==========================================================================================
+ CDFT_Main: Start CDFT calculations
+     Constraint:    1/11  beta2= -0.50   beat3=  0.01
+     Constraint:   10/11  beta2=  0.40   beat3=  0.01
+     Constraint:    3/11  beta2= -0.30   beat3=  0.01
+     Constraint:    7/11  beta2=  0.10   beat3=  0.01
+     Constraint:    4/11  beta2= -0.20   beat3=  0.01
+     Constraint:    9/11  beta2=  0.30   beat3=  0.01
+     Constraint:    8/11  beta2=  0.20   beat3=  0.01
+     Constraint:    5/11  beta2= -0.10   beat3=  0.01
+     Constraint:    6/11  beta2=  0.00   beat3=  0.01
+     Constraint:   11/11  beta2=  0.50   beat3=  0.01
+     Constraint:    2/11  beta2= -0.40   beat3=  0.01
+     Iteration converged after  33 steps, si =   0.00006362,  beta2 = 0.000,  beta3 = 0.010,   6/11  
+     Iteration converged after  43 steps, si =   0.00007367,  beta2 = 0.400,  beta3 = 0.010,  10/11  
+     Iteration converged after  51 steps, si =   0.00009177,  beta2 =-0.300,  beta3 = 0.010,   3/11  
+     Iteration converged after  51 steps, si =   0.00008151,  beta2 =-0.200,  beta3 = 0.010,   4/11  
+     Iteration converged after  52 steps, si =   0.00009433,  beta2 = 0.200,  beta3 = 0.010,   8/11  
+     Iteration converged after  52 steps, si =   0.00009936,  beta2 = 0.500,  beta3 = 0.010,  11/11  
+     Iteration converged after  53 steps, si =   0.00008648,  beta2 = 0.300,  beta3 = 0.010,   9/11  
+     Iteration converged after  55 steps, si =   0.00007569,  beta2 = 0.100,  beta3 = 0.010,   7/11  
+     Iteration converged after  65 steps, si =   0.00009216,  beta2 =-0.100,  beta3 = 0.010,   5/11  
+     Iteration converged after  76 steps, si =   0.00009242,  beta2 =-0.500,  beta3 = 0.010,   1/11  
+     Iteration converged after  86 steps, si =   0.00009783,  beta2 =-0.400,  beta3 = 0.010,   2/11  
+ CDFT_Main: CDFT calculations completed
+ Proj_Main: Start Proj calculations
+     (q1,q2)=(  1, 10) >>>>>>>>>>
+     (q1,q2)=(  1,  8) >>>>>>>>>>
+     (q1,q2)=(  1, 11) >>>>>>>>>>
+     (q1,q2)=(  1,  9) >>>>>>>>>>
+     (q1,q2)=(  1,  7) >>>>>>>>>>
+     (q1,q2)=(  1,  5) >>>>>>>>>>
+     (q1,q2)=(  1,  4) >>>>>>>>>>
+     (q1,q2)=(  1,  3) >>>>>>>>>>
+     (q1,q2)=(  1,  6) >>>>>>>>>>
+     (q1,q2)=(  1,  1) >>>>>>>>>>
+     (q1,q2)=(  1,  2) >>>>>>>>>>
+     alpha:  1/1  beta:  1/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  2/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  3/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  4/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  5/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  6/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  3,  3) >>>>>>>>>>
+     (q1,q2)=(  2,  6) >>>>>>>>>>
+     (q1,q2)=(  2,  3) >>>>>>>>>>
+     (q1,q2)=(  2,  4) >>>>>>>>>>
+     (q1,q2)=(  2,  5) >>>>>>>>>>
+     (q1,q2)=(  2,  9) >>>>>>>>>>
+     alpha:  1/1  beta:  7/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  8/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  9/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 10/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 11/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 12/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     (q1,q2)=(  2, 11) >>>>>>>>>>
+     (q1,q2)=(  2,  8) >>>>>>>>>>
+     (q1,q2)=(  2, 10) >>>>>>>>>>
+     (q1,q2)=(  2,  7) >>>>>>>>>>
+     (q1,q2)=(  2,  2) >>>>>>>>>>
+     alpha:  1/1  beta:  1/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  2/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  3/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  4/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  5/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  6/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  3,  8) >>>>>>>>>>
+     (q1,q2)=(  3,  5) >>>>>>>>>>
+     (q1,q2)=(  3,  7) >>>>>>>>>>
+     (q1,q2)=(  3,  6) >>>>>>>>>>
+     (q1,q2)=(  4,  6) >>>>>>>>>>
+     alpha:  1/1  beta:  7/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  8/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  9/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 10/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 11/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 12/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     (q1,q2)=(  3,  4) >>>>>>>>>>
+     alpha:  1/1  beta:  1/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  3, 11) >>>>>>>>>>
+     (q1,q2)=(  4,  5) >>>>>>>>>>
+     (q1,q2)=(  4,  4) >>>>>>>>>>
+     (q1,q2)=(  3, 10) >>>>>>>>>>
+     (q1,q2)=(  3,  9) >>>>>>>>>>
+     alpha:  1/1  beta:  2/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  3/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  4/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  5/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  6/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  4, 11) >>>>>>>>>>
+     (q1,q2)=(  4,  8) >>>>>>>>>>
+     (q1,q2)=(  4,  9) >>>>>>>>>>
+     (q1,q2)=(  4, 10) >>>>>>>>>>
+     (q1,q2)=(  5,  7) >>>>>>>>>>
+     (q1,q2)=(  5, 10) >>>>>>>>>>
+     (q1,q2)=(  5,  9) >>>>>>>>>>
+     (q1,q2)=(  5,  8) >>>>>>>>>>
+     (q1,q2)=(  5,  6) >>>>>>>>>>
+     alpha:  1/1  beta:  7/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  8/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  9/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 10/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 11/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 12/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     (q1,q2)=(  4,  7) >>>>>>>>>>
+     alpha:  1/1  beta:  1/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  5,  5) >>>>>>>>>>
+     alpha:  1/1  beta:  2/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  3/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  4/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  5/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  6/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  6,  6) >>>>>>>>>>
+     (q1,q2)=(  6,  9) >>>>>>>>>>
+     (q1,q2)=(  6,  7) >>>>>>>>>>
+     (q1,q2)=(  7,  7) >>>>>>>>>>
+     (q1,q2)=(  6,  8) >>>>>>>>>>
+     (q1,q2)=(  7,  8) >>>>>>>>>>
+     (q1,q2)=(  7,  9) >>>>>>>>>>
+     alpha:  1/1  beta:  7/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  8/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  9/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 10/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 11/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 12/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     (q1,q2)=(  5, 11) >>>>>>>>>>
+     alpha:  1/1  beta:  1/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  6, 11) >>>>>>>>>>
+     (q1,q2)=(  7, 10) >>>>>>>>>>
+     (q1,q2)=(  6, 10) >>>>>>>>>>
+     alpha:  1/1  beta:  2/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  3/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  4/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  5/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  6/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  8, 11) >>>>>>>>>>
+     (q1,q2)=(  8,  8) >>>>>>>>>>
+     (q1,q2)=(  9, 11) >>>>>>>>>>
+     (q1,q2)=(  8, 10) >>>>>>>>>>
+     (q1,q2)=(  8,  9) >>>>>>>>>>
+     (q1,q2)=( 10, 10) >>>>>>>>>>
+     (q1,q2)=(  9, 10) >>>>>>>>>>
+     (q1,q2)=( 11, 11) >>>>>>>>>>
+     (q1,q2)=( 10, 11) >>>>>>>>>>
+     alpha:  1/1  beta:  7/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  8/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  9/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 10/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 11/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 12/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     (q1,q2)=(  7, 11) >>>>>>>>>>
+     alpha:  1/1  beta:  1/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  9,  9) >>>>>>>>>>
+     alpha:  1/1  beta:  2/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  3/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  4/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  5/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  6/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  7/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  8/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  9/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 10/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 11/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 12/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+ Proj_Main: Proj calculations completed
+ GCM_Main: Start Proj calculations
+     Reading kernels for GCM calculations...
+     Solving the HWG equation for each J^pi...
+     Writing GCM observables to file: ./output/GCM_40Ca_obs.1D_eMax08.05.12.dat                   
+ GCM_Main: Proj calculations completed
+  ...PROGRAM END!...
+ CPU Time used (minutes):    159.319687    
+ CPU Time used (hours):    2.65532827    
+ Real time (minutes)   93.8750000    
+calculation is finished !
+Time cost : 93min55s
+Done!

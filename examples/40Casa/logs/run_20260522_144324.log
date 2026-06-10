@@ -1,0 +1,46 @@
+日志文件: ./logs/run_20260522_144324.log
+开始时间: Fri May 22 14:43:24 CST 2026
+[32m run ...[0m
+ ... PROGRAM Start!...
+ MPI will create           11  processes.
+ OpenMP will create            5  threads.
+============================================================================================
+     CDFT skipped.
+     Nucleus                                 :   Ca   40
+     Number of oscillator shells (N0F)       :    8
+     Oscillator parameter b0 (fm)            :   use the empirical formula
+     Oscillator parameter beta0              :     0.000
+     Force Parameter                         :   PC-PK1    
+     Pairing strength for delta force        :   314.550 (neutrons)  346.500 (protons)
+     Deformation constraint                  :   beta2 + beta3
+     Deformation constraint number           :     11
+
+     Projection skipped.
+     Number of euler angles                  :    1 (nalpha),  12 (nbeta),   1 (ngamma)
+     Symmetry of euler angles                :   Axially
+     Number gauge angles                     :    5 (nphi)
+     Kernels                                 :   Upper triangular kernels
+     Quadratic constraint q1 range           :   [  1, 11 ]
+     Quadratic constraint q2 range           :   [  1, 11 ]
+     Maximal J value                         :     0
+     Check N2 and J2                         :   Yes
+     Calculate density ME                    :   No
+     Calculate reduced transition density ME :   No
+     Calculate eccentricity kernel           :   No
+
+     GCM:
+     Mmax                                    :   0
+     Zeta                                    :  0.10E-03 0.10E-03 0.10E-03 0.10E-03 0.10E-03
+==========================================================================================
+ GCM_Main: Start Proj calculations
+     Reading kernels for GCM calculations...
+     Solving the HWG equation for each J^pi...
+     Writing GCM observables to file: ./output/GCM_40Ca_obs.1D_eMax08.05.12.dat                   
+ GCM_Main: Proj calculations completed
+  ...PROGRAM END!...
+ CPU Time used (minutes):    3.26049834E-04
+ CPU Time used (hours):    5.43416354E-06
+ Real time (minutes)   0.00000000    
+calculation is finished !
+Time cost : 0min1s
+Done!

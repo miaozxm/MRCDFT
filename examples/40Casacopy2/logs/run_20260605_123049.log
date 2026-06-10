@@ -1,0 +1,63 @@
+日志文件: /home/xizhang/MRCDFT/examples/40Casacopy2/logs/run_20260605_123049.log
+开始时间: Fri Jun  5 12:30:49 CST 2026
+[32m run ...[0m
+ ... PROGRAM Start!...
+ MPI will create           11  processes.
+ OpenMP will create            5  threads.
+============================================================================================
+     Solve Dirac (BCS) Equation :
+     Nucleus                                 :   Ca   40
+     Number of oscillator shells (N0F)       :   10
+     Oscillator parameter b0 (fm)            :   use the empirical formula
+     Oscillator parameter beta0              :     0.000
+     Force Parameter                         :   PC-PK1    
+     Pairing strength for delta force        :   314.550 (neutrons)  346.500 (protons)
+     Deformation constraint                  :   beta2 + beta3
+     Deformation constraint number           :      5
+
+     Projection skipped.
+     Number of euler angles                  :    1 (nalpha),  12 (nbeta),   1 (ngamma)
+     Symmetry of euler angles                :   Axially
+     Number gauge angles                     :    5 (nphi)
+     Kernels                                 :   Upper triangular kernels
+     Quadratic constraint q1 range           :   [  1,  5 ]
+     Quadratic constraint q2 range           :   [  1,  5 ]
+     Maximal J value                         :     0
+     Check N2 and J2                         :   Yes
+     Calculate density ME                    :   No
+     Calculate reduced transition density ME :   No
+     Calculate eccentricity kernel           :   No
+
+     GCM                                     :   GCM skipped.
+     Mmax                                    :   0
+     Zeta                                    :  0.10E-03 0.10E-03 0.10E-03 0.10E-03 0.10E-03
+==========================================================================================
+ CDFT_Main: Start CDFT calculations
+     Constraint:    1/5   beta2= -0.50   beat3=  0.01
+     Constraint:    2/5   beta2= -0.40   beat3=  0.01
+     Constraint:    4/5   beta2= -0.20   beat3=  0.01
+     Constraint:    3/5   beta2= -0.30   beat3=  0.01
+     Constraint:    5/5   beta2= -0.10   beat3=  0.01
+     Iteration converged after  53 steps, si =   0.00004599,  beta2 =-0.300,  beta3 = 0.010,   3/5   
+     Iteration converged after  55 steps, si =   0.00006550,  beta2 =-0.200,  beta3 = 0.010,   4/5   
+     Iteration converged after  54 steps, si =   0.00009261,  beta2 =-0.100,  beta3 = 0.010,   5/5   
+     Iteration converged after  68 steps, si =   0.00006125,  beta2 =-0.400,  beta3 = 0.010,   2/5   
+     Iteration converged after  81 steps, si =   0.00009598,  beta2 =-0.500,  beta3 = 0.010,   1/5   
+ 1E-cm=  -8.9913545450045635     
+ 1E-cm=  -8.9913545450045635     
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -3.6863002710257983E+293
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -6.0002379934414246E+293
+ 2E-cm=   2.2744264154029957E+304
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -4.2625760905058267E+293
+ 2E-cm=  -8.3538745117434878     
+ CDFT_Main: CDFT calculations completed
+  ...PROGRAM END!...
+ CPU Time used (minutes):   0.745631635    
+ CPU Time used (hours):    1.24271940E-02
+ Real time (minutes)  0.756510437    
+calculation is finished !
+Time cost : 0min47s
+Done!

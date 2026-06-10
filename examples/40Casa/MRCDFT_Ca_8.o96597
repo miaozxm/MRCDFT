@@ -1,0 +1,18 @@
+/var/spool/pbs/mom_priv/jobs
+mkdir: cannot create directory ‘./logs’: Permission denied
+tee: ./logs/run_20260525_160229.log: No such file or directory
+日志文件: ./logs/run_20260525_160229.log
+tee: ./logs/error_20260525_160229.log: No such file or directory
+开始时间: Mon May 25 16:02:29 CST 2026
+[32m run ...[0m
+[proxy:0:0@cn1] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file ../../bin/MRCDFT (No such file or directory)
+[proxy:0:0@cn1] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file ../../bin/MRCDFT (No such file or directory)
+[proxy:0:0@cn1] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file ../../bin/MRCDFT (No such file or directory)
+[proxy:0:0@cn1] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file ../../bin/MRCDFT (No such file or directory)
+[proxy:0:0@cn1] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file ../../bin/MRCDFT (No such file or directory)
+[proxy:0:0@cn1] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file ../../bin/MRCDFT (No such file or directory)
+[proxy:0:0@cn1] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file ../../bin/MRCDFT (No such file or directory)
+[proxy:0:0@cn1] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file ../../bin/MRCDFT (No such file or directory)
+calculation is finished !
+Time cost : 0min0s
+Done!

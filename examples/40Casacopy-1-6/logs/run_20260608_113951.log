@@ -1,0 +1,267 @@
+日志文件: /home/xizhang/MRCDFT/examples/40Casacopy-1-6/logs/run_20260608_113951.log
+开始时间: Mon Jun  8 11:39:51 CST 2026
+[32m run ...[0m
+ ... PROGRAM Start!...
+ MPI will create            1  processes.
+ OpenMP will create            5  threads.
+ Info: Creating directory: ./output/
+============================================================================================
+     Solve Dirac (BCS) Equation :
+     Nucleus                                 :   Ca   40
+     Number of oscillator shells (N0F)       :   10
+     Oscillator parameter b0 (fm)            :   use the empirical formula
+     Oscillator parameter beta0              :     0.000
+     Force Parameter                         :   PC-PK1    
+     Pairing strength for delta force        :   314.550 (neutrons)  346.500 (protons)
+     Deformation constraint                  :   beta2 + beta3
+     Deformation constraint number           :     11
+
+     Projection skipped.
+     Number of euler angles                  :    1 (nalpha),  12 (nbeta),   1 (ngamma)
+     Symmetry of euler angles                :   Axially
+     Number gauge angles                     :    5 (nphi)
+     Kernels                                 :   Upper triangular kernels
+     Quadratic constraint q1 range           :   [  1, 11 ]
+     Quadratic constraint q2 range           :   [  1, 11 ]
+     Maximal J value                         :     0
+     Check N2 and J2                         :   Yes
+     Calculate density ME                    :   No
+     Calculate reduced transition density ME :   No
+     Calculate eccentricity kernel           :   No
+
+     GCM                                     :   GCM skipped.
+     Mmax                                    :   0
+     Zeta                                    :  0.10E-03 0.10E-03 0.10E-03 0.10E-03 0.10E-03
+==========================================================================================
+ CDFT_Main: Start CDFT calculations
+     Constraint:    1/11  beta2= -0.50   beat3=  0.01
+     Iteration converged after  81 steps, si =   0.00009598,  beta2 =-0.500,  beta3 = 0.010,   1/11  
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -8.3538745117434878     
+     Constraint:    2/11  beta2= -0.40   beat3=  0.01
+     Iteration converged after  64 steps, si =   0.00009875,  beta2 =-0.400,  beta3 = 0.010,   2/11  
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -8.6183294872445995     
+     Constraint:    3/11  beta2= -0.30   beat3=  0.01
+     Iteration converged after  53 steps, si =   0.00006406,  beta2 =-0.300,  beta3 = 0.010,   3/11  
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -8.4691128052507931     
+     Constraint:    4/11  beta2= -0.20   beat3=  0.01
+     Iteration converged after  53 steps, si =   0.00007163,  beta2 =-0.200,  beta3 = 0.010,   4/11  
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -8.1370872898861037     
+     Constraint:    5/11  beta2= -0.10   beat3=  0.01
+     Iteration converged after  57 steps, si =   0.00009263,  beta2 =-0.100,  beta3 = 0.010,   5/11  
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -8.1158984562725820     
+     Constraint:    6/11  beta2=  0.00   beat3=  0.00
+     Iteration converged after  23 steps, si =   0.00007305,  beta2 = 0.000,  beta3 =-0.000,   6/11  
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -8.1721419003926989     
+     Constraint:    7/11  beta2=  0.50   beat3=  0.01
+     Iteration converged after  53 steps, si =   0.00007991,  beta2 = 0.500,  beta3 = 0.010,   7/11  
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -8.4106906097533667     
+     Constraint:    8/11  beta2=  0.40   beat3=  0.01
+     Iteration converged after  46 steps, si =   0.00009474,  beta2 = 0.400,  beta3 = 0.010,   8/11  
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -8.3192849110057381     
+     Constraint:    9/11  beta2=  0.30   beat3=  0.01
+     Iteration converged after  48 steps, si =   0.00009644,  beta2 = 0.300,  beta3 = 0.010,   9/11  
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -8.0887974874101882     
+     Constraint:   10/11  beta2=  0.20   beat3=  0.01
+     Iteration converged after  43 steps, si =   0.00008562,  beta2 = 0.200,  beta3 = 0.010,  10/11  
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -8.0318655594130242     
+     Constraint:   11/11  beta2=  0.10   beat3=  0.01
+     Iteration converged after  56 steps, si =   0.00007778,  beta2 = 0.100,  beta3 = 0.010,  11/11  
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -8.1309247623124659     
+ CDFT_Main: CDFT calculations completed
+  ...PROGRAM END!...
+ CPU Time used (minutes):    7.20204020    
+ CPU Time used (hours):   0.120034002    
+ Real time (minutes)   7.27500010    
+ ... PROGRAM Start!...
+ MPI will create           21  processes.
+ OpenMP will create            5  threads.
+============================================================================================
+     CDFT skipped.
+     Nucleus                                 :   Ca   40
+     Number of oscillator shells (N0F)       :   10
+     Oscillator parameter b0 (fm)            :   use the empirical formula
+     Oscillator parameter beta0              :     0.000
+     Force Parameter                         :   PC-PK1    
+     Pairing strength for delta force        :   314.550 (neutrons)  346.500 (protons)
+     Deformation constraint                  :   beta2 + beta3
+     Deformation constraint number           :     11
+
+     1DAMP  +  PNP  +  PP   :
+     Number of euler angles                  :    1 (nalpha),  12 (nbeta),   1 (ngamma)
+     Symmetry of euler angles                :   Axially
+     Number gauge angles                     :    5 (nphi)
+     Kernels                                 :   Upper triangular kernels
+     Quadratic constraint q1 range           :   [  1, 11 ]
+     Quadratic constraint q2 range           :   [  1, 11 ]
+     Maximal J value                         :     0
+     Check N2 and J2                         :   Yes
+     Calculate density ME                    :   No
+     Calculate reduced transition density ME :   No
+     Calculate eccentricity kernel           :   No
+
+     GCM:
+     Mmax                                    :   0
+     Zeta                                    :  0.10E-03 0.10E-03 0.10E-03 0.10E-03 0.10E-03
+==========================================================================================
+ Proj_Main: Start Proj calculations
+     (q1,q2)=(  2,  7) >>>>>>>>>>
+     (q1,q2)=(  2,  5) >>>>>>>>>>
+     (q1,q2)=(  1,  3) >>>>>>>>>>
+     (q1,q2)=(  2,  9) >>>>>>>>>>
+     (q1,q2)=(  1,  7) >>>>>>>>>>
+     (q1,q2)=(  1,  8) >>>>>>>>>>
+     (q1,q2)=(  2, 11) >>>>>>>>>>
+     (q1,q2)=(  2,  6) >>>>>>>>>>
+     (q1,q2)=(  2, 10) >>>>>>>>>>
+     (q1,q2)=(  1,  4) >>>>>>>>>>
+     (q1,q2)=(  2,  4) >>>>>>>>>>
+     (q1,q2)=(  2,  2) >>>>>>>>>>
+     (q1,q2)=(  2,  8) >>>>>>>>>>
+     (q1,q2)=(  1,  9) >>>>>>>>>>
+     (q1,q2)=(  2,  3) >>>>>>>>>>
+     (q1,q2)=(  1, 11) >>>>>>>>>>
+     (q1,q2)=(  1, 10) >>>>>>>>>>
+     (q1,q2)=(  1,  2) >>>>>>>>>>
+     (q1,q2)=(  1,  6) >>>>>>>>>>
+     (q1,q2)=(  1,  1) >>>>>>>>>>
+     alpha:  1/1  beta:  1/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  1,  5) >>>>>>>>>>
+ ----------------------------------------------------------------------------------------
+ *****  ERROR IN LINGM, TOLERANZ = 0.4699E-01 WERT VON A( 31, 26) IST -0.1219E-01
+ R}�0------------------------------------------------------------------------------------
+ ----
+STOP WARNING!!!! Matrix pD has zero determinant !!!! 
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 0 PID 173388 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 1 PID 173389 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 2 PID 173390 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 3 PID 173391 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 4 PID 173392 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 6 PID 173394 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 7 PID 173395 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 8 PID 173396 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 9 PID 173397 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 10 PID 173398 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 11 PID 173399 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 12 PID 173400 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 13 PID 173401 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 14 PID 173402 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 15 PID 173403 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 16 PID 173405 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 17 PID 173406 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 18 PID 173407 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 19 PID 173408 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 20 PID 173409 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+calculation is finished !
+Time cost : 7min23s
+Done!

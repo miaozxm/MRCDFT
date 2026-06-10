@@ -9,7 +9,8 @@ obj/
 *.o
 mod/
 *.mod
-examples/
+examples/*/output*
+Labs/*/*/output*
 --git-common-dir/
 System_Calculation
 Rigid_Quant

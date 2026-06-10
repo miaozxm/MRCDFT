@@ -1,0 +1,489 @@
+日志文件: /home/xizhang/MRCDFT/examples/40Casacopy-1.1/logs/run_20260609_181628.log
+开始时间: Tue Jun  9 18:16:28 CST 2026
+[32m run ...[0m
+ ... PROGRAM Start!...
+ MPI will create           11  processes.
+ OpenMP will create            5  threads.
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+ Info: Creating directory: ./output/
+============================================================================================
+     Solve Dirac (BCS) Equation :
+     Nucleus                                 :   Ca   40
+     Number of oscillator shells (N0F)       :   10
+     Oscillator parameter b0 (fm)            :   use the empirical formula
+     Oscillator parameter beta0              :     0.000
+     Force Parameter                         :   PC-PK1    
+     Pairing strength for delta force        :   314.550 (neutrons)  346.500 (protons)
+     Deformation constraint                  :   beta2 + beta3
+     Deformation constraint number           :      5
+
+     1DAMP  +  PNP  +  PP   :
+     Number of euler angles                  :    1 (nalpha),  12 (nbeta),   1 (ngamma)
+     Symmetry of euler angles                :   Axially
+     Number gauge angles                     :    5 (nphi)
+     Kernels                                 :   Upper triangular kernels
+     Quadratic constraint q1 range           :   [  1,  5 ]
+     Quadratic constraint q2 range           :   [  1,  5 ]
+     Maximal J value                         :     0
+     Check N2 and J2                         :   Yes
+     Calculate density ME                    :   No
+     Calculate reduced transition density ME :   No
+     Calculate eccentricity kernel           :   No
+
+     GCM:
+     Mmax                                    :   0
+     Zeta                                    :  0.10E-03 0.10E-03 0.10E-03 0.10E-03 0.10E-03
+==========================================================================================
+ CDFT_Main: Start CDFT calculations
+     Constraint:    1/5   beta2= -0.50   beat3=  0.01
+     Constraint:    3/5   beta2= -0.30   beat3=  0.01
+     Constraint:    2/5   beta2= -0.40   beat3=  0.01
+     Constraint:    4/5   beta2= -0.20   beat3=  0.01
+     Constraint:    5/5   beta2= -0.10   beat3=  0.01
+     Iteration converged after  53 steps, si =   0.00004599,  beta2 =-0.300,  beta3 = 0.010,   3/5   
+     Iteration converged after  54 steps, si =   0.00009261,  beta2 =-0.100,  beta3 = 0.010,   5/5   
+     Iteration converged after  55 steps, si =   0.00006550,  beta2 =-0.200,  beta3 = 0.010,   4/5   
+     Iteration converged after  68 steps, si =   0.00006125,  beta2 =-0.400,  beta3 = 0.010,   2/5   
+     Iteration converged after  81 steps, si =   0.00009598,  beta2 =-0.500,  beta3 = 0.010,   1/5   
+ 1E-cm=  -8.9913545450045635     
+ 1E-cm=  -8.9913545450045635     
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -3.6863002710257983E+293
+ 2E-cm=  -6.0002379934414246E+293
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=  -4.8350376710220842E+293
+ 1E-cm=  -8.9913545450045635     
+ 2E-cm=   3.8934072328024237E+298
+ 2E-cm=  -8.3538745117434878     
+ CDFT_Main: CDFT calculations completed
+ Proj_Main: Start Proj calculations
+     (q1,q2)=(  2,  3) >>>>>>>>>>
+     (q1,q2)=(  3,  3) >>>>>>>>>>
+     (q1,q2)=(  2,  4) >>>>>>>>>>
+     (q1,q2)=(  3,  4) >>>>>>>>>>
+     (q1,q2)=(  2,  5) >>>>>>>>>>
+     (q1,q2)=(  1,  4) >>>>>>>>>>
+     (q1,q2)=(  1,  3) >>>>>>>>>>
+     (q1,q2)=(  1,  2) >>>>>>>>>>
+     (q1,q2)=(  1,  1) >>>>>>>>>>
+     alpha:  1/1  beta:  1/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  2,  2) >>>>>>>>>>
+     (q1,q2)=(  1,  5) >>>>>>>>>>
+     alpha:  1/1  beta:  2/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  3/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  4/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  5/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  6/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     (q1,q2)=(  5,  5) >>>>>>>>>>
+     (q1,q2)=(  4,  4) >>>>>>>>>>
+     (q1,q2)=(  4,  5) >>>>>>>>>>
+     alpha:  1/1  beta:  7/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  8/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  9/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 10/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 11/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 12/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     (q1,q2)=(  3,  5) >>>>>>>>>>
+     alpha:  1/1  beta:  1/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  2/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  3/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  4/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  5/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  6/12 gamma:  1/1  calculate_overlaps_after_PNP_at_Euler_angles ...
+     alpha:  1/1  beta:  7/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  8/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta:  9/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 10/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 11/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+     alpha:  1/1  beta: 12/12 gamma:  1/1  (beta) symmetry (Axially+Parity).
+ Proj_Main: Proj calculations completed
+ GCM_Main: Start Proj calculations
+     Reading kernels for GCM calculations...
+     Solving the HWG equation for each J^pi...
+*** Error in `/home/xizhang/MRCDFT/bin/MRCDFT': free(): invalid next size (fast): 0x00000000493ea770 ***
+======= Backtrace: =========
+/lib64/libc.so.6(+0x81299)[0x2ac7bad23299]
+/home/xizhang/MRCDFT/bin/MRCDFT[0x45bae2]
+/home/xizhang/MRCDFT/bin/MRCDFT[0x43fa6a]
+/home/xizhang/MRCDFT/bin/MRCDFT[0x447644]
+/home/xizhang/MRCDFT/bin/MRCDFT[0x4c06a3]
+/home/xizhang/MRCDFT/bin/MRCDFT[0x40296d]
+/lib64/libc.so.6(__libc_start_main+0xf5)[0x2ac7bacc4555]
+/home/xizhang/MRCDFT/bin/MRCDFT[0x40299d]
+======= Memory map: ========
+00400000-00402000 r--p 00000000 00:2b 791283331                          /home/xizhang/MRCDFT/bin/MRCDFT
+00402000-004c1000 r-xp 00002000 00:2b 791283331                          /home/xizhang/MRCDFT/bin/MRCDFT
+004c1000-068c6000 r--p 000c1000 00:2b 791283331                          /home/xizhang/MRCDFT/bin/MRCDFT
+068c6000-068c7000 r--p 064c5000 00:2b 791283331                          /home/xizhang/MRCDFT/bin/MRCDFT
+068c7000-068c9000 rw-p 064c6000 00:2b 791283331                          /home/xizhang/MRCDFT/bin/MRCDFT
+068c9000-47ce0000 rw-p 00000000 00:00 0 
+48e5a000-4a9ef000 rw-p 00000000 00:00 0                                  [heap]
+2ac7b0d3e000-2ac7b0d60000 r-xp 00000000 fd:00 41962497                   /usr/lib64/ld-2.17.so
+2ac7b0d60000-2ac7b0d62000 r-xp 00000000 00:00 0                          [vdso]
+2ac7b0d62000-2ac7b0d74000 rw-p 00000000 00:00 0 
+2ac7b0d74000-2ac7b0d75000 r--s 00500000 00:05 15397                      /dev/infiniband/uverbs0
+2ac7b0d75000-2ac7b0d76000 r--s 00700000 00:05 15397                      /dev/infiniband/uverbs0
+2ac7b0d76000-2ac7b0d77000 -w-s 00900000 00:05 15397                      /dev/infiniband/uverbs0
+2ac7b0d77000-2ac7b0d78000 r--s 00500000 00:05 15397                      /dev/infiniband/uverbs0
+2ac7b0d78000-2ac7b0d79000 r--s 00700000 00:05 15397                      /dev/infiniband/uverbs0
+2ac7b0d79000-2ac7b0d7a000 -w-s 00900000 00:05 15397                      /dev/infiniband/uverbs0
+2ac7b0d7a000-2ac7b0d7b000 -w-s 00901000 00:05 15397                      /dev/infiniband/uverbs0
+2ac7b0d7b000-2ac7b0d7c000 r--s 00500000 00:05 15397                      /dev/infiniband/uverbs0
+2ac7b0d7c000-2ac7b0d7d000 r--s 00700000 00:05 15397                      /dev/infiniband/uverbs0
+2ac7b0d7d000-2ac7b0d7e000 -w-s 00900000 00:05 15397                      /dev/infiniband/uverbs0
+2ac7b0d7e000-2ac7b0d7f000 -w-s 00901000 00:05 15397                      /dev/infiniband/uverbs0
+2ac7b0d7f000-2ac7b0d82000 rw-s 00000000 00:04 98730004                   /SYSV00000000 (deleted)
+2ac7b0d82000-2ac7b0d83000 -w-s 00902000 00:05 15397                      /dev/infiniband/uverbs0
+2ac7b0d83000-2ac7b0f1e000 rw-p 00000000 00:00 0 
+2ac7b0f1e000-2ac7b0f21000 rw-s 00000000 00:13 47771073                   /dev/shm/ucx_shm_posix_67fba74c (deleted)
+2ac7b0f21000-2ac7b0f4a000 rw-p 00000000 00:00 0 
+2ac7b0f4c000-2ac7b0f4f000 rw-s 00000000 00:00 0 
+2ac7b0f4f000-2ac7b0f50000 rw-p 00000000 00:00 0 
+2ac7b0f50000-2ac7b0f53000 rw-s 00000000 00:00 0 
+2ac7b0f53000-2ac7b0f56000 rw-s 00000000 00:04 98697243                   /SYSV00000000 (deleted)
+2ac7b0f56000-2ac7b0f59000 rw-s 00000000 00:00 0 
+2ac7b0f59000-2ac7b0f5c000 rw-s 00000000 00:04 98729991                   /SYSV00000000 (deleted)
+2ac7b0f5c000-2ac7b0f5f000 rw-s 00000000 00:00 0 
+2ac7b0f5f000-2ac7b0f60000 r--p 00021000 fd:00 41962497                   /usr/lib64/ld-2.17.so
+2ac7b0f60000-2ac7b0f61000 rw-p 00022000 fd:00 41962497                   /usr/lib64/ld-2.17.so
+2ac7b0f61000-2ac7b0f62000 rw-p 00000000 00:00 0 
+2ac7b0f62000-2ac7b10f4000 r-xp 00000000 00:2a 3545218                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/lib/libmpifort.so.12.0.0
+2ac7b10f4000-2ac7b12f4000 ---p 00192000 00:2a 3545218                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/lib/libmpifort.so.12.0.0
+2ac7b12f4000-2ac7b12f8000 r--p 00192000 00:2a 3545218                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/lib/libmpifort.so.12.0.0
+2ac7b12f8000-2ac7b12fc000 rw-p 00196000 00:2a 3545218                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/lib/libmpifort.so.12.0.0
+2ac7b12fc000-2ac7b1320000 rw-p 00000000 00:00 0 
+2ac7b1320000-2ac7b21eb000 r-xp 00000000 00:2a 3545227                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/lib/release/libmpi.so.12.0.0
+2ac7b21eb000-2ac7b23eb000 ---p 00ecb000 00:2a 3545227                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/lib/release/libmpi.so.12.0.0
+2ac7b23eb000-2ac7b23fc000 r--p 00ecb000 00:2a 3545227                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/lib/release/libmpi.so.12.0.0
+2ac7b23fc000-2ac7b240d000 rw-p 00edc000 00:2a 3545227                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/lib/release/libmpi.so.12.0.0
+2ac7b240d000-2ac7b2717000 rw-p 00000000 00:00 0 
+2ac7b2717000-2ac7b271e000 r-xp 00000000 fd:00 41962534                   /usr/lib64/librt-2.17.so
+2ac7b271e000-2ac7b291d000 ---p 00007000 fd:00 41962534                   /usr/lib64/librt-2.17.so
+2ac7b291d000-2ac7b291e000 r--p 00006000 fd:00 41962534                   /usr/lib64/librt-2.17.so
+2ac7b291e000-2ac7b291f000 rw-p 00007000 fd:00 41962534                   /usr/lib64/librt-2.17.so
+2ac7b291f000-2ac7b2921000 r-xp 00000000 fd:00 41962510                   /usr/lib64/libdl-2.17.so
+2ac7b2921000-2ac7b2b21000 ---p 00002000 fd:00 41962510                   /usr/lib64/libdl-2.17.so
+2ac7b2b21000-2ac7b2b22000 r--p 00002000 fd:00 41962510                   /usr/lib64/libdl-2.17.so
+2ac7b2b22000-2ac7b2b23000 rw-p 00003000 fd:00 41962510                   /usr/lib64/libdl-2.17.so
+2ac7b2b23000-2ac7b2b48000 r-xp 00000000 fd:00 42021464                   /usr/lib64/libgomp.so.1.0.0
+2ac7b2b48000-2ac7b2d47000 ---p 00025000 fd:00 42021464                   /usr/lib64/libgomp.so.1.0.0
+2ac7b2d47000-2ac7b2d48000 r--p 00024000 fd:00 42021464                   /usr/lib64/libgomp.so.1.0.0
+2ac7b2d48000-2ac7b2d49000 rw-p 00025000 fd:00 42021464                   /usr/lib64/libgomp.so.1.0.0
+2ac7b2d49000-2ac7b2d60000 r-xp 00000000 fd:00 41962530                   /usr/lib64/libpthread-2.17.so
+2ac7b2d60000-2ac7b2f5f000 ---p 00017000 fd:00 41962530                   /usr/lib64/libpthread-2.17.so
+2ac7b2f5f000-2ac7b2f60000 r--p 00016000 fd:00 41962530                   /usr/lib64/libpthread-2.17.so
+2ac7b2f60000-2ac7b2f61000 rw-p 00017000 fd:00 41962530                   /usr/lib64/libpthread-2.17.so
+2ac7b2f61000-2ac7b2f65000 rw-p 00000000 00:00 0 
+2ac7b2f65000-2ac7b3ae0000 r-xp 00000000 00:2a 3539637                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_gf_lp64.so.1
+2ac7b3ae0000-2ac7b3cdf000 ---p 00b7b000 00:2a 3539637                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_gf_lp64.so.1
+2ac7b3cdf000-2ac7b3ce1000 r--p 00b7a000 00:2a 3539637                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_gf_lp64.so.1
+2ac7b3ce1000-2ac7b3cf4000 rw-p 00b7c000 00:2a 3539637                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_gf_lp64.so.1
+2ac7b3cf4000-2ac7b3cfb000 rw-p 00000000 00:00 0 
+2ac7b3cfb000-2ac7b810b000 r-xp 00000000 00:2a 3539632                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_core.so.1
+2ac7b810b000-2ac7b830a000 ---p 04410000 00:2a 3539632                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_core.so.1
+2ac7b830a000-2ac7b8311000 r--p 0440f000 00:2a 3539632                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_core.so.1
+2ac7b8311000-2ac7b8341000 rw-p 04416000 00:2a 3539632                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_core.so.1
+2ac7b8341000-2ac7b836a000 rw-p 00000000 00:00 0 
+2ac7b836a000-2ac7b9e85000 r-xp 00000000 00:2a 3539639                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_gnu_thread.so.1
+2ac7b9e85000-2ac7ba085000 ---p 01b1b000 00:2a 3539639                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_gnu_thread.so.1
+2ac7ba085000-2ac7ba089000 r--p 01b1b000 00:2a 3539639                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_gnu_thread.so.1
+2ac7ba089000-2ac7ba0d6000 rw-p 01b1f000 00:2a 3539639                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_gnu_thread.so.1
+2ac7ba0d6000-2ac7ba34c000 r-xp 00000000 fd:00 43873390                   /usr/lib64/libgfortran.so.5.0.0
+2ac7ba34c000-2ac7ba54b000 ---p 00276000 fd:00 43873390                   /usr/lib64/libgfortran.so.5.0.0
+2ac7ba54b000-2ac7ba54c000 r--p 00275000 fd:00 43873390                   /usr/lib64/libgfortran.so.5.0.0
+2ac7ba54c000-2ac7ba54e000 rw-p 00276000 fd:00 43873390                   /usr/lib64/libgfortran.so.5.0.0
+2ac7ba54e000-2ac7ba64f000 r-xp 00000000 fd:00 41962512                   /usr/lib64/libm-2.17.so
+2ac7ba64f000-2ac7ba84e000 ---p 00101000 fd:00 41962512                   /usr/lib64/libm-2.17.so
+2ac7ba84e000-2ac7ba84f000 r--p 00100000 fd:00 41962512                   /usr/lib64/libm-2.17.so
+2ac7ba84f000-2ac7ba850000 rw-p 00101000 fd:00 41962512                   /usr/lib64/libm-2.17.so
+2ac7ba850000-2ac7ba865000 r-xp 00000000 fd:00 41943555                   /usr/lib64/libgcc_s-4.8.5-20150702.so.1
+2ac7ba865000-2ac7baa64000 ---p 00015000 fd:00 41943555                   /usr/lib64/libgcc_s-4.8.5-20150702.so.1
+2ac7baa64000-2ac7baa65000 r--p 00014000 fd:00 41943555                   /usr/lib64/libgcc_s-4.8.5-20150702.so.1
+2ac7baa65000-2ac7baa66000 rw-p 00015000 fd:00 41943555                   /usr/lib64/libgcc_s-4.8.5-20150702.so.1
+2ac7baa66000-2ac7baaa1000 r-xp 00000000 fd:00 42100397                   /usr/lib64/libquadmath.so.0.0.0
+2ac7baaa1000-2ac7baca0000 ---p 0003b000 fd:00 42100397                   /usr/lib64/libquadmath.so.0.0.0
+2ac7baca0000-2ac7baca1000 r--p 0003a000 fd:00 42100397                   /usr/lib64/libquadmath.so.0.0.0
+2ac7baca1000-2ac7baca2000 rw-p 0003b000 fd:00 42100397                   /usr/lib64/libquadmath.so.0.0.0
+2ac7baca2000-2ac7bad97000 r-xp 00000000 fd:00 41962504                   /usr/lib64/libc-2.17.so
+2ac7bad97000-2ac7bad98000 r-xp 000f5000 fd:00 41962504                   /usr/lib64/libc-2.17.so
+2ac7bad98000-2ac7bad9a000 r-xp 000f6000 fd:00 41962504                   /usr/lib64/libc-2.17.so
+2ac7bad9a000-2ac7bad9b000 r-xp 000f8000 fd:00 41962504                   /usr/lib64/libc-2.17.so
+2ac7bad9b000-2ac7bada1000 r-xp 000f9000 fd:00 41962504                   /usr/lib64/libc-2.17.so
+2ac7bada1000-2ac7bada3000 r-xp 000ff000 fd:00 41962504                   /usr/lib64/libc-2.17.so
+2ac7bada3000-2ac7bae65000 r-xp 00101000 fd:00 41962504                   /usr/lib64/libc-2.17.so
+2ac7bae65000-2ac7bb065000 ---p 001c3000 fd:00 41962504                   /usr/lib64/libc-2.17.so
+2ac7bb065000-2ac7bb069000 r--p 001c3000 fd:00 41962504                   /usr/lib64/libc-2.17.so
+2ac7bb069000-2ac7bb06b000 rw-p 001c7000 fd:00 41962504                   /usr/lib64/libc-2.17.so
+2ac7bb06b000-2ac7bb070000 rw-p 00000000 00:00 0 
+2ac7bb070000-2ac7bb08c000 r-xp 00000000 00:2a 3020412                    /opt/ohpc/pub/apps/intel/compiler/2021.3.0/linux/lib/oclfpga/host/linux64/lib/libz.so.1
+2ac7bb08c000-2ac7bb28b000 ---p 0001c000 00:2a 3020412                    /opt/ohpc/pub/apps/intel/compiler/2021.3.0/linux/lib/oclfpga/host/linux64/lib/libz.so.1
+2ac7bb28b000-2ac7bb28c000 r--p 0001b000 00:2a 3020412                    /opt/ohpc/pub/apps/intel/compiler/2021.3.0/linux/lib/oclfpga/host/linux64/lib/libz.so.1
+2ac7bb28c000-2ac7bb28d000 rw-p 0001c000 00:2a 3020412                    /opt/ohpc/pub/apps/intel/compiler/2021.3.0/linux/lib/oclfpga/host/linux64/lib/libz.so.1
+2ac7bb28d000-2ac7bb297000 r-xp 00000000 fd:00 41965243                   /usr/lib64/libnuma.so.1.0.0
+2ac7bb297000-2ac7bb497000 ---p 0000a000 fd:00 41965243                   /usr/lib64/libnuma.so.1.0.0
+2ac7bb497000-2ac7bb498000 r--p 0000a000 fd:00 41965243                   /usr/lib64/libnuma.so.1.0.0
+2ac7bb498000-2ac7bb499000 rw-p 0000b000 fd:00 41965243                   /usr/lib64/libnuma.so.1.0.0
+2ac7bb499000-2ac7bb69a000 rw-s 00000000 00:13 47763931                   /dev/shm/Intel_MPI_t12kLt (deleted)
+2ac7bb69a000-2ac7fb69a000 rw-s 00201000 00:13 47763931                   /dev/shm/Intel_MPI_t12kLt (deleted)
+2ac7fb69a000-2aca7b89b000 rw-s 40201000 00:13 47763931                   /dev/shm/Intel_MPI_t12kLt (deleted)
+2aca7b89b000-2aca7bc9c000 rw-p 00000000 00:00 0 
+2aca7bc9c000-2aca7bce0000 r-xp 00000000 00:2a 3545245                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/libfabric.so.1
+2aca7bce0000-2aca7bee0000 ---p 00044000 00:2a 3545245                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/libfabric.so.1
+2aca7bee0000-2aca7bee3000 rw-p 00044000 00:2a 3545245                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/libfabric.so.1
+2aca7bee3000-2aca7bf32000 r-xp 00000000 00:2a 3545251                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/librxm-fi.so
+2aca7bf32000-2aca7c131000 ---p 0004f000 00:2a 3545251                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/librxm-fi.so
+2aca7c131000-2aca7c135000 rw-p 0004e000 00:2a 3545251                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/librxm-fi.so
+2aca7c135000-2aca7c174000 r-xp 00000000 00:2a 3545248                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libmlx-fi.so
+2aca7c174000-2aca7c374000 ---p 0003f000 00:2a 3545248                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libmlx-fi.so
+2aca7c374000-2aca7c377000 rw-p 0003f000 00:2a 3545248                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libmlx-fi.so
+2aca7c377000-2aca7c431000 r-xp 00000000 fd:00 42804232                   /usr/lib64/libucp.so.0.0.0
+2aca7c431000-2aca7c631000 ---p 000ba000 fd:00 42804232                   /usr/lib64/libucp.so.0.0.0
+2aca7c631000-2aca7c632000 r--p 000ba000 fd:00 42804232                   /usr/lib64/libucp.so.0.0.0
+2aca7c632000-2aca7c639000 rw-p 000bb000 fd:00 42804232                   /usr/lib64/libucp.so.0.0.0
+2aca7c639000-2aca7c66c000 r-xp 00000000 fd:00 42804238                   /usr/lib64/libuct.so.0.0.0
+2aca7c66c000-2aca7c86b000 ---p 00033000 fd:00 42804238                   /usr/lib64/libuct.so.0.0.0
+2aca7c86b000-2aca7c86c000 r--p 00032000 fd:00 42804238                   /usr/lib64/libuct.so.0.0.0
+2aca7c86c000-2aca7c870000 rw-p 00033000 fd:00 42804238                   /usr/lib64/libuct.so.0.0.0
+2aca7c870000-2aca7c871000 rw-p 00000000 00:00 0 
+2aca7c871000-2aca7c9ce000 r-xp 00000000 fd:00 42804234                   /usr/lib64/libucs.so.0.0.0
+2aca7c9ce000-2aca7cbce000 ---p 0015d000 fd:00 42804234                   /usr/lib64/libucs.so.0.0.0
+2aca7cbce000-2aca7cbe1000 r--p 0015d000 fd:00 42804234                   /usr/lib64/libucs.so.0.0.0
+2aca7cbe1000-2aca7cbe9000 rw-p 00170000 fd:00 42804234                   /usr/lib64/libucs.so.0.0.0
+2aca7cbe9000-2aca7cbf2000 rw-p 00000000 00:00 0 
+2aca7cbf2000-2aca7cc08000 r-xp 00000000 fd:00 42804230                   /usr/lib64/libucm.so.0.0.0
+2aca7cc08000-2aca7ce08000 ---p 00016000 fd:00 42804230                   /usr/lib64/libucm.so.0.0.0
+2aca7ce08000-2aca7ce09000 r--p 00016000 fd:00 42804230                   /usr/lib64/libucm.so.0.0.0
+2aca7ce09000-2aca7ce0a000 rw-p 00017000 fd:00 42804230                   /usr/lib64/libucm.so.0.0.0
+2aca7ce0a000-2aca7ce0b000 rw-p 00000000 00:00 0 
+2aca7ce0b000-2aca7ce64000 r-xp 00000000 00:2a 3545253                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libsockets-fi.so
+2aca7ce64000-2aca7d063000 ---p 00059000 00:2a 3545253                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libsockets-fi.so
+2aca7d063000-2aca7d067000 rw-p 00058000 00:2a 3545253                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libsockets-fi.so
+2aca7d067000-2aca7d0a5000 r-xp 00000000 00:2a 3545254                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libtcp-fi.so
+2aca7d0a5000-2aca7d2a5000 ---p 0003e000 00:2a 3545254                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libtcp-fi.so
+2aca7d2a5000-2aca7d2a8000 rw-p 0003e000 00:2a 3545254                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libtcp-fi.so
+2aca7d2a8000-2aca7d2fd000 r-xp 00000000 00:2a 3545255                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libverbs-fi.so
+2aca7d2fd000-2aca7d4fc000 ---p 00055000 00:2a 3545255                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libverbs-fi.so
+2aca7d4fc000-2aca7d500000 rw-p 00054000 00:2a 3545255                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libverbs-fi.so
+2aca7d500000-2aca7d518000 r-xp 00000000 fd:00 42771154                   /usr/lib64/librdmacm.so.1.3.43.0
+2aca7d518000-2aca7d717000 ---p 00018000 fd:00 42771154                   /usr/lib64/librdmacm.so.1.3.43.0
+2aca7d717000-2aca7d718000 r--p 00017000 fd:00 42771154                   /usr/lib64/librdmacm.so.1.3.43.0
+2aca7d718000-2aca7d719000 rw-p 00018000 fd:00 42771154                   /usr/lib64/librdmacm.so.1.3.43.0
+2aca7d719000-2aca7d71a000 rw-p 00000000 00:00 0 
+2aca7d71a000-2aca7d738000 r-xp 00000000 fd:00 42771146                   /usr/lib64/libibverbs.so.1.14.43.0
+2aca7d738000-2aca7d937000 ---p 0001e000 fd:00 42771146                   /usr/lib64/libibverbs.so.1.14.43.0
+2aca7d937000-2aca7d938000 r--p 0001d000 fd:00 42771146                   /usr/lib64/libibverbs.so.1.14.43.0
+2aca7d938000-2aca7d939000 rw-p 0001e000 fd:00 42771146                   /usr/lib64/libibverbs.so.1.14.43.0
+2aca7d939000-2aca7d957000 r-xp 00000000 fd:00 41965121                   /usr/lib64/libnl-3.so.200.23.0
+2aca7d957000-2aca7db57000 ---p 0001e000 fd:00 41965121                   /usr/lib64/libnl-3.so.200.23.0
+2aca7db57000-2aca7db59000 r--p 0001e000 fd:00 41965121                   /usr/lib64/libnl-3.so.200.23.0
+2aca7db59000-2aca7db5a000 rw-p 00020000 fd:00 41965121                   /usr/lib64/libnl-3.so.200.23.0
+2aca7db5a000-2aca7dbbe000 r-xp 00000000 fd:00 41965129                   /usr/lib64/libnl-route-3.so.200.23.0
+2aca7dbbe000-2aca7ddbd000 ---p 00064000 fd:00 41965129                   /usr/lib64/libnl-route-3.so.200.23.0
+2aca7ddbd000-2aca7ddc0000 r--p 00063000 fd:00 41965129                   /usr/lib64/libnl-route-3.so.200.23.0
+2aca7ddc0000-2aca7ddc5000 rw-p 00066000 fd:00 41965129                   /usr/lib64/libnl-route-3.so.200.23.0
+2aca7ddc5000-2aca7ddc7000 rw-p 00000000 00:00 0 
+2aca7ddc7000-2aca7de37000 r-xp 00000000 fd:00 42771158                   /usr/lib64/libmlx5.so.1.24.43.0
+2aca7de37000-2aca7e037000 ---p 00070000 fd:00 42771158                   /usr/lib64/libmlx5.so.1.24.43.0
+2aca7e037000-2aca7e038000 r--p 00070000 fd:00 42771158                   /usr/lib64/libmlx5.so.1.24.43.0
+2aca7e038000-2aca7e039000 rw-p 00071000 fd:00 42771158                   /usr/lib64/libmlx5.so.1.24.43.0
+2aca7e039000-2aca7e03c000 rw-p 00000000 00:00 0 
+2aca7e03c000-2aca7e080000 r-xp 00000000 00:2a 3545252                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libshm-fi.so
+2aca7e080000-2aca7e27f000 ---p 00044000 00:2a 3545252                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libshm-fi.so
+2aca7e27f000-2aca7e282000 rw-p 00043000 00:2a 3545252                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libshm-fi.so
+2aca7e282000-2aca7e3b2000 r-xp 00000000 00:2a 3545249                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libpsm3-fi.so
+2aca7e3b2000-2aca7e5b1000 ---p 00130000 00:2a 3545249                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libpsm3-fi.so
+2aca7e5b1000-2aca7e5b8000 rw-p 0012f000 00:2a 3545249                    /opt/ohpc/pub/apps/intel/mpi/2021.3.0/libfabric/lib/prov/libpsm3-fi.so
+2aca7e5b8000-2aca7e5de000 rw-p 00000000 00:00 0 
+2aca7e5de000-2aca7e65e000 r-xp 00000000 fd:00 84366963                   /usr/lib64/ucx/libuct_ib.so.0.0.0
+2aca7e65e000-2aca7e85d000 ---p 00080000 fd:00 84366963                   /usr/lib64/ucx/libuct_ib.so.0.0.0
+2aca7e85d000-2aca7e85e000 r--p 0007f000 fd:00 84366963                   /usr/lib64/ucx/libuct_ib.so.0.0.0
+2aca7e85e000-2aca7e864000 rw-p 00080000 fd:00 84366963                   /usr/lib64/ucx/libuct_ib.so.0.0.0
+2aca7e864000-2aca7e86f000 r-xp 00000000 fd:00 84366965                   /usr/lib64/ucx/libuct_rdmacm.so.0.0.0
+2aca7e86f000-2aca7ea6e000 ---p 0000b000 fd:00 84366965                   /usr/lib64/ucx/libuct_rdmacm.so.0.0.0
+2aca7ea6e000-2aca7ea6f000 r--p 0000a000 fd:00 84366965                   /usr/lib64/ucx/libuct_rdmacm.so.0.0.0
+2aca7ea6f000-2aca7ea70000 rw-p 0000b000 fd:00 84366965                   /usr/lib64/ucx/libuct_rdmacm.so.0.0.0
+2aca7ea70000-2aca7ea74000 r-xp 00000000 fd:00 84366961                   /usr/lib64/ucx/libuct_cma.so.0.0.0
+2aca7ea74000-2aca7ec73000 ---p 00004000 fd:00 84366961                   /usr/lib64/ucx/libuct_cma.so.0.0.0
+2aca7ec73000-2aca7ec74000 r--p 00003000 fd:00 84366961                   /usr/lib64/ucx/libuct_cma.so.0.0.0
+2aca7ec74000-2aca7ec75000 rw-p 00004000 fd:00 84366961                   /usr/lib64/ucx/libuct_cma.so.0.0.0
+2aca7ec75000-2aca7ec7a000 r-xp 00000000 fd:00 84366967                   /usr/lib64/ucx/libuct_knem.so.0.0.0
+2aca7ec7a000-2aca7ee79000 ---p 00005000 fd:00 84366967                   /usr/lib64/ucx/libuct_knem.so.0.0.0
+2aca7ee79000-2aca7ee7a000 r--p 00004000 fd:00 84366967                   /usr/lib64/ucx/libuct_knem.so.0.0.0
+2aca7ee7a000-2aca7ee7b000 rw-p 00005000 fd:00 84366967                   /usr/lib64/ucx/libuct_knem.so.0.0.0
+2aca7ee7b000-2aca7ee7f000 r-xp 00000000 fd:00 84366969                   /usr/lib64/ucx/libuct_xpmem.so.0.0.0
+2aca7ee7f000-2aca7f07e000 ---p 00004000 fd:00 84366969                   /usr/lib64/ucx/libuct_xpmem.so.0.0.0
+2aca7f07e000-2aca7f07f000 r--p 00003000 fd:00 84366969                   /usr/lib64/ucx/libuct_xpmem.so.0.0.0
+2aca7f07f000-2aca7f080000 rw-p 00004000 fd:00 84366969                   /usr/lib64/ucx/libuct_xpmem.so.0.0.0
+2aca7f080000-2aca7f081000 r-xp 00000000 fd:00 44035138                   /usr/lib64/libxpmem.so.0.0.0
+2aca7f081000-2aca7f281000 ---p 00001000 fd:00 44035138                   /usr/lib64/libxpmem.so.0.0.0
+2aca7f281000-2aca7f282000 r--p 00001000 fd:00 44035138                   /usr/lib64/libxpmem.so.0.0.0
+2aca7f282000-2aca7f283000 rw-p 00002000 fd:00 44035138                   /usr/lib64/libxpmem.so.0.0.0
+2aca7f283000-2aca7f284000 ---p 00000000 00:00 0 
+2aca7f284000-2aca7f484000 rw-p 00000000 00:00 0 
+2aca7f484000-2aca7f89d000 rw-s 00000000 00:04 98730007                   /SYSV00000000 (deleted)
+2aca7f89d000-2aca7fcb6000 rw-s 00000000 00:13 47771075                   /dev/shm/ucx_shm_posix_71f331f4 (deleted)
+2aca7fcb6000-2aca7ff76000 rw-p 00000000 00:00 0 
+2aca7ff76000-2aca7ff79000 rw-s 00000000 00:04 98697249                   /SYSV00000000 (deleted)
+2aca7ff79000-2aca7ff9e000 rw-p 00000000 00:00 0 
+2aca7ff9e000-2aca7ffa1000 rw-s 00000000 00:00 0 
+2aca7ffa1000-2aca7ffa4000 rw-s 00000000 00:04 98730009                   /SYSV00000000 (deleted)
+2aca7ffa4000-2aca7ffc9000 rw-p 00000000 00:00 0 
+2aca7ffc9000-2aca7ffcc000 rw-s 00000000 00:00 0 
+2aca7ffcc000-2aca7ffcf000 rw-s 00000000 00:04 98729995                   /SYSV00000000 (deleted)
+2aca7ffcf000-2aca7fff4000 rw-p 00000000 00:00 0 
+2aca7fff4000-2aca7fff7000 rw-s 00000000 00:00 0 
+2aca7fff7000-2aca7fffa000 rw-s 00000000 00:04 98730002                   /SYSV00000000 (deleted)
+2aca7fffa000-2aca7fffd000 rw-s 00000000 00:00 0 
+2aca7fffd000-2aca80000000 rw-s 00000000 00:04 98697237                   /SYSV00000000 (deleted)
+2aca80000000-2aca80021000 rw-p 00000000 00:00 0 
+2aca80021000-2aca84000000 ---p 00000000 00:00 0 
+2aca84000000-2aca84600000 rw-p 00000000 00:00 0 
+2aca84600000-2aca84c00000 rw-p 00000000 00:00 0 
+2aca84c00000-2aca84e00000 rw-p 00000000 00:00 0 
+2aca84e00000-2aca87400000 rw-p 00000000 00:00 0 
+2aca87400000-2aca87600000 rw-p 00000000 00:00 0 
+2aca87600000-2aca88a00000 rw-p 00000000 00:00 0 
+2aca88a00000-2aca88a66000 rw-p 00000000 00:00 0 
+2aca88a66000-2aca88a69000 rw-s 00000000 00:00 0 
+2aca88a69000-2aca88a6c000 rw-s 00000000 00:04 98729999                   /SYSV00000000 (deleted)
+2aca88a6c000-2aca88a91000 rw-p 00000000 00:00 0 
+2aca88a91000-2aca88a94000 rw-s 00000000 00:00 0 
+2aca88a94000-2aca88a97000 rw-s 00000000 00:04 98729984                   /SYSV00000000 (deleted)
+2aca88a97000-2aca88abc000 rw-p 00000000 00:00 0 
+2aca88abc000-2aca88abf000 rw-s 00000000 00:00 0 
+2aca88abf000-2aca88ac2000 rw-s 00000000 00:04 98697277                   /SYSV00000000 (deleted)
+2aca88ac2000-2aca89cd2000 rw-p 00000000 00:00 0 
+2aca89cd2000-2aca8a0eb000 rw-s 00000000 00:04 98730003                   /SYSV00000000 (deleted)
+2aca8a0eb000-2aca8a504000 rw-s 00000000 00:04 98729993                   /SYSV00000000 (deleted)
+2aca8a504000-2aca8a91d000 rw-s 00000000 00:04 98697250                   /SYSV00000000 (deleted)
+2aca8a91d000-2aca8ad36000 rw-s 00000000 00:04 98730000                   /SYSV00000000 (deleted)
+2aca8ad36000-2aca8b14f000 rw-s 00000000 00:04 98730010                   /SYSV00000000 (deleted)
+2aca8b14f000-2aca8b568000 rw-s 00000000 00:04 98697279                   /SYSV00000000 (deleted)
+2aca8b568000-2acdfe191000 rw-p 00000000 00:00 0 
+2acf44efa000-2acf475f9000 r-xp 00000000 00:2a 3539633                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_def.so.1
+2acf475f9000-2acf477f8000 ---p 026ff000 00:2a 3539633                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_def.so.1
+2acf477f8000-2acf477fb000 r--p 026fe000 00:2a 3539633                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_def.so.1
+2acf477fb000-2acf47801000 rw-p 02701000 00:2a 3539633                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_def.so.1
+2acf47801000-2acf47802000 rw-p 00000000 00:00 0 
+2acf47802000-2acf47ff2000 r-xp 00000000 00:2a 3539667                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_vml_def.so.1
+2acf47ff2000-2acf481f2000 ---p 007f0000 00:2a 3539667                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_vml_def.so.1
+2acf481f2000-2acf481f5000 r--p 007f0000 00:2a 3539667                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_vml_def.so.1
+2acf481f5000-2acf4820f000 rw-p 007f3000 00:2a 3539667                    /opt/ohpc/pub/apps/intel/mkl/2021.3.0/lib/intel64/libmkl_vml_def.so.1
+2acf4820f000-2acf48210000 rw-p 00000000 00:00 0 
+2acf48210000-2acf48211000 ---p 00000000 00:00 0 
+2acf48211000-2acf48411000 rw-p 00000000 00:00 0 
+2acf48411000-2acf48412000 ---p 00000000 00:00 0 
+2acf48412000-2acf48612000 rw-p 00000000 00:00 0 
+2acf48612000-2acf48613000 ---p 00000000 00:00 0 
+2acf48613000-2acf48813000 rw-p 00000000 00:00 0 
+2acf48813000-2acf48814000 ---p 00000000 00:00 0 
+2acf48814000-2acf48a14000 rw-p 00000000 00:00 0 
+2acf4c000000-2acf4c282000 rw-p 00000000 00:00 0 
+2acf4c282000-2acf50000000 ---p 00000000 00:00 0 
+2acf50000000-2acf50021000 rw-p 00000000 00:00 0 
+2acf50021000-2acf54000000 ---p 00000000 00:00 0 
+2acf54000000-2acf5427f000 rw-p 00000000 00:00 0 
+2acf5427f000-2acf58000000 ---p 00000000 00:00 0 
+2acf58000000-2acf5827f000 rw-p 00000000 00:00 0 
+2acf5827f000-2acf5c000000 ---p 00000000 00:00 0 
+2acf5c000000-2acf5c021000 rw-p 00000000 00:00 0 
+2acf5c021000-2acf60000000 ---p 00000000 00:00 0 
+7ffd63202000-7ffd633fe000 rw-p 00000000 00:00 0                          [stack]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+
+Program received signal SIGABRT: Process abort signal.
+
+Backtrace for this error:
+#0  0x2ac7ba0f2dfd in ???
+#1  0x2ac7ba0f2013 in ???
+#2  0x2ac7bacd83ff in ???
+#3  0x2ac7bacd8387 in ???
+#4  0x2ac7bacd9a77 in ???
+#5  0x2ac7bad1aed6 in ???
+#6  0x2ac7bad23298 in ???
+#7  0x45bae1 in ???
+#8  0x43fa69 in ???
+#9  0x447643 in ???
+#10  0x4c06a2 in ???
+#11  0x40296c in ???
+#12  0x2ac7bacc4554 in ???
+#13  0x40299c in ???
+#14  0xffffffffffffffff in ???
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 0 PID 195424 RUNNING AT cn3
+=   KILLED BY SIGNAL: 6 (Aborted)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 1 PID 195425 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 2 PID 195426 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 3 PID 195427 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 4 PID 195428 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 5 PID 195429 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 6 PID 195430 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 7 PID 195431 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 8 PID 195432 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 9 PID 195433 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 10 PID 195434 RUNNING AT cn3
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+calculation is finished !
+Time cost : 37min37s
+Done!

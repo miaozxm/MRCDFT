@@ -1,0 +1,16 @@
+日志文件: /home/xizhang/MRCDFT/examples/40Casacopy-50-3/logs/run_20260608_102911.log
+开始时间: Mon Jun  8 10:29:11 CST 2026
+[32m run ...[0m
+[proxy:0:0@cn2] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file /home/xizhang/MRCDFT/bin/MRCDFT1 (No such file or directory)
+[proxy:0:0@cn2] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file /home/xizhang/MRCDFT/bin/MRCDFT1 (No such file or directory)
+[proxy:0:0@cn2] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file /home/xizhang/MRCDFT/bin/MRCDFT1 (No such file or directory)
+[proxy:0:0@cn2] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file /home/xizhang/MRCDFT/bin/MRCDFT1 (No such file or directory)
+[proxy:0:0@cn2] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file /home/xizhang/MRCDFT/bin/MRCDFT1 (No such file or directory)
+[proxy:0:0@cn2] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file /home/xizhang/MRCDFT/bin/MRCDFT1 (No such file or directory)
+[proxy:0:0@cn2] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file /home/xizhang/MRCDFT/bin/MRCDFT1 (No such file or directory)
+[proxy:0:0@cn2] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file /home/xizhang/MRCDFT/bin/MRCDFT1 (No such file or directory)
+[proxy:0:0@cn2] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file /home/xizhang/MRCDFT/bin/MRCDFT1 (No such file or directory)
+[proxy:0:0@cn2] HYD_spawn (../../../../../src/pm/i_hydra/libhydra/spawn/intel/hydra_spawn.c:146): execvp error on file /home/xizhang/MRCDFT/bin/MRCDFT1 (No such file or directory)
+calculation is finished !
+Time cost : 0min1s
+Done!
