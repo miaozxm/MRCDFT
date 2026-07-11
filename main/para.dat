@@ -1,5 +1,5 @@
 CDFTType = 1                        ! 0 : skip CDFT 1: do CDFT
-n0f,n0b  = 14  8                     ! number of oscillator shells
+n0f,n0b  = 4  8                     ! number of oscillator shells
 b0       = -2.4480                  ! oscillator parameter (fm) of basis (If it is less than zero, use the empirical formula.)
 beta0    =  0.00                    ! deformation parameter of basis
 betas    =  0.50                    ! deformation beta2 of W.S. potential
@@ -46,7 +46,7 @@ DsType   =  0                       ! calculate density matrix element: (0) no  
 TDType   =  0                       ! calculate reduced transition density matrix element: (0) no (1) 1B
 lambda   =  3                       ! max lambda of 1B transition density
 checkNJ2 =  1                       ! calculate N^2 and J^2: (0) no (1) yes
-Eccentri =  0                       ! calculate eccentricity kernel: (0) no (1) by Kernel Module (2) by density matrix element (3) (1)+(2)
+Eccentri =  1                       ! calculate eccentricity kernel: (0) no (1) by Kernel Module (2) by density matrix element (3) (1)+(2)
 c-------------------------------------------------------------------
 GCMType  =  1                       ! 0: skip GCM;   1: do GCM 
 Mmax     =  0                       ! (Mmax=0) use cutoff ; (Mmax>0) number of natural states  retained

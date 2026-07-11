@@ -500,10 +500,10 @@ subroutine write_r2_2body_operators_kernels(q1,q2)
                     write(Proj_outputfile%u_outputR2bodyKernel,format2)   Real((4.0d0*pi/3.0d0) * SUM(kernels%r2_2b_KK(J,K1,K2,parity,3,:))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! direct
                                                                                 Real((4.0d0*pi/3.0d0)* SUM(kernels%r2_2b_KK(J,K1,K2,parity,4,:))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! exchange
                                                                                 Real((4.0d0*pi/3.0d0)* SUM(kernels%r2_2b_KK(J,K1,K2,parity,5,:))/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))    ! kappa
-                    do ch=1,2,3 ! n,p,pn
-                        write(Proj_outputfile%u_outputR2bodyKernel,format2)  Real((4.0d0*pi/3.0d0)* r2_2b_KK(J,K1,K2,parity,1,ch) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
+                    do ch=1,3 ! n,p,pn
+                        write(Proj_outputfile%u_outputR2bodyKernel,format2)  Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,1,ch) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 1B
                         Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,2,ch) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! 2B
-                        Real((4.0d0*pi/3.0d0)*(kernels%r2_2b_KK(J,K1,K2,par ity,1,ch)+ kernels%r2_2b_KK(J,K1,K2,parity,2,ch)) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30))  ! 1B+2B
+                        Real((4.0d0*pi/3.0d0)*(kernels%r2_2b_KK(J,K1,K2,parity,1,ch)+ kernels%r2_2b_KK(J,K1,K2,parity,2,ch)) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30))  ! 1B+2B
 
                         write(Proj_outputfile%u_outputR2bodyKernel,format2)  Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,3,ch) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! direct
                         Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,4,ch) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! exchange
@@ -628,9 +628,9 @@ subroutine write_Proj_expectation(q1,q2)
                                     Real(kernels%N2_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! N^2
                                     Real(kernels%N2_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! Z^2
                                     Real(kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)),   & ! J^2
-                                    (Real(kernels%E0_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))/nucleus_attributes%proton_number)**0.5d0, &!R_p  &
-                                    (Real((4.0d0*pi/3.0d0) * kernels%r2_2b_KK(J,K1,K2,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))/nucleus_attributes%proton_number)**0.5d0, & ! 1B
-                                    (Real((4.0d0*pi/3.0d0) * kernels%r2_2b_KK(J,K1,K2,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))/nucleus_attributes%proton_number)**0.5d0    ! 2B
+                                    (Real(kernels%E0_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))/nucleus_attributes%proton_number)**0.5d0 !R_p  &
+                                    ! (Real((4.0d0*pi/3.0d0) * kernels%r2_2b_KK(J,K1,K2,parity,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))/nucleus_attributes%proton_number)**0.5d0, & ! 1B
+                                    ! (Real((4.0d0*pi/3.0d0) * kernels%r2_2b_KK(J,K1,K2,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))/nucleus_attributes%proton_number)**0.5d0    ! 2B
             end do
         end do
     end do

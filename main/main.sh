@@ -1,6 +1,6 @@
 #!/bin/bash                 		
 #PBS -N MRCDFT_Ca_8
-#PBS -l select=1:ncpus=165:host=cn4
+#PBS -l select=1:ncpus=55:host=cn2
 #PBS -o /dev/null
 #PBS -e /dev/null
 
@@ -12,8 +12,8 @@ MRCDFT_BIN="$FDIR/bin/MRCDFT"
 
 cd "$MAIN_DIR" || { echo "ERROR: Cannot cd to $MAIN_DIR"; exit 1; }
 
-export OMP_NUM_THREADS=15
-export MKL_NUM_THREADS=15
+export OMP_NUM_THREADS=5
+export MKL_NUM_THREADS=5
 export MKL_DYNAMIC=FALSE
 # export MKL_THREADING_LAYER=GNU
 
@@ -24,6 +24,7 @@ A=40
 # ===== 实验笔记ID配置（可选）=====
 # 如果设置了 NOTE_ID，运行结束后会自动更新对应笔记
 # 留空则不更新笔记系统
+EXP_PURPOSE="${1:-}"
 NOTE_ID=""  # 例如: "EXP001"
 
 # 从 para.dat 自动提取 Nf
@@ -43,7 +44,11 @@ current_time=$(date +"%Y-%m-%d-%H-%M-%S")
 log_time=$current_time
 NUC="${A}${ELE}"
 EXP_ID="${NUC}_${Nf}_${current_time}"
-EXP_PATH="${LABS_DIR}/${NUC}/${EXP_ID}"
+if [ -n "$EXP_PURPOSE" ]; then
+    EXP_PATH="${LABS_DIR}/${NUC}/${EXP_PURPOSE}/${EXP_ID}"
+else
+    EXP_PATH="${LABS_DIR}/${NUC}/${EXP_ID}"
+fi
 
 # 创建目录结构
 mkdir -p "${EXP_PATH}/output"
