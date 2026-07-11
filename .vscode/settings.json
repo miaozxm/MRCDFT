@@ -1,0 +1,10 @@
+{
+    "fortran.linter.includePaths": [
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/main"
+    ],
+    "fortran.fortls.directories": [
+        "./src",
+        "./main"
+    ]
+}

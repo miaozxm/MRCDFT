@@ -1,0 +1,10 @@
+{
+    "nthreads": 4,
+    "incremental_sync": true,
+    "enable_code_actions": true,
+    "hover_signature": true,
+    "use_signature_help": true,
+    "lowercase_intrinsics": true,
+    "source_dirs": ["./src", "./main"],
+    "incl_suffixes": [".f90", ".F90", ".f", ".F", ".f77", ".F77"]
+}

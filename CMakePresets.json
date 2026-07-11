@@ -1,0 +1,97 @@
+{
+    "version": 6,
+    "configurePresets": [
+      {
+        "name": "mpi-gfortran",
+        "displayName": "MPI with GNU Fortran",
+        "generator": "Unix Makefiles",
+        "binaryDir": "${sourceDir}/build/mpi-gfortran",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "CMAKE_Fortran_COMPILER": "gfortran"
+        }
+      },
+      {
+        "name": "mpi-ifort",
+        "displayName": "MPI with Intel Fortran",
+        "generator": "Unix Makefiles",
+        "binaryDir": "${sourceDir}/build/mpi-ifort",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "CMAKE_Fortran_COMPILER": "ifort"
+        }
+      },
+      {
+        "name": "mpi-ifx",
+        "displayName": "MPI with Intel Fortran",
+        "generator": "Unix Makefiles",
+        "binaryDir": "${sourceDir}/build/mpi-ifx",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "CMAKE_Fortran_COMPILER": "ifx"
+        }
+      },
+      {
+        "name": "debug",
+        "displayName": "GNU Fortran 12 Debug",
+        "generator": "Unix Makefiles",
+        "binaryDir": "${sourceDir}/build/debug",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "CMAKE_Fortran_COMPILER": "gfortran",
+          "CMAKE_VERBOSE_MAKEFILE": "ON"
+        }
+      }
+    ],
+    
+    "buildPresets": [
+      {
+          "name": "mpi-gfortran",
+          "configurePreset": "mpi-gfortran"
+      },
+      {
+        "name": "mpi-ifort",
+        "configurePreset": "mpi-ifort"
+      },
+      {
+        "name": "mpi-ifx",
+        "configurePreset": "mpi-ifx"
+      },
+      {
+        "name": "debug",
+        "configurePreset": "debug"
+      }
+    ],
+
+    "testPresets": [],
+
+    "packagePresets": [
+      {
+        "name": "mpi-ifx",
+        "configurePreset": "mpi-ifx",
+        "description": "Create CPack package (ifx build)",
+        "packageDirectory": "${sourceDir}/build/mpi-ifx/package"
+      }
+    ],
+
+    "workflowPresets": [
+      {
+        "name": "mpi-ifx-to-build",
+        "steps": [
+          { "type": "configure", "name": "mpi-ifx" },
+          { "type": "build", "name": "mpi-ifx" }
+        ]
+      },
+
+      {
+        "name": "mpi-ifx-to-package",
+        "steps": [
+          { "type": "configure", "name": "mpi-ifx" },
+          { "type": "build", "name": "mpi-ifx" },
+          { "type": "package", "name": "mpi-ifx" }
+        ]
+      }
+    ]
+
+  }
+  
