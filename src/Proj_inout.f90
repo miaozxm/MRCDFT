@@ -605,7 +605,7 @@ subroutine write_Proj_expectation(q1,q2)
     character(1), dimension(2) :: ParityChar = ['+', '-']
     real(r64) :: c1,c2,c3,c4,c5
     character(len=*), parameter ::  format1 = "(4a9,3(a2,2x),a6,(1x,a9,2x),(a10,2x),(6x,a,5x),2(6x,a,3x),2(a9,2x),2(a7,2x))", &
-                                    format2 = "(4(2x,f6.3,1x),3(i2,2x),(3x,a,3x),(f9.6,2x),2(f10.5,2x),2(f8.3,2x),2(f9.3,2x),(f7.3,2x),(f7.4,2x))"
+                                    format2 = "(4(2x,f6.3,1x),3(i2,2x),(3x,a,3x),(f9.6,2x),2(f10.5,2x),2(f8.3,2x),2(f9.3,2x),(f7.3,2x),2(f7.4,2x))"
     if(first_kernel) then
         write(Proj_outputfile%u_outExpectation,format1) "beta2_1","beta3_1","beta2_2","beta3_2","J","K1","K2","Parity",&
                                                         "N_Kernel","H_kernel","E","N","Z","N^2","Z^2","J^2", &

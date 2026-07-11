@@ -1,5 +1,5 @@
 CDFTType = 1                        ! 0 : skip CDFT 1: do CDFT
-n0f,n0b  = 4  8                     ! number of oscillator shells
+n0f,n0b  = 10  8                     ! number of oscillator shells
 b0       = -2.4480                  ! oscillator parameter (fm) of basis (If it is less than zero, use the empirical formula.)
 beta0    =  0.00                    ! deformation parameter of basis
 betas    =  0.50                    ! deformation beta2 of W.S. potential

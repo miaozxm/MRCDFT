@@ -1,6 +1,6 @@
 #!/bin/bash                 		
 #PBS -N MRCDFT_Ca_8
-#PBS -l select=1:ncpus=55:host=cn2
+#PBS -l select=1:ncpus=187:host=cn4
 #PBS -o /dev/null
 #PBS -e /dev/null
 
@@ -12,8 +12,8 @@ MRCDFT_BIN="$FDIR/bin/MRCDFT"
 
 cd "$MAIN_DIR" || { echo "ERROR: Cannot cd to $MAIN_DIR"; exit 1; }
 
-export OMP_NUM_THREADS=5
-export MKL_NUM_THREADS=5
+export OMP_NUM_THREADS=17
+export MKL_NUM_THREADS=17
 export MKL_DYNAMIC=FALSE
 # export MKL_THREADING_LAYER=GNU
 
