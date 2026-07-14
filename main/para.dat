@@ -1,5 +1,5 @@
 CDFTType = 1                        ! 0 : skip CDFT 1: do CDFT
-n0f,n0b  = 10  8                     ! number of oscillator shells
+n0f,n0b  = 10  8                    ! number of oscillator shells
 b0       = -2.4480                  ! oscillator parameter (fm) of basis (If it is less than zero, use the empirical formula.)
 beta0    =  0.00                    ! deformation parameter of basis
 betas    =  0.50                    ! deformation beta2 of W.S. potential
@@ -40,7 +40,7 @@ icm      =  1                       ! cent-of-mass corr. 1: average  ; 2: HO app
 nphi     =  5                       ! number of meshpoints in gauge angles phi (odd numbers)
 EulerSym =  1                       ! Symmetry of Euler angles (alpha, beta ,gamma ). 0: no, 1: Axially, 2: D2 
 nalpha   =  1                       ! number of meshpoints in Euler angles alpha  
-nbeta    =  12                       ! number of meshpoints in Euler angles beta (even numbers) 
+nbeta    =  12                      ! number of meshpoints in Euler angles beta (even numbers) 
 ngamma   =  1                       ! number of meshpoints in Euler angles gamma  
 DsType   =  0                       ! calculate density matrix element: (0) no  (1) 1B  (2) 2B (3) 1B + 2B
 TDType   =  0                       ! calculate reduced transition density matrix element: (0) no (1) 1B

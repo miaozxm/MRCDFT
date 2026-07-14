@@ -604,12 +604,12 @@ subroutine write_Proj_expectation(q1,q2)
     integer :: q1, q2,J,K1,K2,parity
     character(1), dimension(2) :: ParityChar = ['+', '-']
     real(r64) :: c1,c2,c3,c4,c5
-    character(len=*), parameter ::  format1 = "(4a9,3(a2,2x),a6,(1x,a9,2x),(a10,2x),(6x,a,5x),2(6x,a,3x),2(a9,2x),2(a7,2x))", &
-                                    format2 = "(4(2x,f6.3,1x),3(i2,2x),(3x,a,3x),(f9.6,2x),2(f10.5,2x),2(f8.3,2x),2(f9.3,2x),(f7.3,2x),2(f7.4,2x))"
+    character(len=*), parameter ::  format1 = "(4a9,3(a2,2x),a6,(1x,a9,2x),(a10,2x),(6x,a,5x),2(6x,a,3x),2(a9,2x),2(a7,2x),5(a9,2x))", &
+                                    format2 = "(4(2x,f6.3,1x),3(i2,2x),(3x,a,3x),(f9.6,2x),2(f10.5,2x),2(f8.3,2x),2(f9.3,2x),(f7.3,2x),6(f7.4,2x))"
     if(first_kernel) then
         write(Proj_outputfile%u_outExpectation,format1) "beta2_1","beta3_1","beta2_2","beta3_2","J","K1","K2","Parity",&
                                                         "N_Kernel","H_kernel","E","N","Z","N^2","Z^2","J^2", &
-                                                        "r^2_p","r^2_2Bp"
+                                                        "E0p","r^2_1Bp","r^2_1Bn","r^2_2Bpp","r^2_2Bpn","r^2_2Bnn"
         first_kernel = .False.
     endif
     do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
@@ -622,9 +622,9 @@ subroutine write_Proj_expectation(q1,q2)
                 end if
                 c1 = 1/nucleus_attributes%proton_number + 1/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number)
                 c2 = 1/(nucleus_attributes%mass_number)**2
-                c3 = 1/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number)
+                c3 = -(1/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number))
                 c4 = 2/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number)
-                c5 = 1/(nucleus_attributes%mass_number)**2
+                c5 = -1/(nucleus_attributes%mass_number)**2
                 write(Proj_outputfile%u_outExpectation,format2) constraint%betac(q1),constraint%bet3c(q1), &
                                     constraint%betac(q2),constraint%bet3c(q2),J,K1,K2,ParityChar(parity),  &
                                     Real(kernels%N_KK(J,K1,K2,parity)),Real(kernels%H_KK(J,K1,K2,parity)), &
@@ -634,11 +634,12 @@ subroutine write_Proj_expectation(q1,q2)
                                     Real(kernels%N2_KK(J,K1,K2,1,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! N^2
                                     Real(kernels%N2_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)), & ! Z^2
                                     Real(kernels%J2_KK(J,K1,K2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)),   & ! J^2
-                                    (Real(kernels%E0_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))/nucleus_attributes%proton_number)**0.5d0, & !R_p  &
-                                    (c1*Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,1,2) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30))) + &
-                                    (c2*Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,1,1) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30))) + &
-                                    (c3*Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,2,2) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30))) + &
-                                    (c4*Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,2,3) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30))) + &
+                                    ! (Real(kernels%E0_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))/nucleus_attributes%proton_number)**0.5d0, & !R_p  &
+                                    (Real(kernels%E0_KK(J,K1,K2,2,parity)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))/nucleus_attributes%proton_number), & !R_p  &
+                                    (c1*Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,1,2) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30))) , &
+                                    (c2*Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,1,1) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30))) , &
+                                    (c3*Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,2,2) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30))) , &
+                                    (c4*Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,2,3) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30))) , &
                                     (c5*Real((4.0d0*pi/3.0d0)* kernels%r2_2b_KK(J,K1,K2,parity,2,1) /(kernels%N_KK(J,K1,K2,parity)+1.0d-30)))
                                     ! (Real((4.0d0*pi/3.0d0) * kernels%r2_2b_KK(J,K1,K2,parity,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30))/nucleus_attributes%proton_number)**0.5d0    ! 2B
             end do

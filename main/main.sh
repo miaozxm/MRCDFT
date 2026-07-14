@@ -1,6 +1,6 @@
 #!/bin/bash                 		
-#PBS -N MRCDFT_Ca_8
-#PBS -l select=1:ncpus=187:host=cn4
+#PBS -N MRCDFT
+#PBS -l select=1:ncpus=55
 #PBS -o /dev/null
 #PBS -e /dev/null
 
@@ -12,8 +12,8 @@ MRCDFT_BIN="$FDIR/bin/MRCDFT"
 
 cd "$MAIN_DIR" || { echo "ERROR: Cannot cd to $MAIN_DIR"; exit 1; }
 
-export OMP_NUM_THREADS=17
-export MKL_NUM_THREADS=17
+export OMP_NUM_THREADS=5
+export MKL_NUM_THREADS=5
 export MKL_DYNAMIC=FALSE
 # export MKL_THREADING_LAYER=GNU
 
@@ -25,6 +25,7 @@ A=40
 # 如果设置了 NOTE_ID，运行结束后会自动更新对应笔记
 # 留空则不更新笔记系统
 EXP_PURPOSE="${1:-}"
+# EXP_PURPOSE="test"
 NOTE_ID=""  # 例如: "EXP001"
 
 # 从 para.dat 自动提取 Nf
