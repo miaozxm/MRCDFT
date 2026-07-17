@@ -1,0 +1,230 @@
+{
+  "file_type": "kernel",
+  "header_lines": 0,
+  "body_lines": 7,
+  "fields": [
+    {
+      "line_index": 1,
+      "method": "space",
+      "columns": [
+        {
+          "name": "J",
+          "type": "float"
+        },
+        {
+          "name": "K1",
+          "type": "float"
+        },
+        {
+          "name": "K2",
+          "type": "float"
+        },
+        {
+          "name": "Parity",
+          "type": "string"
+        },
+        {
+          "name": "N^2/N_KK",
+          "type": "float"
+        },
+        {
+          "name": "Z^2/N_KK",
+          "type": "float"
+        },
+        {
+          "name": "J^2/N_KK",
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 2,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "N_KKr",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "N_KKi",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "H_KKr",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "H_KKi",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 3,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "Nr",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "Ni",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "Zr",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "Zi",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 4,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "Q2_KK_12pr",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "Q2_KK_12pi",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "Q_KK_21pr",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "Q_KK_21pi",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 5,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "E0_KKpr",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "E0_KKpi",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "E0_KKpr",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "E0_KKpi",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 6,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "Q2_KK_12nr",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "Q2_KK_12ni",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "Q_KK_21nr",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "Q_KK_21ni",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 7,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "E0_KKnr",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "E0_KKni",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "E0_KKnr",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "E0_KKni",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    }
+  ],
+  "metadata_from_filename": {
+    "pattern": "^(?P<prefix>Proj_)(?P<m>\\d{2})(?P<name>[A-Z][a-z]?)(?P<filename>_kern)\\.(?P<dim>\\dD)(?P<s>_eMax)(?P<n0f>\\d{2})\\.(?P<nphi>\\d{2})\\.(?P<nbeta>\\d{2})(?P<beta2_l>[+-]\\d{3})(?P<beta3_l>[+-]\\d{3})_(?P<beta2_r>[+-]\\d{3})(?P<beta3_r>[+-]\\d{3})\\.elem",
+    "fields": {
+      "m": {
+        "type": "int"
+      },
+      "n0f": {
+        "type": "int"
+      },
+      "nphi": {
+        "type": "int"
+      },
+      "nbeta": {
+        "type": "int"
+      },
+      "beta2_l": {
+        "type": "float",
+        "scale": 0.01
+      },
+      "beta3_l": {
+        "type": "float",
+        "scale": 0.01
+      },
+      "beta2_r": {
+        "type": "float",
+        "scale": 0.01
+      },
+      "beta3_r": {
+        "type": "float",
+        "scale": 0.01
+      }
+    }
+  }
+}

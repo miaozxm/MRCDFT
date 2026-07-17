@@ -1,4 +1,5 @@
 {
+    "python.defaultInterpreterPath": "/home/xizhang/miniconda3/envs/mrcdft-env/bin/python",
     "fortran.linter.includePaths": [
         "${workspaceFolder}/src",
         "${workspaceFolder}/main"

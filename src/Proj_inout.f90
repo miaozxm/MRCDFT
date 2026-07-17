@@ -604,7 +604,7 @@ subroutine write_Proj_expectation(q1,q2)
     integer :: q1, q2,J,K1,K2,parity
     character(1), dimension(2) :: ParityChar = ['+', '-']
     real(r64) :: c1,c2,c3,c4,c5
-    character(len=*), parameter ::  format1 = "(4a9,3(a2,2x),a6,(1x,a9,2x),(a10,2x),(6x,a,5x),2(6x,a,3x),2(a9,2x),2(a7,2x),5(a9,2x))", &
+    character(len=*), parameter ::  format1 = "(4a9,3(a2,2x),a6,(1x,a9,2x),(a10,2x),(6x,a,5x),2(6x,a,3x),2(a9,2x),2(a7,x),5(a9,x))", &
                                     format2 = "(4(2x,f6.3,1x),3(i2,2x),(3x,a,3x),(f9.6,2x),2(f10.5,2x),2(f8.3,2x),2(f9.3,2x),(f7.3,2x),6(f7.4,2x))"
     if(first_kernel) then
         write(Proj_outputfile%u_outExpectation,format1) "beta2_1","beta3_1","beta2_2","beta3_2","J","K1","K2","Parity",&
@@ -622,9 +622,9 @@ subroutine write_Proj_expectation(q1,q2)
                 end if
                 c1 = 1/nucleus_attributes%proton_number + 1/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number)
                 c2 = 1/(nucleus_attributes%mass_number)**2
-                c3 = -(1/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number))
-                c4 = 2/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number)
-                c5 = -1/(nucleus_attributes%mass_number)**2
+                c3 = (1/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number))
+                c4 = -2/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number)
+                c5 = 1/(nucleus_attributes%mass_number)**2
                 write(Proj_outputfile%u_outExpectation,format2) constraint%betac(q1),constraint%bet3c(q1), &
                                     constraint%betac(q2),constraint%bet3c(q2),J,K1,K2,ParityChar(parity),  &
                                     Real(kernels%N_KK(J,K1,K2,parity)),Real(kernels%H_KK(J,K1,K2,parity)), &

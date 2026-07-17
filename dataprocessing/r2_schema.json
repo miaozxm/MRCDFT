@@ -1,0 +1,208 @@
+{
+  "file_type": "R2_2b",
+  "header_lines": 0,
+  "body_lines": 8,
+  "fields": [
+    {
+      "line_index": 1,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "total_r2_1B",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "total_r2_2B",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "r2_1&2B",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 2,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "total_direct",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "total_exchange",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "total_kappa",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 3,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "o2",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "o5",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "1&2bn",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 4,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "2bndirect",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "2bnexchange",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "2bnkappa",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 5,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "o1",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "o3",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "1&2bp",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 6,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "2bpdirect",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "2bpexchange",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "2bpkappa",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 7,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "1bpn",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "o4",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "2bpn",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "line_index": 8,
+      "method": "fixed_width",
+      "columns": [
+        {
+          "name": "2bpndirect",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "exchange",
+          "width": 15,
+          "type": "float"
+        },
+        {
+          "name": "kappa",
+          "width": 15,
+          "type": "float"
+        }
+      ]
+    }
+  ],
+  "metadata_from_filename": {
+    "pattern": "^(?P<prefix>Proj_)(?P<m>\\d{2})(?P<name>[A-Z][a-z]?)(?P<filename>_R2_2b)\\.(?P<dim>\\dD)(?P<s>_eMax)(?P<n0f>\\d{2})\\.(?P<nphi>\\d{2})\\.(?P<nbeta>\\d{2})(?P<beta2_l>[+-]\\d{3})(?P<beta3_l>[+-]\\d{3})_(?P<beta2_r>[+-]\\d{3})(?P<beta3_r>[+-]\\d{3})\\.elem",
+    "fields": {
+      "m": {
+        "type": "int"
+      },
+      "n0f": {
+        "type": "int"
+      },
+      "nphi": {
+        "type": "int"
+      },
+      "nbeta": {
+        "type": "int"
+      },
+      "beta2_l": {
+        "type": "float",
+        "scale": 0.01
+      },
+      "beta3_l": {
+        "type": "float",
+        "scale": 0.01
+      },
+      "beta2_r": {
+        "type": "float",
+        "scale": 0.01
+      },
+      "beta3_r": {
+        "type": "float",
+        "scale": 0.01
+      }
+    }
+  }
+}
