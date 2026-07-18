@@ -733,6 +733,9 @@ type GCM_kernels_
     complex(r64),dimension(:,:,:,:,:,:,:),allocatable :: X_KK ! X_KK(J,K1,K2,it,Pi(+/-)), Particle number kernel
     complex(r64),dimension(:,:,:,:,:,:,:),allocatable :: Q2_KK ! Q2_KK(J,Kf,Ki,it,Pi_i(+/-)), <Ji+2 Kf q1 Pi_f ||Q2||Ji Ki q2 Pi_i>   
     complex(r64),dimension(:,:,:,:,:,:,:),allocatable :: E0_KK  ! E0_KK(J,Kf,Ki,it,Pi(+/-)), <J_f K_f q_1 Pi| r2 |J_i K_i q_2 Pi> 
+    complex(r64),dimension(:,:,:,:,:,:,:,:),allocatable :: r2_2b_KK ! r2_2b_KK(J,parity,q1,K1,q2,K2, term, channel)
+    ! term: 1=1B, 2=2B, 3=direct, 4=exchange, 5=kappa
+    ! channel: 1=n, 2=p, 3=pn
 endtype
 type(GCM_kernels_) :: GCM_kernels
 
@@ -759,7 +762,8 @@ type GCM_Observables
     real(r64),dimension(:,:,:),allocatable :: E_ex                 ! Excitation energy 
     real(r64),dimension(:,:,:),allocatable :: beta2_aver,beta3_aver ! Average deformation
     real(r64),dimension(:,:,:),allocatable :: N,Z                   ! particle number
-    real(r64),dimension(:,:,:),allocatable :: rrms_p                ! proton radius
+    real(r64),dimension(:,:,:),allocatable :: rrms_p         ! proton radius
+    real(r64),dimension(:,:,:),allocatable :: rrms_p_old   ! proton radius (old, no COM correction)           
 
 endtype 
 type(GCM_Observables) :: GCM_obser

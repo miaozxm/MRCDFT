@@ -461,6 +461,16 @@ subroutine write_kernels
                                                                 kernels%Q2_KK_21(J,K1,K2,1,parity)
                     write(Proj_outputfile%u_outputelem,format2) kernels%E0_KK(J,K1,K2,1,parity), &
                                                                 kernels%E0_KK(J,K1,K2,1,parity)
+                    ! r²_2b 五项 (写成期望值 = ÷N × 4π/3，与 H/X 约定一致)
+                    write(Proj_outputfile%u_outputelem,format2) &
+                        (4.0d0*pi/3.0d0)*kernels%r2_2b_KK(J,K1,K2,parity,1,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30), & ! O1: 1B,p
+                        (4.0d0*pi/3.0d0)*kernels%r2_2b_KK(J,K1,K2,parity,1,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)    ! O2: 1B,n
+                    write(Proj_outputfile%u_outputelem,format2) &
+                        (4.0d0*pi/3.0d0)*kernels%r2_2b_KK(J,K1,K2,parity,2,2)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30), & ! O3: 2B,pp
+                        (4.0d0*pi/3.0d0)*kernels%r2_2b_KK(J,K1,K2,parity,2,3)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30)    ! O4: 2B,pn
+                    write(Proj_outputfile%u_outputelem,format2) &
+                        (4.0d0*pi/3.0d0)*kernels%r2_2b_KK(J,K1,K2,parity,2,1)/(kernels%N_KK(J,K1,K2,parity)+1.0d-30), & ! O5: 2B,nn
+                        (0.0d0, 0.0d0)  ! padding (format2需要4个real)
                 end do
             end do
         end do 
@@ -622,9 +632,9 @@ subroutine write_Proj_expectation(q1,q2)
                 end if
                 c1 = 1/nucleus_attributes%proton_number + 1/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number)
                 c2 = 1/(nucleus_attributes%mass_number)**2
-                c3 = (1/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number))
-                c4 = -2/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number)
-                c5 = 1/(nucleus_attributes%mass_number)**2
+                c3 =  (1/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number))
+                c4 =  1/(nucleus_attributes%mass_number)**2 - 1/(nucleus_attributes%mass_number*nucleus_attributes%proton_number)
+                c5 =  1/(nucleus_attributes%mass_number)**2
                 write(Proj_outputfile%u_outExpectation,format2) constraint%betac(q1),constraint%bet3c(q1), &
                                     constraint%betac(q2),constraint%bet3c(q2),J,K1,K2,ParityChar(parity),  &
                                     Real(kernels%N_KK(J,K1,K2,parity)),Real(kernels%H_KK(J,K1,K2,parity)), &

@@ -1347,25 +1347,25 @@ Module Kernel
                 ! 2B
                 it = 1
                 ! 
-                r2_2b_PNP(2,it) = r2_2b_PNP(2,it) - fac*r2_2b_arry(2,phi_n_index,it)
-                pr2_2b_PNP(2,it) = pr2_2b_PNP(2,it) - pfac*pr2_2b_arry(2,phi_n_index,it)
+                r2_2b_PNP(2,it) = r2_2b_PNP(2,it) + fac*r2_2b_arry(2,phi_n_index,it)
+                pr2_2b_PNP(2,it) = pr2_2b_PNP(2,it) + pfac*pr2_2b_arry(2,phi_n_index,it)
                 ! each teram of nn
-                r2_2b_Each_Term_PNP(1,it) = r2_2b_Each_Term_PNP(1,it) - fac*Each_2B_Term_arry(1,phi_n_index,it)
-                r2_2b_Each_Term_PNP(2,it) = r2_2b_Each_Term_PNP(2,it) - fac*Each_2B_Term_arry(2,phi_n_index,it)
-                r2_2b_Each_Term_PNP(3,it) = r2_2b_Each_Term_PNP(3,it) - fac*Each_2B_Term_arry(3,phi_n_index,it)
-                pr2_2b_Each_Term_PNP(1,it) = pr2_2b_Each_Term_PNP(1,it) - pfac*pEach_2B_Term_arry(1,phi_n_index,it)
-                pr2_2b_Each_Term_PNP(2,it) = pr2_2b_Each_Term_PNP(2,it) - pfac*pEach_2B_Term_arry(2,phi_n_index,it)
-                pr2_2b_Each_Term_PNP(3,it) = pr2_2b_Each_Term_PNP(3,it) - pfac*pEach_2B_Term_arry(3,phi_n_index,it)
+                r2_2b_Each_Term_PNP(1,it) = r2_2b_Each_Term_PNP(1,it) + fac*Each_2B_Term_arry(1,phi_n_index,it)
+                r2_2b_Each_Term_PNP(2,it) = r2_2b_Each_Term_PNP(2,it) + fac*Each_2B_Term_arry(2,phi_n_index,it)
+                r2_2b_Each_Term_PNP(3,it) = r2_2b_Each_Term_PNP(3,it) + fac*Each_2B_Term_arry(3,phi_n_index,it)
+                pr2_2b_Each_Term_PNP(1,it) = pr2_2b_Each_Term_PNP(1,it) + pfac*pEach_2B_Term_arry(1,phi_n_index,it)
+                pr2_2b_Each_Term_PNP(2,it) = pr2_2b_Each_Term_PNP(2,it) + pfac*pEach_2B_Term_arry(2,phi_n_index,it)
+                pr2_2b_Each_Term_PNP(3,it) = pr2_2b_Each_Term_PNP(3,it) + pfac*pEach_2B_Term_arry(3,phi_n_index,it)
                 it = 2
                 r2_2b_PNP(2,it) = r2_2b_PNP(2,it) - fac*r2_2b_arry(2,phi_p_index,it)
                 pr2_2b_PNP(2,it) = pr2_2b_PNP(2,it) - pfac*pr2_2b_arry(2,phi_p_index,it)
                 ! each teram of pp
-                r2_2b_Each_Term_PNP(1,it) = r2_2b_Each_Term_PNP(1,it) - fac*Each_2B_Term_arry(1,phi_p_index,it)
-                r2_2b_Each_Term_PNP(2,it) = r2_2b_Each_Term_PNP(2,it) - fac*Each_2B_Term_arry(2,phi_p_index,it)
-                r2_2b_Each_Term_PNP(3,it) = r2_2b_Each_Term_PNP(3,it) - fac*Each_2B_Term_arry(3,phi_p_index,it)
-                pr2_2b_Each_Term_PNP(1,it) = pr2_2b_Each_Term_PNP(1,it) - pfac*pEach_2B_Term_arry(1,phi_p_index,it)
-                pr2_2b_Each_Term_PNP(2,it) = pr2_2b_Each_Term_PNP(2,it) - pfac*pEach_2B_Term_arry(2,phi_p_index,it)
-                pr2_2b_Each_Term_PNP(3,it) = pr2_2b_Each_Term_PNP(3,it) - pfac*pEach_2B_Term_arry(3,phi_p_index,it)
+                r2_2b_Each_Term_PNP(1,it) = r2_2b_Each_Term_PNP(1,it) + fac*Each_2B_Term_arry(1,phi_p_index,it)
+                r2_2b_Each_Term_PNP(2,it) = r2_2b_Each_Term_PNP(2,it) + fac*Each_2B_Term_arry(2,phi_p_index,it)
+                r2_2b_Each_Term_PNP(3,it) = r2_2b_Each_Term_PNP(3,it) + fac*Each_2B_Term_arry(3,phi_p_index,it)
+                pr2_2b_Each_Term_PNP(1,it) = pr2_2b_Each_Term_PNP(1,it) +pfac*pEach_2B_Term_arry(1,phi_p_index,it)
+                pr2_2b_Each_Term_PNP(2,it) = pr2_2b_Each_Term_PNP(2,it) + pfac*pEach_2B_Term_arry(2,phi_p_index,it)
+                pr2_2b_Each_Term_PNP(3,it) = pr2_2b_Each_Term_PNP(3,it) + pfac*pEach_2B_Term_arry(3,phi_p_index,it)
 
                 do mu = -n,n
                     r2_2b_PNP(2,3) = r2_2b_PNP(2,3) + fac*(-1)**mu* &

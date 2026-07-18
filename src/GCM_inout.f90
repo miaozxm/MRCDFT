@@ -85,7 +85,7 @@ MODULE GCM_Inout
         integer :: read_J, read_K1, read_K2
         character(1) :: read_parity_char
         real(r64) :: read_N2, read_Z2, read_J2
-        complex(r64) :: Q2_KK_21(2), E0_KK_21(2)
+        complex(r64) :: Q2_KK_21(2), E0_KK_21(2), r2_2b_dummy
         character(1), dimension(2) :: ParityChar = ['+', '-']
         character(len=*), parameter ::  format1 = "(3i5,4x,a,4x,3f12.3)", &
                                         format2 = "(4e15.8)"
@@ -104,6 +104,9 @@ MODULE GCM_Inout
         ! E0_KK(J,Pi_i(+/-),q1,Ki,q2,Kf,it), <J_f K_f q_1 Pi| r2 |J_i K_i q_2 Pi>
         allocate(GCM_kernels%E0_KK(0:gcm_space%Jmax,2,gcm_space%q1_start:gcm_space%q1_end,-gcm_space%Jmax:gcm_space%Jmax, &
                                     gcm_space%q2_start:gcm_space%q2_end,-gcm_space%Jmax:gcm_space%Jmax,2),source=(0.d0,0.d0))
+        ! r2_2b_KK(J,parity,q1,K1,q2,K2, term, channel)
+        allocate(GCM_kernels%r2_2b_KK(0:gcm_space%Jmax,2,gcm_space%q1_start:gcm_space%q1_end,-gcm_space%Jmax:gcm_space%Jmax, &
+                                gcm_space%q2_start:gcm_space%q2_end,-gcm_space%Jmax:gcm_space%Jmax,5,3),source=(0.d0,0.d0))
 
         write(*,"(5x,A)") 'Reading kernels for GCM calculations...'
         do q1 = gcm_space%q1_start, gcm_space%q1_end
@@ -159,16 +162,31 @@ MODULE GCM_Inout
                             ! neutron part
                             read(Proj_outputfile%u_outputelem,format2) GCM_kernels%Q2_KK(J,parity,q1,K1,q2,K2,1), Q2_KK_21(1)
                             read(Proj_outputfile%u_outputelem,format2) GCM_kernels%E0_KK(J,parity,q1,K1,q2,K2,1), E0_KK_21(1)
+                            ! r²_2b 五项 (期望值格式 = ÷N × 4π/3，读取后 ×N 恢复)
+                            read(Proj_outputfile%u_outputelem,format2) GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,1,2), &
+                                                                         GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,1,1)    ! O1: 1B,p ; O2: 1B,n
+                            read(Proj_outputfile%u_outputelem,format2) GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,2,2), &
+                                                                         GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,2,3)    ! O3: 2B,pp ; O4: 2B,pn
+                            read(Proj_outputfile%u_outputelem,format2) GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,2,1), &
+                                                                         r2_2b_dummy                                          ! O5: 2B,nn ; padding
+
 
                             GCM_kernels%H_KK(J,parity,q1,K1,q2,K2) = GCM_kernels%H_KK(J,parity,q1,K1,q2,K2)*GCM_kernels%N_KK(J,parity,q1,K1,q2,K2)
                             GCM_kernels%X_KK(J,parity,q1,K1,q2,K2,1) = GCM_kernels%X_KK(J,parity,q1,K1,q2,K2,1)*GCM_kernels%N_KK(J,parity,q1,K1,q2,K2)
                             GCM_kernels%X_KK(J,parity,q1,K1,q2,K2,2) = GCM_kernels%X_KK(J,parity,q1,K1,q2,K2,2)*GCM_kernels%N_KK(J,parity,q1,K1,q2,K2)
+                            ! r²_2b ×N 恢复原始 kernel（只乘实际用到的5项）
+                            GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,1,2) = GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,1,2) * GCM_kernels%N_KK(J,parity,q1,K1,q2,K2)  ! O1: 1B,p
+                            GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,1,1) = GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,1,1) * GCM_kernels%N_KK(J,parity,q1,K1,q2,K2)  ! O2: 1B,n
+                            GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,2,2) = GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,2,2) * GCM_kernels%N_KK(J,parity,q1,K1,q2,K2)  ! O3: 2B,pp
+                            GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,2,3) = GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,2,3) * GCM_kernels%N_KK(J,parity,q1,K1,q2,K2)  ! O4: 2B,pn
+                            GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,2,1) = GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,2,1) * GCM_kernels%N_KK(J,parity,q1,K1,q2,K2)  ! O5: 2B,nn
                             if(Proj_option%Kernel_Symmetry==1 .and. q1/=q2) then
                                 GCM_kernels%N_KK(J,parity,q2,K2,q1,K1) = GCM_kernels%N_KK(J,parity,q1,K1,q2,K2)
                                 GCM_kernels%H_KK(J,parity,q2,K2,q1,K1) = GCM_kernels%H_KK(J,parity,q1,K1,q2,K2)
                                 GCM_kernels%X_KK(J,parity,q2,K2,q1,K1,:) = GCM_kernels%X_KK(J,parity,q1,K1,q2,K2,:)
                                 GCM_kernels%Q2_KK(J,parity,q2,K2,q1,K1,:) = Q2_KK_21(:)
                                 GCM_kernels%E0_KK(J,parity,q2,K2,q1,K1,:) = E0_KK_21(:)
+                                GCM_kernels%r2_2b_KK(J,parity,q2,K2,q1,K1,:,:) = GCM_kernels%r2_2b_KK(J,parity,q1,K1,q2,K2,:,:)
                             end if
                         end do 
                     end do 
