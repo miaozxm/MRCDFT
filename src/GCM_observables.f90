@@ -31,7 +31,7 @@ MODULE GCM_Observables
         allocate(GCM_obser%E_ex(GCM_basis%N_max,0:gcm_space%Jmax,2),GCM_obser%beta2_aver(GCM_basis%N_max,0:gcm_space%Jmax,2),&
                  GCM_obser%beta3_aver(GCM_basis%N_max,0:gcm_space%Jmax,2),GCM_obser%N(GCM_basis%N_max,0:gcm_space%Jmax,2),&
                  GCM_obser%Z(GCM_basis%N_max,0:gcm_space%Jmax,2),   GCM_obser%rrms_p(GCM_basis%N_max,0:gcm_space%Jmax,2),&
-GCM_obser%rrms_p_old(GCM_basis%N_max,0:gcm_space%Jmax,2),source=0.d0,source=0.d0)
+                GCM_obser%rrms_p_old(GCM_basis%N_max,0:gcm_space%Jmax,2),source=0.d0)
 
         A_phys = nucleus_attributes%mass_number
         Z_phys = nucleus_attributes%proton_number
