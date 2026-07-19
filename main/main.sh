@@ -1,6 +1,6 @@
 #!/bin/bash                 		
 #PBS -N MRCDFT
-#PBS -l select=1:ncpus=210
+#PBS -l select=1:ncpus=63
 #PBS -o /dev/null
 #PBS -e /dev/null
 
@@ -12,14 +12,14 @@ MRCDFT_BIN="$FDIR/bin/MRCDFT"
 
 cd "$MAIN_DIR" || { echo "ERROR: Cannot cd to $MAIN_DIR"; exit 1; }
 
-export OMP_NUM_THREADS=10
-export MKL_NUM_THREADS=10
+export OMP_NUM_THREADS=3
+export MKL_NUM_THREADS=3
 export MKL_DYNAMIC=FALSE
 # export MKL_THREADING_LAYER=GNU
 
 # ===== 实验参数配置 =====
 ELE="Ca"
-A=42
+A=48
 
 # ===== 实验笔记ID配置（可选）=====
 # 如果设置了 NOTE_ID，运行结束后会自动更新对应笔记
@@ -107,8 +107,13 @@ ERROR_FILE="$LOG_DIR/error_${log_time}.log"
 exec 1> >(tee -a "$LOG_FILE")
 exec 2> >(tee -a "$ERROR_FILE")
 
-# 将当前脚本复制到logs目录
-cp "$0" "$LOG_DIR/run_${log_time}.sh"
+# 将当前脚本复制到logs目录，并修改路径参数使其可直接在目标位置重复运行
+# 1. MAIN_DIR 改为 ..（实验目录，参数文件所在位置）
+# 2. current_time 固定为原始运行时间（防止目录重定向到新时间戳）
+sed -e "s|^MAIN_DIR=.*|MAIN_DIR=\"..\"|" \
+    -e "s|^current_time=.*|current_time=\"${current_time}\"|" \
+    "$0" > "$LOG_DIR/run_${log_time}.sh"
+chmod +x "$LOG_DIR/run_${log_time}.sh"
 
 echo "日志文件: $LOG_FILE"
 echo "开始时间: $(date)"
@@ -133,7 +138,7 @@ echo Done!
 if [ -n "$NOTE_ID" ]; then
     NOTE_MANAGER="/home/xizhang/MRCDFT/Notes/note_manager.sh"
     if [ -x "$NOTE_MANAGER" ]; then
-        run_time=$(date +"%Y-%m-%d %H:%M:%S")
+        run_time=$(date + "%Y-%m-%d %H:%M:%S")
         echo "正在更新实验笔记 ${NOTE_ID}..."
         bash "$NOTE_MANAGER" update "$NOTE_ID" "$EXP_ID" "$EXP_PATH" "$run_time" "completed"
     else

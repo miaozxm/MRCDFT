@@ -633,7 +633,7 @@ subroutine write_Proj_expectation(q1,q2)
                 c1 = 1/nucleus_attributes%proton_number + 1/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number)
                 c2 = 1/(nucleus_attributes%mass_number)**2
                 c3 = (1/(nucleus_attributes%mass_number)**2 - 2/(nucleus_attributes%mass_number*nucleus_attributes%proton_number))
-                c4 = -(1/(nucleus_attributes%mass_number)**2 - 1/(nucleus_attributes%mass_number*nucleus_attributes%proton_number))
+                c4 = (1/(nucleus_attributes%mass_number)**2 - 1/(nucleus_attributes%mass_number*nucleus_attributes%proton_number))
                 c5 = 1/(nucleus_attributes%mass_number)**2
                 write(Proj_outputfile%u_outExpectation,format2) constraint%betac(q1),constraint%bet3c(q1), &
                                     constraint%betac(q2),constraint%bet3c(q2),J,K1,K2,ParityChar(parity),  &

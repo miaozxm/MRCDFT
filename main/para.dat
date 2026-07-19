@@ -7,7 +7,7 @@ bet3s    =  0.00                    ! deformation beta3 of W.S. potential
 maxi     =  400                     ! maximal number of iterations
 xmix     =  0.50                    ! mixing parameter
 inin     =  1                       ! 1 (calc. from beginning); 0 (read saved pot.) 
-Ca 44                               ! nucleus under consideration
+Ca 48                               ! nucleus under consideration
 Ide      =  4  4                    ! Pairing control: 1. no  2. Frozen  3. G   4. Delta
 Delta    =  0.000000  0.000000      ! Frozen Gaps (neutrons and protons)
 Ga       =  0.000000  0.000000      ! Pairing-Constants GG = GA/A

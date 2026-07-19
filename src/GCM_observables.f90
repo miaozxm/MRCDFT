@@ -31,14 +31,16 @@ MODULE GCM_Observables
         allocate(GCM_obser%E_ex(GCM_basis%N_max,0:gcm_space%Jmax,2),GCM_obser%beta2_aver(GCM_basis%N_max,0:gcm_space%Jmax,2),&
                  GCM_obser%beta3_aver(GCM_basis%N_max,0:gcm_space%Jmax,2),GCM_obser%N(GCM_basis%N_max,0:gcm_space%Jmax,2),&
                  GCM_obser%Z(GCM_basis%N_max,0:gcm_space%Jmax,2),   GCM_obser%rrms_p(GCM_basis%N_max,0:gcm_space%Jmax,2),&
-                GCM_obser%rrms_p_old(GCM_basis%N_max,0:gcm_space%Jmax,2),source=0.d0)
+                GCM_obser%rrms_p_old(GCM_basis%N_max,0:gcm_space%Jmax,2),GCM_obser%o1(GCM_basis%N_max,0:gcm_space%Jmax,2),&
+                GCM_obser%o2(GCM_basis%N_max,0:gcm_space%Jmax,2),GCM_obser%o3(GCM_basis%N_max,0:gcm_space%Jmax,2),&
+                GCM_obser%o4(GCM_basis%N_max,0:gcm_space%Jmax,2),GCM_obser%o5(GCM_basis%N_max,0:gcm_space%Jmax,2),source=0.d0)
 
         A_phys = nucleus_attributes%mass_number
         Z_phys = nucleus_attributes%proton_number
         c1 = 1.0d0/Z_phys + 1.0d0/A_phys**2 - 2.0d0/(Z_phys*A_phys)
         c2 = 1.0d0/A_phys**2
         c3 = 1.0d0/A_phys**2 - 2.0d0/(Z_phys*A_phys)
-        c4 = 2.0d0/A_phys**2 - 2.0d0/(Z_phys*A_phys)
+        c4 = 1.0d0/A_phys**2 - 1.0d0/(Z_phys*A_phys)
         c5 = 1.0d0/A_phys**2
         do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
             ! parity
@@ -84,6 +86,11 @@ MODULE GCM_Observables
                 GCM_obser%N(iM,J,parity) = n_neu
                 GCM_obser%Z(iM,J,parity) = n_pro
                 GCM_obser%rrms_p_old(iM,J,parity) = dsqrt(be0/(n_pro+1.E-10))
+                GCM_obser%o1(iM,J,parity) = r2_O1
+                GCM_obser%o2(iM,J,parity) = r2_O2
+                GCM_obser%o3(iM,J,parity) = r2_O3
+                GCM_obser%o4(iM,J,parity) = r2_O4
+                GCM_obser%o5(iM,J,parity) = r2_O5
                 r2_p_total = c1*r2_O1 + c2*r2_O2 + c3*r2_O3 + c4*r2_O4 + c5*r2_O5
                 GCM_obser%rrms_p(iM,J,parity) = dsqrt(abs(r2_p_total))
             end do

@@ -764,7 +764,7 @@ type GCM_Observables
     real(r64),dimension(:,:,:),allocatable :: N,Z                   ! particle number
     real(r64),dimension(:,:,:),allocatable :: rrms_p         ! proton radius
     real(r64),dimension(:,:,:),allocatable :: rrms_p_old   ! proton radius (old, no COM correction)           
-
+    real(r64),dimension(:,:,:),allocatable :: o1, o2, o3, o4, o5
 endtype 
 type(GCM_Observables) :: GCM_obser
 

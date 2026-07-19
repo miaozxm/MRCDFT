@@ -1369,14 +1369,14 @@ Module Kernel
 
                 do mu = -n,n
                     r2_2b_PNP(2,3) = r2_2b_PNP(2,3) + fac*(-1)**mu* &
-                            (Qn_mu_arry(mu,phi_n_index,1)*Qn_mu_arry(-mu,phi_p_index,2) + Qn_mu_arry(mu,phi_p_index,2)*Qn_mu_arry(-mu,phi_n_index,1))
+                            (Qn_mu_arry(mu,phi_n_index,1)*Qn_mu_arry(-mu,phi_p_index,2) - Qn_mu_arry(mu,phi_p_index,2)*Qn_mu_arry(-mu,phi_n_index,1))
                     pr2_2b_PNP(2,3) = pr2_2b_PNP(2,3) + pfac*(-1)**mu* &
-                            (pQn_mu_arry(mu,phi_n_index,1)*pQn_mu_arry(-mu,phi_p_index,2) + pQn_mu_arry(mu,phi_p_index,2)*pQn_mu_arry(-mu,phi_n_index,1))
+                            (pQn_mu_arry(mu,phi_n_index,1)*pQn_mu_arry(-mu,phi_p_index,2) - pQn_mu_arry(mu,phi_p_index,2)*pQn_mu_arry(-mu,phi_n_index,1))
                     ! direct term should include `np and pn`
-                    r2_2b_Each_Term_PNP(1,3) = r2_2b_Each_Term_PNP(1,3) + fac*(-1)**mu* &
-                            (Qn_mu_arry(mu,phi_n_index,1)*Qn_mu_arry(-mu,phi_p_index,2) + Qn_mu_arry(mu,phi_p_index,2)*Qn_mu_arry(-mu,phi_n_index,1))
-                    pr2_2b_Each_Term_PNP(1,3) = pr2_2b_Each_Term_PNP(1,3) + pfac*(-1)**mu* &
-                            (pQn_mu_arry(mu,phi_n_index,1)*pQn_mu_arry(-mu,phi_p_index,2) + pQn_mu_arry(mu,phi_p_index,2)*pQn_mu_arry(-mu,phi_n_index,1))
+                    r2_2b_Each_Term_PNP(1,3) = r2_2b_Each_Term_PNP(1,3) - fac*(-1)**mu* &
+                            (Qn_mu_arry(mu,phi_n_index,1)*Qn_mu_arry(-mu,phi_p_index,2) - Qn_mu_arry(mu,phi_p_index,2)*Qn_mu_arry(-mu,phi_n_index,1))
+                    pr2_2b_Each_Term_PNP(1,3) = pr2_2b_Each_Term_PNP(1,3) - pfac*(-1)**mu* &
+                            (pQn_mu_arry(mu,phi_n_index,1)*pQn_mu_arry(-mu,phi_p_index,2) - pQn_mu_arry(mu,phi_p_index,2)*pQn_mu_arry(-mu,phi_n_index,1))
                 end do
             end do
         end do

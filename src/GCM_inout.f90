@@ -312,11 +312,11 @@ MODULE GCM_Inout
             use Globals, only: gcm_space,Proj_option,GCM_HWG,GCM_obser
             integer :: J,parity,iM
             character(1), dimension(2) :: ParityChar = ['+', '-']
-            character(len=*), parameter ::  format1 = "(i2,a1,i2,f12.4,3f10.4,f12.4,3f9.4,2f9.4)"
+            character(len=*), parameter ::  format1 = "(i2,a1,i2,f12.4,3f10.4,f12.4,3f9.4,1f9.4,1f12.4,5f9.4)"
             write(GCM_outputfile%u_outGCM_observables,'(A,f10.4,A)') 'Ground State Energy:', GCM_HWG%E(1,0,1), 'MeV'
             write(GCM_outputfile%u_outGCM_observables,*) '------------------------------------------------------'
             write(GCM_outputfile%u_outGCM_observables,"(A)") 'Excitation Spectrum:'
-            write(GCM_outputfile%u_outGCM_observables,"(A)") 'J^pi_i        E       E_ex    <beta2>   <beta3>       <N>       <Z>    rrms_p'
+            write(GCM_outputfile%u_outGCM_observables,"(A)") 'J^pi_i        E       E_ex    <beta2>   <beta3>       <N>       <Z>    rrms_p     rrms_p_old     o1     o2     o3     o4     o5'
             do J = gcm_space%Jmin, gcm_space%Jmax, gcm_space%Jstep
                 ! parity
                 if ((-1)**J == 1 .or. Proj_option%PPtype==0) then
@@ -327,7 +327,8 @@ MODULE GCM_Inout
                 do iM = 1, GCM_HWG%M(J,parity)
                     write(GCM_outputfile%u_outGCM_observables,format1) J,ParityChar(parity),iM,GCM_HWG%E(iM,J,parity),GCM_obser%E_ex(iM,J,parity),&
                                      GCM_obser%beta2_aver(iM,J,parity),GCM_obser%beta3_aver(iM,J,parity),&
-                                     GCM_obser%N(iM,J,parity),GCM_obser%Z(iM,J,parity),GCM_obser%rrms_p(iM,J,parity)
+                                     GCM_obser%N(iM,J,parity),GCM_obser%Z(iM,J,parity),GCM_obser%rrms_p(iM,J,parity),GCM_obser%rrms_p_old(iM,J,parity),&
+                                     GCM_obser%o1(iM,J,parity),GCM_obser%o2(iM,J,parity),GCM_obser%o3(iM,J,parity),GCM_obser%o4(iM,J,parity),GCM_obser%o5(iM,J,parity)
                 end do 
             end do
             write(GCM_outputfile%u_outGCM_observables,*) '------------------------------------------------------'
