@@ -302,8 +302,6 @@ subroutine write_Proj_output(q1,q2)
         end if 
         call write_eccentricity_operators_kernels(q1,q2)
     end if 
-    ! write r2 2body operators kernels
-    call write_r2_2body_operators_kernels(q1,q2)
     ! write matrix elemets of operator
     if(q1== gcm_space%q1_start .and. q2==gcm_space%q2_start) then 
         call write_reduced_1B_multipole_matrix_elements

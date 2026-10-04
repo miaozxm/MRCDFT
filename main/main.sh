@@ -1,6 +1,6 @@
 #!/bin/bash                 		
 #PBS -N MRCDFT
-#PBS -l select=1:ncpus=63
+#PBS -l select=1:ncpus=210
 #PBS -o /dev/null
 #PBS -e /dev/null
 
@@ -12,14 +12,14 @@ MRCDFT_BIN="$FDIR/bin/MRCDFT"
 
 cd "$MAIN_DIR" || { echo "ERROR: Cannot cd to $MAIN_DIR"; exit 1; }
 
-export OMP_NUM_THREADS=3
-export MKL_NUM_THREADS=3
+export OMP_NUM_THREADS=5
+export MKL_NUM_THREADS=5
 export MKL_DYNAMIC=FALSE
 # export MKL_THREADING_LAYER=GNU
 
 # ===== 实验参数配置 =====
 ELE="Ca"
-A=48
+A=40
 
 # ===== 实验笔记ID配置（可选）=====
 # 如果设置了 NOTE_ID，运行结束后会自动更新对应笔记
@@ -121,7 +121,7 @@ echo "开始时间: $(date)"
 start_time=$(date +%s)
 echo -e "\033[32m run ...\033[0m"
 
-mpirun -np 21 "$MRCDFT_BIN" -p para.dat -d b23.dat
+mpirun -np 42 "$MRCDFT_BIN" -p para.dat -d b23.dat
 # mpirun -np 28 "$MRCDFT_BIN" -p para2.dat -d b23.dat
 
 echo calculation is finished !
